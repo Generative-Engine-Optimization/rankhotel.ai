@@ -75,18 +75,31 @@ tailwind.config = {
 
   const mqDesktop = window.matchMedia("(min-width: 768px)");
 
+  function pageLang() {
+    const lang = (document.documentElement.getAttribute("lang") || "").toLowerCase();
+    return lang.startsWith("it") ? "it" : "en";
+  }
+
+  function navLabels() {
+    return pageLang() === "it"
+      ? { open: "Apri menu di navigazione", close: "Chiudi menu di navigazione" }
+      : { open: "Open navigation menu", close: "Close navigation menu" };
+  }
+
   function closeMenu(toggle, panel) {
     if (!toggle || !panel) return;
+    const labels = navLabels();
     toggle.setAttribute("aria-expanded", "false");
     panel.classList.remove("is-open");
-    toggle.setAttribute("aria-label", "Apri menu di navigazione");
+    toggle.setAttribute("aria-label", labels.open);
   }
 
   function openMenu(toggle, panel) {
     if (!toggle || !panel) return;
+    const labels = navLabels();
     toggle.setAttribute("aria-expanded", "true");
     panel.classList.add("is-open");
-    toggle.setAttribute("aria-label", "Chiudi menu di navigazione");
+    toggle.setAttribute("aria-label", labels.close);
   }
 
   function initNav() {
@@ -126,6 +139,8 @@ tailwind.config = {
         toggle.focus();
       }
     });
+
+    toggle.setAttribute("aria-label", navLabels().open);
   }
 
   /** Audit form → Make.com webhook (URL da `data-webhook` sul form, o window.RANKHOTEL_MAKE_WEBHOOK). */
@@ -138,18 +153,57 @@ tailwind.config = {
     return fromWin || fromForm;
   }
 
-  function webhookErrorMessage(status) {
+  function webhookErrorMessage(status, lang) {
+    const en = lang === "en";
     if (status === 410 || status === 404) {
+      if (en) {
+        return (
+          "Make webhook no longer active (error " +
+          status +
+          "). In Make.com open the scenario, ensure it is on, add or renew the «Custom webhook» module, copy the new URL and replace it in the form's data-webhook attribute."
+        );
+      }
       return (
         "Webhook Make non più attivo (errore " +
         status +
-        "). In Make.com apri lo scenario, assicurati che sia acceso, aggiungi o rinnova il modulo «Webhook personalizzato», copia il nuovo indirizzo e sostituiscilo nell’attributo data-webhook del form in index.html."
+        "). In Make.com apri lo scenario, assicurati che sia acceso, aggiungi o rinnova il modulo «Webhook personalizzato», copia il nuovo indirizzo e sostituiscilo nell'attributo data-webhook del form."
       );
     }
     if (status === 403 || status === 401) {
+      if (en) {
+        return "Webhook access denied. Check in Make for any API keys or restrictions on the Webhook module.";
+      }
       return "Accesso al webhook rifiutato. Controlla in Make eventuali chiavi API o restrizioni sul modulo Webhook.";
     }
+    if (en) {
+      return (
+        "Submission failed (server error " + status + "). Try again shortly or verify the Make scenario."
+      );
+    }
     return "Invio non riuscito (errore server " + status + "). Riprova tra poco o verifica lo scenario Make.";
+  }
+
+  function formStrings(lang) {
+    if (lang === "en") {
+      return {
+        submitting: "Sending…",
+        success: "Request sent. We'll get back to you soon.",
+        webhookMissing:
+          "Webhook URL missing: set data-webhook on the form or window.RANKHOTEL_MAKE_WEBHOOK.",
+        networkError:
+          "Connection blocked or offline. If you opened the site from file://, try an HTTP server; if the console shows a CORS error, enable cross-origin requests on the webhook in Make or use a proxy.",
+        genericError: "Submission failed. Please try again shortly.",
+      };
+    }
+    return {
+      submitting: "Invio in corso…",
+      success: "Richiesta inviata. Ti contatteremo al più presto.",
+      webhookMissing:
+        "Manca l'URL del webhook: imposta data-webhook sul form oppure window.RANKHOTEL_MAKE_WEBHOOK.",
+      networkError:
+        "Connessione bloccata o rete assente. Se usi il sito da file:// prova da un server HTTP; se in console compare un errore CORS, abilita le richieste cross-origin sul webhook in Make o usa un proxy.",
+      genericError: "Invio non riuscito. Riprova tra poco.",
+    };
   }
 
   function setAuditFormStatus(el, message, kind) {
@@ -173,6 +227,9 @@ tailwind.config = {
 
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
+      const lang = pageLang();
+      const str = formStrings(lang);
+
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
@@ -180,11 +237,7 @@ tailwind.config = {
 
       const webhookUrl = getAuditWebhookUrl(form);
       if (!webhookUrl) {
-        setAuditFormStatus(
-          statusEl,
-          "Manca l’URL del webhook: imposta data-webhook sul form oppure window.RANKHOTEL_MAKE_WEBHOOK.",
-          "error"
-        );
+        setAuditFormStatus(statusEl, str.webhookMissing, "error");
         return;
       }
 
@@ -196,12 +249,12 @@ tailwind.config = {
         website: (fd.get("website") || "").toString().trim(),
         rooms: (fd.get("rooms") || "").toString().trim(),
         message: (fd.get("message") || "").toString().trim(),
-        source: "rankhotel-ai-landing",
+        source: (form.getAttribute("data-form-source") || "").trim() || "rankhotel-ai-landing",
         submittedAt: new Date().toISOString(),
         pageUrl: typeof window !== "undefined" ? window.location.href : "",
       };
 
-      setAuditFormStatus(statusEl, "Invio in corso…", "info");
+      setAuditFormStatus(statusEl, str.submitting, "info");
       form.setAttribute("aria-busy", "true");
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -217,7 +270,7 @@ tailwind.config = {
         });
 
         if (!res.ok) {
-          const msg = webhookErrorMessage(res.status);
+          const msg = webhookErrorMessage(res.status, lang);
           setAuditFormStatus(statusEl, msg, "error");
           if (typeof console !== "undefined" && console.error) {
             console.error("Audit form webhook:", res.status, res.statusText);
@@ -225,11 +278,7 @@ tailwind.config = {
           return;
         }
 
-        setAuditFormStatus(
-          statusEl,
-          "Richiesta inviata. Ti contatteremo al più presto.",
-          "success"
-        );
+        setAuditFormStatus(statusEl, str.success, "success");
         form.reset();
       } catch (err) {
         const isNetwork =
@@ -237,9 +286,7 @@ tailwind.config = {
           (err && String(err.message || "").toLowerCase().includes("fetch"));
         setAuditFormStatus(
           statusEl,
-          isNetwork
-            ? "Connessione bloccata o rete assente. Se usi il sito da file:// prova da un server HTTP; se in console compare un errore CORS, abilita le richieste cross-origin sul webhook in Make o usa un proxy."
-            : "Invio non riuscito. Riprova tra poco.",
+          isNetwork ? str.networkError : str.genericError,
           "error"
         );
         if (typeof console !== "undefined" && console.error) {
@@ -254,9 +301,34 @@ tailwind.config = {
     });
   }
 
+  /** Hero headline: cycle model names (ChatGPT → Gemini → Claude) in sync on all [data-hero-model-rotate] nodes. */
+  function initHeroModelRotate() {
+    var els = document.querySelectorAll("[data-hero-model-rotate]");
+    if (!els.length) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    var models = ["ChatGPT", "Gemini", "Claude"];
+    var i = 0;
+    setInterval(function () {
+      i = (i + 1) % models.length;
+      var label = models[i];
+      els.forEach(function (el) {
+        el.style.opacity = "0";
+      });
+      window.setTimeout(function () {
+        els.forEach(function (el) {
+          el.textContent = label;
+          el.style.opacity = "1";
+        });
+      }, 220);
+    }, 2500);
+  }
+
   function boot() {
     initNav();
     initAuditForm();
+    initHeroModelRotate();
   }
 
   if (document.readyState === "loading") {

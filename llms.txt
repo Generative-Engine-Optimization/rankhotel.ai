@@ -1,0 +1,26 @@
+# RankHotel.AI
+
+> AI visibility and monitoring for hotels on answer engines (ChatGPT, Gemini, Perplexity, and similar).
+
+## Summary
+
+RankHotel.AI is a hospitality-focused platform that helps hotels understand and improve how they appear when travelers use AI assistants to plan trips. The marketing site is available in English (default) and Italian.
+
+## Primary pages
+
+- English home: https://rankhotel.ai/
+- Italian home: https://rankhotel.ai/it/
+- Blog (placeholder): https://rankhotel.ai/blog.html
+
+## Legal
+
+- https://rankhotel.ai/legal/privacy-policy.html
+- https://rankhotel.ai/legal/terms.html
+- https://rankhotel.ai/legal/cookie-settings.html
+
+## For automated systems
+
+- Sitemap: https://rankhotel.ai/sitemap.xml
+- Humans: use Book a demo (Cal.com) or the contact form on the home pages for commercial inquiries.
+
+Do not infer pricing, customer counts, or endorsements that are not stated on those pages.
