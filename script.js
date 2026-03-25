@@ -301,24 +301,112 @@ tailwind.config = {
     });
   }
 
-  /** Hero headline: cycle model names (ChatGPT → Gemini → Claude) in sync on all [data-hero-model-rotate] nodes. */
+  function copyPageUrlStrings(lang) {
+    if (lang === "en") {
+      return {
+        action: "Copy page link",
+        done: "Link copied to clipboard",
+        fail: "Could not copy link",
+      };
+    }
+    return {
+      action: "Copia il link della pagina",
+      done: "Link copiato negli appunti",
+      fail: "Impossibile copiare il link",
+    };
+  }
+
+  function initCopyPageUrl() {
+    const btn = document.querySelector("[data-copy-page-url]");
+    if (!btn) return;
+
+    const lang = pageLang();
+    const str = copyPageUrlStrings(lang);
+    btn.setAttribute("aria-label", str.action);
+    const icon = btn.querySelector(".material-symbols-outlined");
+
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    }
+
+    btn.addEventListener("click", function () {
+      const url = window.location.href;
+      const resetAria = function () {
+        btn.setAttribute("aria-label", str.action);
+      };
+
+      function onSuccess() {
+        btn.setAttribute("aria-label", str.done);
+        if (icon) icon.textContent = "check";
+        window.setTimeout(function () {
+          resetAria();
+          if (icon) icon.textContent = "share";
+        }, 2200);
+      }
+
+      function onFail() {
+        btn.setAttribute("aria-label", str.fail);
+        window.setTimeout(resetAria, 2800);
+      }
+
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        navigator.clipboard.writeText(url).then(onSuccess, function () {
+          if (fallbackCopy(url)) onSuccess();
+          else onFail();
+        });
+      } else if (fallbackCopy(url)) {
+        onSuccess();
+      } else {
+        onFail();
+      }
+    });
+  }
+
+  /** Hero headline: cycle LLM logos from assets/images/llms-logo on all [data-hero-model-rotate] imgs. */
   function initHeroModelRotate() {
     var els = document.querySelectorAll("[data-hero-model-rotate]");
     if (!els.length) return;
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
-    var models = ["ChatGPT", "Gemini", "Claude"];
+    var base = (function () {
+      var scripts = document.getElementsByTagName("script");
+      for (var j = 0; j < scripts.length; j++) {
+        var src = scripts[j].src;
+        if (src && /\/script\.js(\?|$)/i.test(src)) {
+          return src.replace(/\/script\.js[^/]*$/i, "/assets/images/llms-logo/");
+        }
+      }
+      return "./assets/images/llms-logo/";
+    })();
+    var slides = [
+      { file: "chatgpt.webp", alt: "ChatGPT" },
+      { file: "gemini.webp", alt: "Gemini" },
+      { file: "copilot.webp", alt: "Copilot" },
+      { file: "perplexity.webp", alt: "Perplexity" },
+      { file: "google-ai.webp", alt: "Google AI" },
+      { file: "aioverview.webp", alt: "AI Overview" },
+    ];
     var i = 0;
     setInterval(function () {
-      i = (i + 1) % models.length;
-      var label = models[i];
+      i = (i + 1) % slides.length;
+      var slide = slides[i];
       els.forEach(function (el) {
         el.style.opacity = "0";
       });
       window.setTimeout(function () {
         els.forEach(function (el) {
-          el.textContent = label;
+          el.src = base + slide.file;
+          el.alt = slide.alt;
           el.style.opacity = "1";
         });
       }, 220);
@@ -328,6 +416,7 @@ tailwind.config = {
   function boot() {
     initNav();
     initAuditForm();
+    initCopyPageUrl();
     initHeroModelRotate();
   }
 
