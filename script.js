@@ -74,6 +74,7 @@ tailwind.config = {
   "use strict";
 
   const mqDesktop = window.matchMedia("(min-width: 768px)");
+  const mqBlogTocWide = window.matchMedia("(min-width: 1024px)");
 
   function pageLang() {
     const lang = (document.documentElement.getAttribute("lang") || "").toLowerCase();
@@ -371,6 +372,128 @@ tailwind.config = {
     });
   }
 
+  function blogTocStrings(lang) {
+    if (lang === "en") {
+      return {
+        summary: "On this page",
+        navLabel: "Article contents",
+      };
+    }
+    return {
+      summary: "In questa pagina",
+      navLabel: "Indice dell'articolo",
+    };
+  }
+
+  function slugifyHeadingId(raw) {
+    var s = (raw || "")
+      .toString()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    s = s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+    return s || "section";
+  }
+
+  /** Build TOC from h2/h3 inside article.blog-article; mount into main [data-blog-toc]. */
+  function initBlogTableOfContents() {
+    var mount = document.querySelector("main [data-blog-toc]");
+    var article = document.querySelector("article.blog-article");
+    if (!mount || !article) return;
+
+    var headings = Array.prototype.slice
+      .call(article.querySelectorAll("h2, h3"))
+      .filter(function (h) {
+        return !h.closest(".blog-faq-section");
+      });
+    if (!headings.length) return;
+
+    var used = Object.create(null);
+    function ensureId(el) {
+      if (el.id && String(el.id).trim()) return el.id;
+      var base = slugifyHeadingId(el.textContent);
+      var id = base;
+      var n = 2;
+      while (document.getElementById(id) || used[id]) {
+        id = base + "-" + n;
+        n += 1;
+      }
+      used[id] = true;
+      el.id = id;
+      return id;
+    }
+
+    headings.forEach(function (h) {
+      ensureId(h);
+    });
+
+    var lang = pageLang();
+    var str = blogTocStrings(lang);
+    var topOl = document.createElement("ol");
+    topOl.className = "blog-toc-list";
+    var currentSubOl = null;
+
+    headings.forEach(function (h) {
+      var tag = h.tagName.toLowerCase();
+      var text = (h.textContent || "").trim();
+      if (!text) return;
+
+      var a = document.createElement("a");
+      a.href = "#" + h.id;
+      a.textContent = text;
+
+      if (tag === "h2") {
+        var li = document.createElement("li");
+        li.className = "blog-toc-item blog-toc-item--h2";
+        li.appendChild(a);
+        currentSubOl = document.createElement("ol");
+        currentSubOl.className = "blog-toc-sub";
+        li.appendChild(currentSubOl);
+        topOl.appendChild(li);
+      } else {
+        var li3 = document.createElement("li");
+        li3.className = "blog-toc-item blog-toc-item--h3";
+        li3.appendChild(a);
+        if (currentSubOl) {
+          currentSubOl.appendChild(li3);
+        } else {
+          li3.classList.add("blog-toc-item--orphan-h3");
+          topOl.appendChild(li3);
+        }
+      }
+    });
+
+    var nav = document.createElement("nav");
+    nav.className = "blog-toc-nav";
+    nav.setAttribute("aria-label", str.navLabel);
+    nav.appendChild(topOl);
+
+    var details = document.createElement("details");
+    details.className = "blog-toc-disclosure";
+    var sidebarTitle = document.createElement("p");
+    sidebarTitle.className = "blog-toc-sidebar-title";
+    sidebarTitle.setAttribute("aria-hidden", "true");
+    sidebarTitle.textContent = str.summary;
+    var summary = document.createElement("summary");
+    summary.className = "blog-toc-summary";
+    summary.textContent = str.summary;
+    details.appendChild(sidebarTitle);
+    details.appendChild(summary);
+    details.appendChild(nav);
+
+    mount.innerHTML = "";
+    mount.appendChild(details);
+
+    function syncTocOpen() {
+      details.open = mqBlogTocWide.matches;
+    }
+
+    syncTocOpen();
+    mqBlogTocWide.addEventListener("change", syncTocOpen);
+  }
+
   /** Hero headline: cycle LLM logos from assets/images/llms-logo on all [data-hero-model-rotate] imgs. */
   function initHeroModelRotate() {
     var els = document.querySelectorAll("[data-hero-model-rotate]");
@@ -417,6 +540,7 @@ tailwind.config = {
     initNav();
     initAuditForm();
     initCopyPageUrl();
+    initBlogTableOfContents();
     initHeroModelRotate();
   }
 
