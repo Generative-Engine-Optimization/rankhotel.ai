@@ -96,6 +96,30 @@
     "mainEntity": [
       {
         "@type": "Question",
+        "name": "What does RankHotel do?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "RankHotel helps hotels and hospitality companies turn SEO and AI search into a predictable source of direct bookings, without relying on OTAs, external agencies, or costly in-house teams. We combine research, strategy, content, and automation into one integrated system that drives qualified traffic and direct conversions from Google and AI platforms like ChatGPT and Perplexity. We operate as an extension of your marketing team: you get dedicated AI Search Optimization specialists supported by AI tools and content workflows that perform the work of multiple full time roles, all focused on maximizing visibility, occupancy, and long-term growth."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can AI really do SEO as well as human experts?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, and that's exactly why RankHotel exists. AI alone isn't enough: it can automate processes and speed up research, but without strategic direction it risks taking shortcuts or producing irrelevant content. We combine the best of both worlds: human intelligence and AI automation. Our team uses AI to handle data, research, and content at scale, but every move is guided by experienced AI Search Optimization and hospitality SEO specialists. That's how we create real results: more qualified traffic, more direct bookings, and long-term brand growth. AI is an accelerator. Humans make it meaningful."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does pricing work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pricing varies depending on the complexity of your property, market, and goals, but we offer standard plans to make it simple to get started. Talk to us to explore the best option for your hotel and discover how we can scale results together."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Is the monitoring really real-time?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -112,14 +136,6 @@
       },
       {
         "@type": "Question",
-        "name": "How do I book a demo?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Use the Book a demo button to open our calendar and pick a time. We'll walk you through RankHotel and how it tracks your AI visibility."
-        }
-      },
-      {
-        "@type": "Question",
         "name": "Does RankHotel replace traditional SEO tools?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -131,6 +147,7 @@
   </script>
 
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="./assets/js/includes.js"></script>
   <script src="./script.js"></script>
   <script src="./assets/js/embeds/cal-demo.js"></script>
 </head>
@@ -141,42 +158,7 @@
   <!-- End Google Tag Manager (noscript) -->
   <a class="skip-link" href="./#main-content">Skip to main content</a>
 
-  <header class="site-header nav-shell fixed top-0 left-0 right-0 z-[var(--nav-z)]">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-      <nav class="nav-bar-island relative px-4 sm:px-5 md:px-6 py-3 sm:py-3.5" aria-label="Main navigation">
-        <div class="flex items-center justify-between gap-3 w-full">
-          <a class="block shrink-0" href="./">
-            <img
-              src="./assets/images/logo/logo-rankhotel.svg"
-              alt="RankHotel.AI: AI visibility for hotels"
-              class="h-11 sm:h-12 md:h-[3.5rem] lg:h-[3.75rem] w-auto object-contain"
-              width="1244"
-              height="276"
-              decoding="async"
-              fetchpriority="high"
-              loading="eager"
-            />
-          </a>
-
-          <div id="primary-menu" class="primary-menu md:flex-1 md:justify-center md:gap-7 lg:gap-9">
-            <a class="nav-link" href="./#product">Organic Growth Engine</a>
-            <a class="nav-link" href="./pricing.html">Pricing</a>
-            <a class="nav-link" href="./#faq">FAQ</a>
-            <a class="nav-link" href="./blog.html">Blog</a>
-          </div>
-
-          <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            <a class="nav-lang inline-flex items-center justify-center min-w-[40px] min-h-[44px] sm:min-w-[44px]" href="./it/" hreflang="it" lang="it" title="Italiano" aria-label="Italian version">IT</a>
-            <button type="button" class="hidden sm:inline-flex bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-2 rounded-xl font-semibold text-sm electric-glow active:scale-95 transition-transform items-center justify-center min-h-[44px] border-0 cursor-pointer" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Book a demo</button>
-            <button type="button" class="nav-toggle md:hidden" aria-controls="primary-menu" aria-expanded="false" aria-label="Open navigation menu">
-              <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
-            </button>
-            <button type="button" class="sm:hidden inline-flex items-center justify-center min-h-[44px] px-3 py-2 rounded-xl text-sm font-semibold bg-gradient-to-br from-primary to-primary-container text-on-primary-container electric-glow border-0 cursor-pointer" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Demo</button>
-          </div>
-        </div>
-      </nav>
-    </div>
-  </header>
+  <div data-include="/partials/en/header.html" data-lang-href="/it/"></div>
 
   <main id="main-content" class="pt-[6.75rem] sm:pt-28">
     <section class="relative px-4 sm:px-8 pt-16 md:pt-20 pb-24 md:pb-32 overflow-hidden text-center" aria-labelledby="hero-heading">
@@ -230,16 +212,47 @@
 
     <section id="booking-shift" class="max-w-7xl mx-auto px-4 sm:px-8 py-16 md:py-24" aria-labelledby="problem-heading">
       <h2 id="problem-heading" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 md:mb-8 text-center max-w-4xl mx-auto leading-tight">
-        The way travelers book has changed. Permanently.
+        ChatGPT has surpassed 1 billion monthly active users.
       </h2>
       <div class="max-w-3xl mx-auto text-on-surface-variant text-base md:text-lg leading-relaxed space-y-6 text-center">
         <p>
-          Millions of people already use ChatGPT, Perplexity, and Gemini to plan their trips. They type <span class="chat-query" translate="no">best boutique hotel in Florence</span> and get a direct answer.
+          A portion of them is looking for a hotel just like yours. They type <span class="chat-query" translate="no">best boutique hotel in Florence</span> and get a direct answer.
         </p>
+      </div>
+    </section>
 
-        <p class="text-on-surface font-medium pt-2">
-          ChatGPT has surpassed 1 billion monthly active users. Some of them are looking for a hotel like yours. The question is: do they find you?
+    <section id="ai-search-moat" class="max-w-7xl mx-auto px-4 sm:px-8 py-16 md:py-24 border-t border-white/5" aria-labelledby="ai-search-moat-heading">
+      <div class="max-w-4xl mx-auto text-center mb-10 md:mb-12">
+        <p class="text-[0.6875rem] uppercase tracking-widest text-primary font-bold mb-3">Our positioning</p>
+        <h2 id="ai-search-moat-heading" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
+          Building Our Moat in the AI Search Era
+        </h2>
+        <p class="text-on-surface-variant text-base md:text-lg leading-relaxed">
+          Optimizing visibility in AI generated answers starts with solid SEO fundamentals. No shortcuts: real results require expertise, consistency, and strategic thinking.
         </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+        <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6 md:p-7">
+          <p class="text-[0.6875rem] uppercase tracking-widest text-primary font-bold mb-3">01</p>
+          <h3 class="text-lg font-bold mb-3">Get the fundamentals right</h3>
+          <p class="text-sm md:text-[0.9375rem] text-on-surface-variant leading-relaxed">
+            Poorly executed optimization can hurt performance and trust. We start from technical and editorial SEO basics before scaling anything.
+          </p>
+        </article>
+        <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6 md:p-7">
+          <p class="text-[0.6875rem] uppercase tracking-widest text-tertiary font-bold mb-3">02</p>
+          <h3 class="text-lg font-bold mb-3">Use AI with judgment</h3>
+          <p class="text-sm md:text-[0.9375rem] text-on-surface-variant leading-relaxed">
+            We believe in automation and AI tools only when guided by experience and embedded in a clear strategy, not as one-click shortcuts.
+          </p>
+        </article>
+        <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6 md:p-7">
+          <p class="text-[0.6875rem] uppercase tracking-widest text-secondary font-bold mb-3">03</p>
+          <h3 class="text-lg font-bold mb-3">Build durable growth systems</h3>
+          <p class="text-sm md:text-[0.9375rem] text-on-surface-variant leading-relaxed">
+            We use <a href="https://www.rankwit.ai/" class="text-primary hover:underline underline-offset-4">RankWit AI</a> to track queries across search engines and LLMs, build AI agents and workflows, and manage strategy with clients. No easy promises, just structured, data driven execution.
+          </p>
+        </article>
       </div>
     </section>
 
@@ -250,7 +263,7 @@
           <p class="hiw-kicker">How it works · SEO &amp; AEO experts + software + AI agents</p>
           <h2 id="hiw-heading" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 md:mb-6 leading-tight">How we build your organic growth engine for hotels</h2>
           <p class="text-on-surface-variant text-base md:text-lg leading-relaxed">
-            We combine the RankWit AI platform, custom AI agents, and specialists in organic growth for hotels and resorts to run everything end-to-end—from strategy to bookings generated. Here is how the system works.
+            We combine the <a href="https://www.rankwit.ai/" class="text-primary hover:underline underline-offset-4">RankWit AI</a> platform, custom AI agents, and specialists in organic growth for hotels and resorts to run everything end-to-end from strategy to bookings generated. Here is how the system works.
           </p>
         </header>
         <div class="max-w-4xl mx-auto flex flex-col gap-5 md:gap-6">
@@ -267,7 +280,7 @@
                 <h3 class="text-xl md:text-2xl font-bold mb-1">Context</h3>
                 <p class="hiw-lead">We build a knowledge base that becomes your single source of truth.</p>
                 <p class="text-on-surface-variant text-sm md:text-[0.9375rem] leading-relaxed mb-5">
-                  We go deep on your hotel: positioning, target segments (business, leisure, luxury), seasonality, experiences offered, and brand voice. We also analyze what emerges from guest requests, reviews, and conversations with the front desk or booking team. This dynamic knowledge base powers every phase of the work—from research to content creation.
+                  We go deep on your hotel: positioning, target segments (business, leisure, luxury), seasonality, experiences offered, and brand voice. We also analyze what emerges from guest requests, reviews, and conversations with the front desk or booking team. This dynamic knowledge base powers every phase of the work, from research to content creation.
                 </p>
                 <ul class="flex flex-wrap gap-2 list-none p-0 m-0">
                   <li class="hiw-pill">Guest types (families, couples, business)</li>
@@ -293,7 +306,7 @@
                 <h3 class="text-xl md:text-2xl font-bold mb-1">Research</h3>
                 <p class="hiw-lead">We find the 5% of searches that drive 80% of bookings.</p>
                 <p class="text-on-surface-variant text-sm md:text-[0.9375rem] leading-relaxed mb-4">
-                  We analyze the real questions travelers ask—what they search on Google and in AI before booking a hotel. We collect data from:
+                  We analyze the real questions travelers ask, what they search on Google and in AI before booking a hotel. We collect data from:
                 </p>
                 <ul class="text-on-surface-variant text-sm md:text-[0.9375rem] leading-relaxed space-y-2 mb-4 list-disc pl-5 marker:text-primary/80">
                   <li>Reviews (e.g. Google, OTAs)</li>
@@ -319,7 +332,7 @@
               </div>
               <div class="min-w-0 flex-1">
                 <h3 class="text-xl md:text-2xl font-bold mb-1">Strategy</h3>
-                <p class="hiw-lead">A concrete roadmap based on what drives bookings—not vanity traffic.</p>
+                <p class="hiw-lead">A concrete roadmap based on what drives bookings, not vanity traffic.</p>
                 <p class="text-on-surface-variant text-sm md:text-[0.9375rem] leading-relaxed mb-4">
                   We analyze what works for the searches that matter most: which pages rank, which content gets cited by AI, which formats actually convert. Then we turn it into a clear, prioritized roadmap:
                 </p>
@@ -346,13 +359,13 @@
                 <h3 class="text-xl md:text-2xl font-bold mb-1">Execution</h3>
                 <p class="hiw-lead">AI + your hotel’s knowledge + experts = assets competitors cannot replicate.</p>
                 <p class="text-on-surface-variant text-sm md:text-[0.9375rem] leading-relaxed mb-4">
-                  For every target search, our systems analyze what works on Google and in AI and combine it with unique insight from your hotel. The output is not just “content”—it is booking-generating assets:
+                  For every target search, our systems analyze what works on Google and in AI and combine it with unique insight from your hotel. The output is not just “content”, it is booking-generating assets:
                 </p>
                 <ul class="text-on-surface-variant text-sm md:text-[0.9375rem] leading-relaxed space-y-2 list-disc pl-5 marker:text-primary/80">
-                  <li><strong class="text-on-surface font-semibold">New pages</strong> — landings for offers, experience pages, local guides, “hotel for…” pages</li>
-                  <li><strong class="text-on-surface font-semibold">Content optimization</strong> — we improve existing pages to capture high-intent searches</li>
-                  <li><strong class="text-on-surface font-semibold">Link &amp; mention building</strong> — visibility on travel sites and industry media</li>
-                  <li><strong class="text-on-surface font-semibold">Community presence</strong> — strategic answers on Reddit, Quora, and platforms that shape traveler decisions</li>
+                  <li><strong class="text-on-surface font-semibold">New pages</strong>, landings for offers, experience pages, local guides, “hotel for…” pages</li>
+                  <li><strong class="text-on-surface font-semibold">Content optimization</strong>, we improve existing pages to capture high-intent searches</li>
+                  <li><strong class="text-on-surface font-semibold">Link &amp; mention building</strong>, visibility on travel sites and industry media</li>
+                  <li><strong class="text-on-surface font-semibold">Community presence</strong>, strategic answers on Reddit, Quora, and platforms that shape traveler decisions</li>
                 </ul>
               </div>
             </div>
@@ -368,7 +381,7 @@
               </div>
               <div class="min-w-0 flex-1">
                 <h3 class="text-xl md:text-2xl font-bold mb-1">Optimization</h3>
-                <p class="hiw-lead">We optimize on revenue signals—not rankings alone.</p>
+                <p class="hiw-lead">We optimize on revenue signals, not rankings alone.</p>
                 <p class="text-on-surface-variant text-sm md:text-[0.9375rem] leading-relaxed mb-4">
                   We do not focus only on rankings. We track what actually matters: direct bookings, occupancy, average stay value, interactions and inquiries. We use this data to:
                 </p>
@@ -463,16 +476,24 @@
       <h2 id="faq-heading" class="text-3xl md:text-4xl font-bold text-center mb-10">FAQ</h2>
       <div class="space-y-6">
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6">
+          <h3 class="text-lg font-bold mb-2">What does RankHotel do?</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">RankHotel helps hotels and hospitality companies turn SEO and AI search into a predictable source of direct bookings, without relying on OTAs, external agencies, or costly in-house teams. We combine research, strategy, content, and automation into one integrated system that drives qualified traffic and direct conversions from Google and AI platforms like ChatGPT and Perplexity. We operate as an extension of your marketing team: you get dedicated AI Search Optimization specialists supported by AI tools and content workflows that perform the work of multiple full time roles, all focused on maximizing visibility, occupancy, and long-term growth.</p>
+        </article>
+        <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6">
+          <h3 class="text-lg font-bold mb-2">Can AI really do SEO as well as human experts?</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">No, and that's exactly why RankHotel exists. AI alone isn't enough. It can automate processes and speed up research, but without strategic direction, it risks taking shortcuts or producing irrelevant content. We combine the best of both worlds: human intelligence and AI automation. Our team uses AI to handle data, research, and content at scale, but every move is guided by experienced AI Search Optimization and hospitality SEO specialists. That's how we create real results: more qualified traffic, more direct bookings, and long-term brand growth. AI is an accelerator. Humans make it meaningful.</p>
+        </article>
+        <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6">
+          <h3 class="text-lg font-bold mb-2">How does pricing work?</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">Pricing varies depending on the complexity of your property, market, and goals but we offer standard plans to make it simple to get started. Talk to us to explore the best option for your hotel and discover how we can scale results together.</p>
+        </article>
+        <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6">
           <h3 class="text-lg font-bold mb-2">Is the monitoring really real-time?</h3>
           <p class="text-sm text-on-surface-variant leading-relaxed">We run structured queries at regular intervals across all major AI platforms, so you always have a current picture of your visibility.</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6">
           <h3 class="text-lg font-bold mb-2">Can I track my competitors?</h3>
           <p class="text-sm text-on-surface-variant leading-relaxed">Yes. Every plan includes competitive benchmarking; you'll know exactly where you stand versus similar hotels in your market.</p>
-        </article>
-        <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6">
-          <h3 class="text-lg font-bold mb-2">How do I book a demo?</h3>
-          <p class="text-sm text-on-surface-variant leading-relaxed">Use the Book a demo button to open our calendar and pick a time. We'll walk you through RankHotel and how it tracks your AI visibility.</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6">
           <h3 class="text-lg font-bold mb-2">Does RankHotel replace traditional SEO tools?</h3>
@@ -538,63 +559,6 @@
 
   </main>
 
-  <footer class="site-footer w-full mt-20 md:mt-32 px-4 sm:px-6 pb-6 md:pb-10">
-    <div class="max-w-5xl mx-auto">
-      <div class="footer-island px-6 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14">
-        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5 lg:gap-x-10 xl:gap-x-14">
-          <div class="md:col-span-2 lg:col-span-2">
-            <a class="inline-block mb-8" href="https://www.rankwit.ai/">
-              <img
-                src="./assets/images/logo/logo-rankhotel.svg"
-                alt="RankHotel.AI: AI visibility for hotels"
-                class="h-11 sm:h-12 md:h-[3.5rem] w-auto object-contain"
-                width="1244"
-                height="276"
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-            <p class="footer-tagline">
-              AI visibility for hotels: how you show up when travelers ask ChatGPT, Gemini, and Perplexity.
-            </p>
-          </div>
-          <nav class="md:col-span-1" aria-labelledby="footer-product">
-            <h2 id="footer-product" class="footer-col-title">Product</h2>
-            <ul class="space-y-1 list-none p-0 m-0">
-              <li><a class="footer-link" href="./#product">Organic Growth Engine</a></li>
-              <li><a class="footer-link" href="./pricing.html">Pricing</a></li>
-              <li><a class="footer-link" href="./#faq">FAQ</a></li>
-            </ul>
-          </nav>
-          <nav class="md:col-span-1" aria-labelledby="footer-resources">
-            <h2 id="footer-resources" class="footer-col-title">Resources</h2>
-            <ul class="space-y-1 list-none p-0 m-0">
-              <li><a class="footer-link" href="./blog.html">Blog</a></li>
-              <li><a class="footer-link" href="./legal/cookie-settings.html">Cookie settings</a></li>
-            </ul>
-          </nav>
-          <nav class="md:col-span-2 lg:col-span-1" aria-labelledby="footer-contact">
-            <h2 id="footer-contact" class="footer-col-title">Contact</h2>
-            <ul class="space-y-1 list-none p-0 m-0">
-              <li><button type="button" class="footer-link w-full sm:w-auto" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Book a demo</button></li>
-              <li><a class="footer-link" href="./#trial">SEO &amp; GEO audit</a></li>
-              <li><a class="footer-link" href="./legal/terms.html">Terms of service</a></li>
-            </ul>
-          </nav>
-        </div>
-        <div class="footer-meta mt-12 md:mt-14 pt-8 md:pt-10 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-6">
-          <p class="footer-legal">© 2026 RankHotel.AI · All rights reserved</p>
-          <button
-            type="button"
-            class="footer-social self-start sm:self-auto"
-            data-copy-page-url
-            aria-label="Copy page link"
-          >
-            <span class="material-symbols-outlined text-[1.35rem]" aria-hidden="true">share</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <div data-include="/partials/en/footer.html"></div>
 </body>
 </html>

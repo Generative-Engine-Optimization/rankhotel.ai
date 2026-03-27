@@ -57,6 +57,7 @@
   }
   </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="../assets/js/includes.js"></script>
   <script src="../script.js"></script>
   <script src="../assets/js/embeds/cal-demo.js"></script>
 </head>
@@ -67,42 +68,7 @@
   <!-- End Google Tag Manager (noscript) -->
   <a class="skip-link" href="#main-content">Vai al contenuto principale</a>
 
-  <header class="site-header nav-shell fixed top-0 left-0 right-0 z-[var(--nav-z)]">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-      <nav class="nav-bar-island relative px-4 sm:px-5 md:px-6 py-3 sm:py-3.5" aria-label="Navigazione principale">
-        <div class="flex items-center justify-between gap-3 w-full">
-          <a class="block shrink-0" href="./index.html">
-            <img
-              src="../assets/images/logo/logo-rankhotel.svg"
-              alt="RankHotel.AI: visibilità AI per hotel"
-              class="h-11 sm:h-12 md:h-[3.5rem] lg:h-[3.75rem] w-auto object-contain"
-              width="1244"
-              height="276"
-              decoding="async"
-              fetchpriority="high"
-              loading="eager"
-            />
-          </a>
-
-          <div id="primary-menu" class="primary-menu md:flex-1 md:justify-center md:gap-7 lg:gap-9">
-            <a class="nav-link" href="./index.html#product">Organic Growth Engine</a>
-            <a class="nav-link" href="./pricing.html" aria-current="page">Pricing</a>
-            <a class="nav-link" href="./index.html#faq">FAQ</a>
-            <a class="nav-link" href="./blog.html">Blog</a>
-          </div>
-
-          <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            <a class="nav-lang inline-flex items-center justify-center min-w-[40px] min-h-[44px] sm:min-w-[44px]" href="../pricing.html" hreflang="en" lang="en" title="English" aria-label="English version">EN</a>
-            <button type="button" class="hidden sm:inline-flex bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-2 rounded-xl font-semibold text-sm electric-glow active:scale-95 transition-transform items-center justify-center min-h-[44px] border-0 cursor-pointer" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Richiedi audit gratuito</button>
-            <button type="button" class="nav-toggle md:hidden" aria-controls="primary-menu" aria-expanded="false" aria-label="Apri menu di navigazione">
-              <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
-            </button>
-            <button type="button" class="sm:hidden inline-flex items-center justify-center min-h-[44px] px-3 py-2 rounded-xl text-sm font-semibold bg-gradient-to-br from-primary to-primary-container text-on-primary-container electric-glow border-0 cursor-pointer" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Audit gratis</button>
-          </div>
-        </div>
-      </nav>
-    </div>
-  </header>
+  <div data-include="/partials/it/header.html" data-lang-href="/pricing.html"></div>
 
   <main id="main-content" class="pt-[6.75rem] sm:pt-28 px-4 sm:px-6 pb-16 md:pb-24">
     <div class="max-w-3xl mx-auto text-center mb-14 md:mb-20">
@@ -110,8 +76,8 @@
       <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
         Fatti trovare dai viaggiatori prima ancora delle OTA
       </h1>
-      <p class="text-on-surface text-lg md:text-xl font-medium leading-relaxed">
-        Trasforma Google e la ricerca AI nel tuo canale principale di prenotazioni dirette 🏨📈
+      <p class="text-on-surface-variant text-lg md:text-xl font-light leading-relaxed">
+        Trasforma Google e la ricerca AI nel tuo canale principale di prenotazioni dirette.
       </p>
     </div>
 
@@ -125,7 +91,7 @@
         <li class="chat-query text-on-surface" translate="no">«dove dormire vista lago di Como»</li>
       </ul>
       <p>Confrontano, leggono recensioni, fanno shortlist.</p>
-      <p><span class="text-on-surface" aria-hidden="true">👉</span> Se il tuo hotel non appare lì, stai perdendo prenotazioni prima ancora che inizi la gara.</p>
+      <p>Se il tuo hotel non appare lì, stai perdendo prenotazioni prima ancora che inizi la gara.</p>
       <p class="text-on-surface font-medium pt-2">Noi facciamo in modo che trovino te.</p>
       <p>E trasformiamo quella visibilità in prenotazioni dirette, maggiore occupazione e più revenue.</p>
     </div>
@@ -139,7 +105,7 @@
         <li class="flex gap-3"><span class="material-symbols-outlined text-primary shrink-0 text-xl" aria-hidden="true">warning</span><span>Le AI consigliano altri hotel, non il tuo</span></li>
         <li class="flex gap-3"><span class="material-symbols-outlined text-primary shrink-0 text-xl" aria-hidden="true">warning</span><span>Non sai quali contenuti portano davvero clienti</span></li>
       </ul>
-      <p class="mt-8 text-on-surface text-base md:text-lg"><span aria-hidden="true">👉</span> Il risultato? Stai pagando per clienti che potresti acquisire direttamente.</p>
+      <p class="mt-8 text-on-surface text-base md:text-lg">Il risultato? Stai pagando per clienti che potresti acquisire direttamente.</p>
     </section>
 
     <section class="max-w-3xl mx-auto mb-16 md:mb-20 rounded-2xl border border-white/10 bg-surface-container-low/50 p-8 md:p-10" aria-labelledby="solution-heading">
@@ -176,27 +142,27 @@
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">1.</span> Capire il tuo hotel (Context)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">Costruiamo una knowledge base completa: tipologie di ospiti (coppie, famiglie, business), punti di forza e differenziazione, recensioni e feedback reali, offerte ed esperienze.</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> Questo ci permette di creare contenuti che i tuoi competitor non possono replicare.</p>
+          <p class="text-on-surface text-sm md:text-base">Questo ci permette di creare contenuti che i tuoi competitor non possono replicare.</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">2.</span> Trovare le ricerche che contano (Research)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">Analizziamo recensioni e domande reali degli ospiti, forum e community, ricerche su Google, performance dei competitor. Con AI e dati identifichiamo:</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> il 5% delle ricerche che genera l'80% delle prenotazioni</p>
+          <p class="text-on-surface text-sm md:text-base">il 5% delle ricerche che genera l'80% delle prenotazioni</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">3.</span> Costruire una strategia che funziona (Strategy)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">Non andiamo a caso. Creiamo una roadmap chiara: quali pagine creare, quali contenuti aggiornare, come posizionarti contro hotel e OTA.</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> Tutto prioritizzato per impatto reale.</p>
+          <p class="text-on-surface text-sm md:text-base">Tutto prioritizzato per impatto reale.</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">4.</span> Creare contenuti che vendono (Execution)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">Realizziamo asset concreti: pagine offerte e landing ad alta conversione, guide locali (cosa fare, dove andare), pagine «hotel per…» (romantico, business, famiglia), ottimizzazione contenuti esistenti, presenza strategica su piattaforme che influenzano le decisioni.</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> Non contenuti generici. Contenuti che portano prenotazioni.</p>
+          <p class="text-on-surface text-sm md:text-base">Non contenuti generici. Contenuti che portano prenotazioni.</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">5.</span> Ottimizzare in base ai risultati (Optimization)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">Non guardiamo solo le posizioni. Misuriamo prenotazioni dirette, richieste, occupazione, comportamento degli utenti.</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> Miglioriamo continuamente ciò che funziona e eliminiamo il resto.</p>
+          <p class="text-on-surface text-sm md:text-base">Miglioriamo continuamente ciò che funziona e eliminiamo il resto.</p>
         </article>
       </div>
     </section>
@@ -224,9 +190,9 @@
       <section class="rounded-2xl border border-white/10 border-red-500/20 bg-surface-container-low/50 p-6 md:p-8" aria-labelledby="not-for-heading">
         <h2 id="not-for-heading" class="text-xl font-bold mb-4">Per chi NON è</h2>
         <ul class="space-y-2 list-none p-0 text-on-surface-variant text-sm md:text-base leading-relaxed">
-          <li><span aria-hidden="true">❌</span> Chi cerca risultati immediati in pochi giorni</li>
-          <li><span aria-hidden="true">❌</span> Chi vuole «solo traffico» e non prenotazioni</li>
-          <li><span aria-hidden="true">❌</span> Chi non è disposto a differenziarsi davvero</li>
+          <li>Chi cerca risultati immediati in pochi giorni</li>
+          <li>Chi vuole solo traffico e non prenotazioni</li>
+          <li>Chi non è disposto a differenziarsi davvero</li>
         </ul>
       </section>
     </div>
@@ -239,7 +205,7 @@
         <li>livello di competizione</li>
         <li>obiettivi di crescita</li>
       </ul>
-      <p class="text-on-surface font-medium"><span aria-hidden="true">👉</span> Più alto il potenziale, maggiore l'impatto del sistema.</p>
+      <p class="text-on-surface font-medium">Più alto il potenziale, maggiore l'impatto del sistema.</p>
     </section>
 
     <section class="max-w-3xl mx-auto text-center rounded-2xl border border-primary/30 bg-primary/5 p-8 md:p-12" aria-labelledby="cta-heading">
@@ -252,63 +218,6 @@
     </section>
   </main>
 
-  <footer class="site-footer w-full mt-12 md:mt-20 px-4 sm:px-6 pb-6 md:pb-10">
-    <div class="max-w-5xl mx-auto">
-      <div class="footer-island px-6 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14">
-        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5 lg:gap-x-10 xl:gap-x-14">
-          <div class="md:col-span-2 lg:col-span-2">
-            <a class="inline-block mb-8" href="./index.html">
-              <img
-                src="../assets/images/logo/logo-rankhotel.svg"
-                alt="RankHotel.AI: visibilità AI per hotel"
-                class="h-11 sm:h-12 md:h-[3.5rem] w-auto object-contain"
-                width="1244"
-                height="276"
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-            <p class="footer-tagline">
-              Visibilità AI per hotel: come appari quando i viaggiatori chiedono a ChatGPT, Gemini e Perplexity.
-            </p>
-          </div>
-          <nav class="md:col-span-1" aria-labelledby="footer-product">
-            <h2 id="footer-product" class="footer-col-title">Prodotto</h2>
-            <ul class="space-y-1 list-none p-0 m-0">
-              <li><a class="footer-link" href="./index.html#product">Organic Growth Engine</a></li>
-              <li><a class="footer-link" href="./pricing.html">Pricing</a></li>
-              <li><a class="footer-link" href="./index.html#faq">FAQ</a></li>
-            </ul>
-          </nav>
-          <nav class="md:col-span-1" aria-labelledby="footer-resources">
-            <h2 id="footer-resources" class="footer-col-title">Risorse</h2>
-            <ul class="space-y-1 list-none p-0 m-0">
-              <li><a class="footer-link" href="./blog.html">Blog</a></li>
-              <li><a class="footer-link" href="../legal/cookie-settings.html">Impostazioni cookie</a></li>
-            </ul>
-          </nav>
-          <nav class="md:col-span-2 lg:col-span-1" aria-labelledby="footer-contact">
-            <h2 id="footer-contact" class="footer-col-title">Contatti</h2>
-            <ul class="space-y-1 list-none p-0 m-0">
-              <li><button type="button" class="footer-link w-full sm:w-auto" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Richiedi audit gratuito</button></li>
-              <li><a class="footer-link" href="./index.html#trial">Audit SEO &amp; GEO</a></li>
-              <li><a class="footer-link" href="../legal/terms.html">Termini di servizio</a></li>
-            </ul>
-          </nav>
-        </div>
-        <div class="footer-meta mt-12 md:mt-14 pt-8 md:pt-10 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-6">
-          <p class="footer-legal">© 2026 RankHotel.AI · Tutti i diritti riservati</p>
-          <button
-            type="button"
-            class="footer-social self-start sm:self-auto"
-            data-copy-page-url
-            aria-label="Copia link alla pagina"
-          >
-            <span class="material-symbols-outlined text-[1.35rem]" aria-hidden="true">share</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <div data-include="/partials/it/footer.html"></div>
 </body>
 </html>

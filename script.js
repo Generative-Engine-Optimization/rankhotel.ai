@@ -544,9 +544,24 @@ tailwind.config = {
     initHeroModelRotate();
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
-  } else {
+  var hasBooted = false;
+  function bootOnce() {
+    if (hasBooted) return;
+    hasBooted = true;
     boot();
+  }
+
+  function startAfterIncludes() {
+    if (window.__rhIncludesPending) {
+      document.addEventListener("includes:ready", bootOnce, { once: true });
+    } else {
+      bootOnce();
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startAfterIncludes, { once: true });
+  } else {
+    startAfterIncludes();
   }
 })();

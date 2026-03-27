@@ -57,6 +57,7 @@
   }
   </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="./assets/js/includes.js"></script>
   <script src="./script.js"></script>
   <script src="./assets/js/embeds/cal-demo.js"></script>
 </head>
@@ -67,42 +68,7 @@
   <!-- End Google Tag Manager (noscript) -->
   <a class="skip-link" href="#main-content">Skip to main content</a>
 
-  <header class="site-header nav-shell fixed top-0 left-0 right-0 z-[var(--nav-z)]">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4">
-      <nav class="nav-bar-island relative px-4 sm:px-5 md:px-6 py-3 sm:py-3.5" aria-label="Main navigation">
-        <div class="flex items-center justify-between gap-3 w-full">
-          <a class="block shrink-0" href="./index.html">
-            <img
-              src="./assets/images/logo/logo-rankhotel.svg"
-              alt="RankHotel.AI: AI visibility for hotels"
-              class="h-11 sm:h-12 md:h-[3.5rem] lg:h-[3.75rem] w-auto object-contain"
-              width="1244"
-              height="276"
-              decoding="async"
-              fetchpriority="high"
-              loading="eager"
-            />
-          </a>
-
-          <div id="primary-menu" class="primary-menu md:flex-1 md:justify-center md:gap-7 lg:gap-9">
-            <a class="nav-link" href="./index.html#product">Organic Growth Engine</a>
-            <a class="nav-link" href="./pricing.html" aria-current="page">Pricing</a>
-            <a class="nav-link" href="./index.html#faq">FAQ</a>
-            <a class="nav-link" href="./blog.html">Blog</a>
-          </div>
-
-          <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            <a class="nav-lang inline-flex items-center justify-center min-w-[40px] min-h-[44px] sm:min-w-[44px]" href="./it/pricing.html" hreflang="it" lang="it" title="Italiano" aria-label="Italian version">IT</a>
-            <button type="button" class="hidden sm:inline-flex bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-2 rounded-xl font-semibold text-sm electric-glow active:scale-95 transition-transform items-center justify-center min-h-[44px] border-0 cursor-pointer" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Book a demo</button>
-            <button type="button" class="nav-toggle md:hidden" aria-controls="primary-menu" aria-expanded="false" aria-label="Open navigation menu">
-              <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
-            </button>
-            <button type="button" class="sm:hidden inline-flex items-center justify-center min-h-[44px] px-3 py-2 rounded-xl text-sm font-semibold bg-gradient-to-br from-primary to-primary-container text-on-primary-container electric-glow border-0 cursor-pointer" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Demo</button>
-          </div>
-        </div>
-      </nav>
-    </div>
-  </header>
+  <div data-include="/partials/en/header.html" data-lang-href="/it/pricing.html"></div>
 
   <main id="main-content" class="pt-[6.75rem] sm:pt-28 px-4 sm:px-6 pb-16 md:pb-24">
     <div class="max-w-3xl mx-auto text-center mb-14 md:mb-20">
@@ -110,8 +76,8 @@
       <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
         Get found by travelers before OTAs even enter the picture
       </h1>
-      <p class="text-on-surface text-lg md:text-xl font-medium leading-relaxed">
-        Turn Google and AI search into your main channel for direct bookings 🏨📈
+      <p class="text-on-surface-variant text-lg md:text-xl font-light leading-relaxed">
+        Turn Google and AI search into your main channel for direct bookings.
       </p>
     </div>
 
@@ -125,7 +91,7 @@
         <li class="chat-query text-on-surface" translate="no">“where to stay with a Lake Como view”</li>
       </ul>
       <p>They compare, read reviews, and build a shortlist.</p>
-      <p><span class="text-on-surface" aria-hidden="true">👉</span> If your hotel doesn't show up there, you're losing bookings before the race even starts.</p>
+      <p>If your hotel doesn't show up there, you're losing bookings before the race even starts.</p>
       <p class="text-on-surface font-medium pt-2">We make sure they find you.</p>
       <p>We turn that visibility into direct bookings, higher occupancy, and more revenue.</p>
     </div>
@@ -139,7 +105,7 @@
         <li class="flex gap-3"><span class="material-symbols-outlined text-primary shrink-0 text-xl" aria-hidden="true">warning</span><span>AI assistants recommend other hotels, not yours</span></li>
         <li class="flex gap-3"><span class="material-symbols-outlined text-primary shrink-0 text-xl" aria-hidden="true">warning</span><span>You don't know which content actually brings guests</span></li>
       </ul>
-      <p class="mt-8 text-on-surface text-base md:text-lg"><span aria-hidden="true">👉</span> The result? You're paying for guests you could win directly.</p>
+      <p class="mt-8 text-on-surface text-base md:text-lg">The result? You're paying for guests you could win directly.</p>
     </section>
 
     <section class="max-w-3xl mx-auto mb-16 md:mb-20 rounded-2xl border border-white/10 bg-surface-container-low/50 p-8 md:p-10" aria-labelledby="solution-heading">
@@ -176,27 +142,27 @@
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">1.</span> Understand your hotel (Context)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">We build a full knowledge base: guest segments (couples, families, business), strengths and differentiation, real reviews and feedback, offers and experiences.</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> That lets us create content your competitors can't copy.</p>
+          <p class="text-on-surface text-sm md:text-base">That lets us create content your competitors can't copy.</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">2.</span> Find the searches that matter (Research)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">We analyze real guest reviews and questions, forums and communities, Google demand, and competitor performance. With AI and data we identify:</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> the ~5% of searches that drive ~80% of bookings</p>
+          <p class="text-on-surface text-sm md:text-base">the ~5% of searches that drive ~80% of bookings</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">3.</span> Build a strategy that works (Strategy)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">We don't guess. We define a clear roadmap: which pages to create, which content to refresh, how to position against hotels and OTAs.</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> Everything prioritized by real impact.</p>
+          <p class="text-on-surface text-sm md:text-base">Everything prioritized by real impact.</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">4.</span> Create content that sells (Execution)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">Concrete assets: offer pages and high-converting landings, local guides (what to do, where to go), “hotel for…” pages (romantic, business, family), optimization of existing content, strategic presence on platforms that shape decisions.</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> Not generic content—content that drives bookings.</p>
+          <p class="text-on-surface text-sm md:text-base">Not generic content, content that drives bookings.</p>
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/30 p-6 md:p-8">
           <h3 class="text-xl font-bold mb-3"><span class="text-primary">5.</span> Optimize from results (Optimization)</h3>
           <p class="text-on-surface-variant text-sm md:text-base leading-relaxed mb-4">We don't only watch rankings. We measure direct bookings, leads, occupancy, and user behavior.</p>
-          <p class="text-on-surface text-sm md:text-base"><span aria-hidden="true">👉</span> We keep improving what works and cut what doesn't.</p>
+          <p class="text-on-surface text-sm md:text-base">We keep improving what works and cut what doesn't.</p>
         </article>
       </div>
     </section>
@@ -224,9 +190,9 @@
       <section class="rounded-2xl border border-white/10 border-red-500/20 bg-surface-container-low/50 p-6 md:p-8" aria-labelledby="not-for-heading">
         <h2 id="not-for-heading" class="text-xl font-bold mb-4">Who it's not for</h2>
         <ul class="space-y-2 list-none p-0 text-on-surface-variant text-sm md:text-base leading-relaxed">
-          <li><span aria-hidden="true">❌</span> Anyone expecting results in a few days</li>
-          <li><span aria-hidden="true">❌</span> Anyone who wants “traffic only,” not bookings</li>
-          <li><span aria-hidden="true">❌</span> Anyone unwilling to truly differentiate</li>
+          <li>Anyone expecting results in a few days</li>
+          <li>Anyone who wants traffic only, not bookings</li>
+          <li>Anyone unwilling to truly differentiate</li>
         </ul>
       </section>
     </div>
@@ -239,7 +205,7 @@
         <li>Competitive intensity</li>
         <li>Growth goals</li>
       </ul>
-      <p class="text-on-surface font-medium"><span aria-hidden="true">👉</span> The higher the potential, the greater the impact of the system.</p>
+      <p class="text-on-surface font-medium">The higher the potential, the greater the impact of the system.</p>
     </section>
 
     <section class="max-w-3xl mx-auto text-center rounded-2xl border border-primary/30 bg-primary/5 p-8 md:p-12" aria-labelledby="cta-heading">
@@ -252,63 +218,6 @@
     </section>
   </main>
 
-  <footer class="site-footer w-full mt-12 md:mt-20 px-4 sm:px-6 pb-6 md:pb-10">
-    <div class="max-w-5xl mx-auto">
-      <div class="footer-island px-6 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14">
-        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5 lg:gap-x-10 xl:gap-x-14">
-          <div class="md:col-span-2 lg:col-span-2">
-            <a class="inline-block mb-8" href="./index.html">
-              <img
-                src="./assets/images/logo/logo-rankhotel.svg"
-                alt="RankHotel.AI: AI visibility for hotels"
-                class="h-11 sm:h-12 md:h-[3.5rem] w-auto object-contain"
-                width="1244"
-                height="276"
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-            <p class="footer-tagline">
-              AI visibility for hotels: how you show up when travelers ask ChatGPT, Gemini, and Perplexity.
-            </p>
-          </div>
-          <nav class="md:col-span-1" aria-labelledby="footer-product">
-            <h2 id="footer-product" class="footer-col-title">Product</h2>
-            <ul class="space-y-1 list-none p-0 m-0">
-              <li><a class="footer-link" href="./index.html#product">Organic Growth Engine</a></li>
-              <li><a class="footer-link" href="./pricing.html">Pricing</a></li>
-              <li><a class="footer-link" href="./index.html#faq">FAQ</a></li>
-            </ul>
-          </nav>
-          <nav class="md:col-span-1" aria-labelledby="footer-resources">
-            <h2 id="footer-resources" class="footer-col-title">Resources</h2>
-            <ul class="space-y-1 list-none p-0 m-0">
-              <li><a class="footer-link" href="./blog.html">Blog</a></li>
-              <li><a class="footer-link" href="./legal/cookie-settings.html">Cookie settings</a></li>
-            </ul>
-          </nav>
-          <nav class="md:col-span-2 lg:col-span-1" aria-labelledby="footer-contact">
-            <h2 id="footer-contact" class="footer-col-title">Contact</h2>
-            <ul class="space-y-1 list-none p-0 m-0">
-              <li><button type="button" class="footer-link w-full sm:w-auto" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Book a demo</button></li>
-              <li><a class="footer-link" href="./index.html#trial">SEO &amp; GEO audit</a></li>
-              <li><a class="footer-link" href="./legal/terms.html">Terms of service</a></li>
-            </ul>
-          </nav>
-        </div>
-        <div class="footer-meta mt-12 md:mt-14 pt-8 md:pt-10 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-6">
-          <p class="footer-legal">© 2026 RankHotel.AI · All rights reserved</p>
-          <button
-            type="button"
-            class="footer-social self-start sm:self-auto"
-            data-copy-page-url
-            aria-label="Copy page link"
-          >
-            <span class="material-symbols-outlined text-[1.35rem]" aria-hidden="true">share</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <div data-include="/partials/en/footer.html"></div>
 </body>
 </html>
