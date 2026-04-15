@@ -10,7 +10,13 @@ RankHotel.AI is a hospitality-focused platform that helps hotels understand and 
 
 - English home: https://rankhotel.ai/
 - Italian home: https://rankhotel.ai/it/
-- Blog (placeholder): https://rankhotel.ai/blog.html
+- Blog: https://rankhotel.ai/blog.html
+- About: https://rankhotel.ai/about.html
+- Team: https://rankhotel.ai/team.html
+- Contact: https://rankhotel.ai/contact.html
+- Chi siamo (IT): https://rankhotel.ai/it/about.html
+- Team (IT): https://rankhotel.ai/it/team.html
+- Contatti (IT): https://rankhotel.ai/it/contact.html
 
 ## Legal
 

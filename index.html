@@ -11,7 +11,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="./assets/images/logo/rankhotel_ai_Favicon.ico" type="image/x-icon" />
-  <meta name="description" content="56% of travelers already use AI to choose a hotel. RankHotel is the only platform that monitors how your property appears on ChatGPT, Gemini, and Perplexity, and helps you improve it." />
+  <meta name="description" content="AI assistants are now part of hotel discovery journeys. RankHotel helps you monitor and improve how your property appears on ChatGPT, Gemini, and Perplexity." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0a0a0a" />
   <link rel="canonical" href="https://rankhotel.ai/" />
@@ -26,13 +26,13 @@
   <meta property="og:locale:alternate" content="it_IT" />
   <meta property="og:url" content="https://rankhotel.ai/" />
   <meta property="og:title" content="RankHotel.AI | AI visibility for hotels on ChatGPT, Gemini &amp; Perplexity" />
-  <meta property="og:description" content="56% of travelers already use AI to choose a hotel. RankHotel monitors how yours appears on ChatGPT, Gemini, and Perplexity, and helps you improve it." />
+  <meta property="og:description" content="AI assistants are now part of hotel discovery journeys. RankHotel monitors how yours appears on ChatGPT, Gemini, and Perplexity, and helps you improve it." />
   <meta property="og:image" content="https://rankhotel.ai/assets/images/logo/rankhotel-dark-white.jpg" />
   <meta property="og:image:alt" content="RankHotel.AI: AI visibility for hotels" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="RankHotel.AI | AI visibility for hotels on ChatGPT, Gemini &amp; Perplexity" />
-  <meta name="twitter:description" content="56% of travelers use AI to choose hotels. RankHotel monitors ChatGPT, Gemini &amp; Perplexity, and helps you improve visibility." />
+  <meta name="twitter:description" content="AI assistants are now part of hotel discovery journeys. RankHotel monitors ChatGPT, Gemini and Perplexity, and helps you improve visibility." />
   <meta name="twitter:image" content="https://rankhotel.ai/assets/images/logo/rankhotel-dark-white.jpg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -59,7 +59,29 @@
     "name": "RankHotel.AI",
     "url": "https://rankhotel.ai/",
     "inLanguage": "en-US",
-    "publisher": { "@type": "Organization", "name": "RankHotel.AI" }
+    "publisher": { "@type": "Organization", "name": "RankHotel.AI" },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://rankhotel.ai/blog.html?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "AI Visibility for Hotels",
+    "serviceType": "AI Search Optimization for hospitality",
+    "provider": {
+      "@type": "Organization",
+      "name": "RankHotel.AI",
+      "url": "https://rankhotel.ai/"
+    },
+    "areaServed": "Worldwide",
+    "availableLanguage": ["en", "it"],
+    "url": "https://rankhotel.ai/",
+    "description": "Managed SEO and AEO services for hotels that want to increase direct bookings from Google and AI assistants."
   }
   </script>
   <script type="application/ld+json">
@@ -86,6 +108,26 @@
       "@type": "Organization",
       "name": "RankHotel.AI",
       "url": "https://rankhotel.ai/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactAction",
+    "name": "Request a free SEO and AEO audit",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://rankhotel.ai/#trial",
+      "inLanguage": "en-US",
+      "actionPlatform": [
+        "https://schema.org/DesktopWebPlatform",
+        "https://schema.org/MobileWebPlatform"
+      ]
+    },
+    "result": {
+      "@type": "Thing",
+      "name": "SEO and AEO audit request"
     }
   }
   </script>
@@ -179,7 +221,7 @@
         </p>
         <h1 id="hero-heading" class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6 md:mb-8 max-w-4xl mx-auto leading-[1.1] flex flex-col items-center gap-4 md:gap-6">
           <span class="block">
-            <span class="text-primary font-extrabold">56%</span> of travelers already use
+            Travelers already use
             <span class="inline-flex items-center align-middle justify-center mx-0.5" aria-live="polite">
               <img
                 class="hero-llm-icon inline-block align-middle h-[0.8em] w-auto max-h-[2.5rem] sm:max-h-[2.875rem] md:max-h-[3.5rem] object-contain"
@@ -199,6 +241,9 @@
         <p class="text-on-surface-variant text-base md:text-lg lg:text-xl max-w-3xl mx-auto mb-10 font-light leading-relaxed">
             Do you know what they find when they search for yours?
         </p>
+        <p class="text-on-surface-variant/80 text-xs md:text-sm max-w-3xl mx-auto mb-10 leading-relaxed">
+          Market behavior references are based on aggregated travel and AI adoption reports from 2025-2026.
+        </p>
         <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
           <button type="button" class="inline-flex items-center justify-center text-center no-underline bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-8 sm:px-10 py-4 rounded-xl font-bold text-base sm:text-lg electric-glow hover:scale-[1.02] transition-all min-h-[48px] border-0 cursor-pointer font-inherit" data-cal-link="rankwit/rankhotel.ai" data-cal-namespace="rankhotel.ai" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>
             Book a demo
@@ -212,11 +257,14 @@
 
     <section id="booking-shift" class="max-w-7xl mx-auto px-4 sm:px-8 py-16 md:py-24" aria-labelledby="problem-heading">
       <h2 id="problem-heading" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 md:mb-8 text-center max-w-4xl mx-auto leading-tight">
-        ChatGPT has surpassed 1 billion monthly active users.
+        Why does AI search now influence hotel bookings?
       </h2>
       <div class="max-w-3xl mx-auto text-on-surface-variant text-base md:text-lg leading-relaxed space-y-6 text-center">
         <p>
-          A portion of them is looking for a hotel just like yours. They type <span class="chat-query" translate="no">best boutique hotel in Florence</span> and get a direct answer.
+          Travelers increasingly ask assistants direct questions like <span class="chat-query" translate="no">best boutique hotel in Florence</span> and receive immediate recommendations.
+        </p>
+        <p>
+          If your property is not represented with clear entities, structured content, and trustworthy signals, the answer often favors OTAs or competitors.
         </p>
       </div>
     </section>
@@ -225,7 +273,7 @@
       <div class="max-w-4xl mx-auto text-center mb-10 md:mb-12">
         <p class="text-[0.6875rem] uppercase tracking-widest text-primary font-bold mb-3">Our positioning</p>
         <h2 id="ai-search-moat-heading" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
-          Building Our Moat in the AI Search Era
+          How do hotels build durable visibility in AI search?
         </h2>
         <p class="text-on-surface-variant text-base md:text-lg leading-relaxed">
           Optimizing visibility in AI generated answers starts with solid SEO fundamentals. No shortcuts: real results require expertise, consistency, and strategic thinking.
@@ -402,8 +450,8 @@
 
     <section id="product" class="max-w-7xl mx-auto px-4 sm:px-8 py-16 md:py-24 border-t border-white/5" aria-labelledby="product-heading">
       <div class="text-center mb-12 md:mb-16 max-w-3xl mx-auto">
-        <h2 id="product-heading" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6">
-          From AI signals to decisions your team can act on
+          <h2 id="product-heading" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6">
+          What can your team do with AI visibility signals?
         </h2>
         <p class="text-on-surface-variant text-base md:text-lg leading-relaxed">
           Built only for hotels: see how leading models cite, recommend, and link your property, then close the gaps before travelers book elsewhere.
@@ -497,7 +545,7 @@
         </article>
         <article class="rounded-2xl border border-white/10 bg-surface-container-low/50 p-6">
           <h3 class="text-lg font-bold mb-2">Does RankHotel replace traditional SEO tools?</h3>
-          <p class="text-sm text-on-surface-variant leading-relaxed">No. It complements them. SEO still matters, but AI search is a new and separate channel. RankHotel is the only tool built specifically for hotels on this front.</p>
+          <p class="text-sm text-on-surface-variant leading-relaxed">No. RankHotel adds a dedicated AI visibility workflow on top of your SEO stack, so your team can monitor how assistants cite your hotel and close gaps that classic rank trackers do not cover.</p>
         </article>
       </div>
     </section>
