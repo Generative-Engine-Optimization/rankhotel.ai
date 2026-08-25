@@ -1,0 +1,1114 @@
+[
+  {
+    "city": "roma",
+    "date": "2026-06-30",
+    "windowDays": 30,
+    "responsesAnalyzed": 2400,
+    "modelAgreement": 0.9,
+    "directShare": 0.21,
+    "aggregatorShare": 0.463,
+    "reviewShare": 0.178,
+    "externalShare": 0.149,
+    "top3Concentration": 0.477,
+    "coMentions": [
+      {
+        "hotelA": "hotel-de-russie",
+        "hotelB": "st-regis-rome",
+        "share": 0.846
+      },
+      {
+        "hotelA": "hotel-de-russie",
+        "hotelB": "hotel-hassler-roma",
+        "share": 0.815
+      },
+      {
+        "hotelA": "hotel-de-russie",
+        "hotelB": "hotel-eden-roma",
+        "share": 0.57
+      },
+      {
+        "hotelA": "hotel-de-russie",
+        "hotelB": "palazzo-manfredi",
+        "share": 0.564
+      },
+      {
+        "hotelA": "hotel-de-russie",
+        "hotelB": "hotel-artemide",
+        "share": 0.527
+      },
+      {
+        "hotelA": "st-regis-rome",
+        "hotelB": "hotel-hassler-roma",
+        "share": 0.525
+      },
+      {
+        "hotelA": "st-regis-rome",
+        "hotelB": "hotel-eden-roma",
+        "share": 0.658
+      },
+      {
+        "hotelA": "st-regis-rome",
+        "hotelB": "palazzo-manfredi",
+        "share": 0.689
+      },
+      {
+        "hotelA": "st-regis-rome",
+        "hotelB": "hotel-artemide",
+        "share": 0.431
+      },
+      {
+        "hotelA": "hotel-hassler-roma",
+        "hotelB": "hotel-eden-roma",
+        "share": 0.79
+      },
+      {
+        "hotelA": "hotel-hassler-roma",
+        "hotelB": "palazzo-manfredi",
+        "share": 0.533
+      },
+      {
+        "hotelA": "hotel-hassler-roma",
+        "hotelB": "hotel-artemide",
+        "share": 0.559
+      },
+      {
+        "hotelA": "hotel-eden-roma",
+        "hotelB": "palazzo-manfredi",
+        "share": 0.723
+      },
+      {
+        "hotelA": "hotel-eden-roma",
+        "hotelB": "hotel-artemide",
+        "share": 0.321
+      },
+      {
+        "hotelA": "palazzo-manfredi",
+        "hotelB": "hotel-artemide",
+        "share": 0.575
+      }
+    ],
+    "intents": [
+      {
+        "intent": "discovery",
+        "prompts": 10,
+        "citedShare": 0.779,
+        "avgPosition": 3.3,
+        "trend": -2
+      },
+      {
+        "intent": "informational",
+        "prompts": 6,
+        "citedShare": 0.733,
+        "avgPosition": 2.4,
+        "trend": -4
+      },
+      {
+        "intent": "comparison",
+        "prompts": 2,
+        "citedShare": 0.851,
+        "avgPosition": 4,
+        "trend": 5
+      },
+      {
+        "intent": "transactional",
+        "prompts": 2,
+        "citedShare": 0.955,
+        "avgPosition": 4.2,
+        "trend": 2
+      }
+    ],
+    "movements": [
+      {
+        "kind": "entered",
+        "hotel": "hotel-eden-roma",
+        "other": null,
+        "delta": 2
+      },
+      {
+        "kind": "overtook",
+        "hotel": "st-regis-rome",
+        "other": "hotel-hassler-roma",
+        "delta": 1
+      },
+      {
+        "kind": "left",
+        "hotel": "hotel-locarno",
+        "other": null,
+        "delta": -1
+      }
+    ]
+  },
+  {
+    "city": "milano",
+    "date": "2026-06-30",
+    "windowDays": 30,
+    "responsesAnalyzed": 2400,
+    "modelAgreement": 0.9,
+    "directShare": 0.168,
+    "aggregatorShare": 0.436,
+    "reviewShare": 0.189,
+    "externalShare": 0.207,
+    "top3Concentration": 0.48,
+    "coMentions": [
+      {
+        "hotelA": "armani-hotel-milano",
+        "hotelB": "bulgari-hotel-milano",
+        "share": 0.631
+      },
+      {
+        "hotelA": "armani-hotel-milano",
+        "hotelB": "park-hyatt-milano",
+        "share": 0.47
+      },
+      {
+        "hotelA": "armani-hotel-milano",
+        "hotelB": "hotel-principe-di-savoia",
+        "share": 0.457
+      },
+      {
+        "hotelA": "armani-hotel-milano",
+        "hotelB": "me-milan-il-duca",
+        "share": 0.584
+      },
+      {
+        "hotelA": "armani-hotel-milano",
+        "hotelB": "chateau-monfort",
+        "share": 0.596
+      },
+      {
+        "hotelA": "bulgari-hotel-milano",
+        "hotelB": "park-hyatt-milano",
+        "share": 0.832
+      },
+      {
+        "hotelA": "bulgari-hotel-milano",
+        "hotelB": "hotel-principe-di-savoia",
+        "share": 0.525
+      },
+      {
+        "hotelA": "bulgari-hotel-milano",
+        "hotelB": "me-milan-il-duca",
+        "share": 0.443
+      },
+      {
+        "hotelA": "bulgari-hotel-milano",
+        "hotelB": "chateau-monfort",
+        "share": 0.601
+      },
+      {
+        "hotelA": "park-hyatt-milano",
+        "hotelB": "hotel-principe-di-savoia",
+        "share": 0.626
+      },
+      {
+        "hotelA": "park-hyatt-milano",
+        "hotelB": "me-milan-il-duca",
+        "share": 0.68
+      },
+      {
+        "hotelA": "park-hyatt-milano",
+        "hotelB": "chateau-monfort",
+        "share": 0.428
+      },
+      {
+        "hotelA": "hotel-principe-di-savoia",
+        "hotelB": "me-milan-il-duca",
+        "share": 0.514
+      },
+      {
+        "hotelA": "hotel-principe-di-savoia",
+        "hotelB": "chateau-monfort",
+        "share": 0.596
+      },
+      {
+        "hotelA": "me-milan-il-duca",
+        "hotelB": "chateau-monfort",
+        "share": 0.522
+      }
+    ],
+    "intents": [
+      {
+        "intent": "discovery",
+        "prompts": 10,
+        "citedShare": 0.769,
+        "avgPosition": 4.4,
+        "trend": 0
+      },
+      {
+        "intent": "informational",
+        "prompts": 6,
+        "citedShare": 0.819,
+        "avgPosition": 3.5,
+        "trend": -4
+      },
+      {
+        "intent": "comparison",
+        "prompts": 2,
+        "citedShare": 0.894,
+        "avgPosition": 2.7,
+        "trend": 0
+      },
+      {
+        "intent": "transactional",
+        "prompts": 2,
+        "citedShare": 0.773,
+        "avgPosition": 3.1,
+        "trend": 3
+      }
+    ],
+    "movements": [
+      {
+        "kind": "entered",
+        "hotel": "hotel-principe-di-savoia",
+        "other": null,
+        "delta": 2
+      },
+      {
+        "kind": "overtook",
+        "hotel": "bulgari-hotel-milano",
+        "other": "park-hyatt-milano",
+        "delta": 1
+      },
+      {
+        "kind": "left",
+        "hotel": "spadari-al-duomo",
+        "other": null,
+        "delta": -1
+      }
+    ]
+  },
+  {
+    "city": "firenze",
+    "date": "2026-06-30",
+    "windowDays": 30,
+    "responsesAnalyzed": 2400,
+    "modelAgreement": 0.833,
+    "directShare": 0.188,
+    "aggregatorShare": 0.443,
+    "reviewShare": 0.221,
+    "externalShare": 0.147,
+    "top3Concentration": 0.457,
+    "coMentions": [
+      {
+        "hotelA": "four-seasons-firenze",
+        "hotelB": "portrait-firenze",
+        "share": 0.567
+      },
+      {
+        "hotelA": "four-seasons-firenze",
+        "hotelB": "the-st-regis-florence",
+        "share": 0.489
+      },
+      {
+        "hotelA": "four-seasons-firenze",
+        "hotelB": "hotel-savoy-firenze",
+        "share": 0.587
+      },
+      {
+        "hotelA": "four-seasons-firenze",
+        "hotelB": "hotel-lungarno",
+        "share": 0.501
+      },
+      {
+        "hotelA": "four-seasons-firenze",
+        "hotelB": "palazzo-vecchietti",
+        "share": 0.469
+      },
+      {
+        "hotelA": "portrait-firenze",
+        "hotelB": "the-st-regis-florence",
+        "share": 0.579
+      },
+      {
+        "hotelA": "portrait-firenze",
+        "hotelB": "hotel-savoy-firenze",
+        "share": 0.642
+      },
+      {
+        "hotelA": "portrait-firenze",
+        "hotelB": "hotel-lungarno",
+        "share": 0.531
+      },
+      {
+        "hotelA": "portrait-firenze",
+        "hotelB": "palazzo-vecchietti",
+        "share": 0.582
+      },
+      {
+        "hotelA": "the-st-regis-florence",
+        "hotelB": "hotel-savoy-firenze",
+        "share": 0.618
+      },
+      {
+        "hotelA": "the-st-regis-florence",
+        "hotelB": "hotel-lungarno",
+        "share": 0.402
+      },
+      {
+        "hotelA": "the-st-regis-florence",
+        "hotelB": "palazzo-vecchietti",
+        "share": 0.336
+      },
+      {
+        "hotelA": "hotel-savoy-firenze",
+        "hotelB": "hotel-lungarno",
+        "share": 0.713
+      },
+      {
+        "hotelA": "hotel-savoy-firenze",
+        "hotelB": "palazzo-vecchietti",
+        "share": 0.564
+      },
+      {
+        "hotelA": "hotel-lungarno",
+        "hotelB": "palazzo-vecchietti",
+        "share": 0.391
+      }
+    ],
+    "intents": [
+      {
+        "intent": "discovery",
+        "prompts": 10,
+        "citedShare": 0.695,
+        "avgPosition": 4.2,
+        "trend": -3
+      },
+      {
+        "intent": "informational",
+        "prompts": 6,
+        "citedShare": 0.861,
+        "avgPosition": 4.1,
+        "trend": 3
+      },
+      {
+        "intent": "comparison",
+        "prompts": 2,
+        "citedShare": 0.757,
+        "avgPosition": 4.3,
+        "trend": -2
+      },
+      {
+        "intent": "transactional",
+        "prompts": 2,
+        "citedShare": 0.732,
+        "avgPosition": 4.4,
+        "trend": -2
+      }
+    ],
+    "movements": [
+      {
+        "kind": "entered",
+        "hotel": "hotel-savoy-firenze",
+        "other": null,
+        "delta": 2
+      },
+      {
+        "kind": "overtook",
+        "hotel": "portrait-firenze",
+        "other": "the-st-regis-florence",
+        "delta": 1
+      },
+      {
+        "kind": "left",
+        "hotel": "hotel-calimala",
+        "other": null,
+        "delta": -2
+      }
+    ]
+  },
+  {
+    "city": "venezia",
+    "date": "2026-06-30",
+    "windowDays": 30,
+    "responsesAnalyzed": 2400,
+    "modelAgreement": 0.9,
+    "directShare": 0.187,
+    "aggregatorShare": 0.469,
+    "reviewShare": 0.165,
+    "externalShare": 0.178,
+    "top3Concentration": 0.46,
+    "coMentions": [
+      {
+        "hotelA": "aman-venice",
+        "hotelB": "hotel-danieli",
+        "share": 0.615
+      },
+      {
+        "hotelA": "aman-venice",
+        "hotelB": "the-gritti-palace",
+        "share": 0.796
+      },
+      {
+        "hotelA": "aman-venice",
+        "hotelB": "belmond-hotel-cipriani",
+        "share": 0.487
+      },
+      {
+        "hotelA": "aman-venice",
+        "hotelB": "ca-di-dio",
+        "share": 0.54
+      },
+      {
+        "hotelA": "aman-venice",
+        "hotelB": "ca-sagredo-hotel",
+        "share": 0.441
+      },
+      {
+        "hotelA": "hotel-danieli",
+        "hotelB": "the-gritti-palace",
+        "share": 0.706
+      },
+      {
+        "hotelA": "hotel-danieli",
+        "hotelB": "belmond-hotel-cipriani",
+        "share": 0.859
+      },
+      {
+        "hotelA": "hotel-danieli",
+        "hotelB": "ca-di-dio",
+        "share": 0.511
+      },
+      {
+        "hotelA": "hotel-danieli",
+        "hotelB": "ca-sagredo-hotel",
+        "share": 0.392
+      },
+      {
+        "hotelA": "the-gritti-palace",
+        "hotelB": "belmond-hotel-cipriani",
+        "share": 0.495
+      },
+      {
+        "hotelA": "the-gritti-palace",
+        "hotelB": "ca-di-dio",
+        "share": 0.679
+      },
+      {
+        "hotelA": "the-gritti-palace",
+        "hotelB": "ca-sagredo-hotel",
+        "share": 0.459
+      },
+      {
+        "hotelA": "belmond-hotel-cipriani",
+        "hotelB": "ca-di-dio",
+        "share": 0.43
+      },
+      {
+        "hotelA": "belmond-hotel-cipriani",
+        "hotelB": "ca-sagredo-hotel",
+        "share": 0.428
+      },
+      {
+        "hotelA": "ca-di-dio",
+        "hotelB": "ca-sagredo-hotel",
+        "share": 0.33
+      }
+    ],
+    "intents": [
+      {
+        "intent": "discovery",
+        "prompts": 10,
+        "citedShare": 0.753,
+        "avgPosition": 2.8,
+        "trend": 4
+      },
+      {
+        "intent": "informational",
+        "prompts": 6,
+        "citedShare": 0.765,
+        "avgPosition": 3.9,
+        "trend": -3
+      },
+      {
+        "intent": "comparison",
+        "prompts": 2,
+        "citedShare": 0.928,
+        "avgPosition": 2.8,
+        "trend": 3
+      },
+      {
+        "intent": "transactional",
+        "prompts": 2,
+        "citedShare": 0.828,
+        "avgPosition": 2.9,
+        "trend": 5
+      }
+    ],
+    "movements": [
+      {
+        "kind": "entered",
+        "hotel": "belmond-hotel-cipriani",
+        "other": null,
+        "delta": 2
+      },
+      {
+        "kind": "overtook",
+        "hotel": "hotel-danieli",
+        "other": "the-gritti-palace",
+        "delta": 1
+      },
+      {
+        "kind": "left",
+        "hotel": "hotel-antiche-figure",
+        "other": null,
+        "delta": -1
+      }
+    ]
+  },
+  {
+    "city": "napoli",
+    "date": "2026-06-30",
+    "windowDays": 30,
+    "responsesAnalyzed": 2400,
+    "modelAgreement": 0.833,
+    "directShare": 0.173,
+    "aggregatorShare": 0.405,
+    "reviewShare": 0.225,
+    "externalShare": 0.195,
+    "top3Concentration": 0.501,
+    "coMentions": [
+      {
+        "hotelA": "romeo-hotel-napoli",
+        "hotelB": "grand-hotel-vesuvio",
+        "share": 0.742
+      },
+      {
+        "hotelA": "romeo-hotel-napoli",
+        "hotelB": "grand-hotel-parkers",
+        "share": 0.682
+      },
+      {
+        "hotelA": "romeo-hotel-napoli",
+        "hotelB": "renaissance-mediterraneo",
+        "share": 0.443
+      },
+      {
+        "hotelA": "romeo-hotel-napoli",
+        "hotelB": "hotel-britannique",
+        "share": 0.538
+      },
+      {
+        "hotelA": "romeo-hotel-napoli",
+        "hotelB": "palazzo-caracciolo",
+        "share": 0.345
+      },
+      {
+        "hotelA": "grand-hotel-vesuvio",
+        "hotelB": "grand-hotel-parkers",
+        "share": 0.541
+      },
+      {
+        "hotelA": "grand-hotel-vesuvio",
+        "hotelB": "renaissance-mediterraneo",
+        "share": 0.509
+      },
+      {
+        "hotelA": "grand-hotel-vesuvio",
+        "hotelB": "hotel-britannique",
+        "share": 0.425
+      },
+      {
+        "hotelA": "grand-hotel-vesuvio",
+        "hotelB": "palazzo-caracciolo",
+        "share": 0.433
+      },
+      {
+        "hotelA": "grand-hotel-parkers",
+        "hotelB": "renaissance-mediterraneo",
+        "share": 0.43
+      },
+      {
+        "hotelA": "grand-hotel-parkers",
+        "hotelB": "hotel-britannique",
+        "share": 0.375
+      },
+      {
+        "hotelA": "grand-hotel-parkers",
+        "hotelB": "palazzo-caracciolo",
+        "share": 0.502
+      },
+      {
+        "hotelA": "renaissance-mediterraneo",
+        "hotelB": "hotel-britannique",
+        "share": 0.543
+      },
+      {
+        "hotelA": "renaissance-mediterraneo",
+        "hotelB": "palazzo-caracciolo",
+        "share": 0.324
+      },
+      {
+        "hotelA": "hotel-britannique",
+        "hotelB": "palazzo-caracciolo",
+        "share": 0.439
+      }
+    ],
+    "intents": [
+      {
+        "intent": "discovery",
+        "prompts": 10,
+        "citedShare": 0.619,
+        "avgPosition": 2.9,
+        "trend": 2
+      },
+      {
+        "intent": "informational",
+        "prompts": 6,
+        "citedShare": 0.815,
+        "avgPosition": 2.3,
+        "trend": 3
+      },
+      {
+        "intent": "comparison",
+        "prompts": 2,
+        "citedShare": 0.658,
+        "avgPosition": 4.7,
+        "trend": 1
+      },
+      {
+        "intent": "transactional",
+        "prompts": 2,
+        "citedShare": 0.924,
+        "avgPosition": 3.8,
+        "trend": -1
+      }
+    ],
+    "movements": [
+      {
+        "kind": "entered",
+        "hotel": "renaissance-mediterraneo",
+        "other": null,
+        "delta": 2
+      },
+      {
+        "kind": "overtook",
+        "hotel": "grand-hotel-vesuvio",
+        "other": "grand-hotel-parkers",
+        "delta": 1
+      },
+      {
+        "kind": "left",
+        "hotel": "hotel-piazza-bellini",
+        "other": null,
+        "delta": -2
+      }
+    ]
+  },
+  {
+    "city": "torino",
+    "date": "2026-06-30",
+    "windowDays": 30,
+    "responsesAnalyzed": 2400,
+    "modelAgreement": 0.867,
+    "directShare": 0.224,
+    "aggregatorShare": 0.458,
+    "reviewShare": 0.224,
+    "externalShare": 0.094,
+    "top3Concentration": 0.539,
+    "coMentions": [
+      {
+        "hotelA": "principi-di-piemonte",
+        "hotelB": "grand-hotel-sitea",
+        "share": 0.77
+      },
+      {
+        "hotelA": "principi-di-piemonte",
+        "hotelB": "turin-palace-hotel",
+        "share": 0.573
+      },
+      {
+        "hotelA": "principi-di-piemonte",
+        "hotelB": "hotel-victoria-torino",
+        "share": 0.362
+      },
+      {
+        "hotelA": "principi-di-piemonte",
+        "hotelB": "doubletree-lingotto",
+        "share": 0.416
+      },
+      {
+        "hotelA": "principi-di-piemonte",
+        "hotelB": "nh-collection-piazza-carlina",
+        "share": 0.3
+      },
+      {
+        "hotelA": "grand-hotel-sitea",
+        "hotelB": "turin-palace-hotel",
+        "share": 0.582
+      },
+      {
+        "hotelA": "grand-hotel-sitea",
+        "hotelB": "hotel-victoria-torino",
+        "share": 0.44
+      },
+      {
+        "hotelA": "grand-hotel-sitea",
+        "hotelB": "doubletree-lingotto",
+        "share": 0.384
+      },
+      {
+        "hotelA": "grand-hotel-sitea",
+        "hotelB": "nh-collection-piazza-carlina",
+        "share": 0.316
+      },
+      {
+        "hotelA": "turin-palace-hotel",
+        "hotelB": "hotel-victoria-torino",
+        "share": 0.475
+      },
+      {
+        "hotelA": "turin-palace-hotel",
+        "hotelB": "doubletree-lingotto",
+        "share": 0.399
+      },
+      {
+        "hotelA": "turin-palace-hotel",
+        "hotelB": "nh-collection-piazza-carlina",
+        "share": 0.296
+      },
+      {
+        "hotelA": "hotel-victoria-torino",
+        "hotelB": "doubletree-lingotto",
+        "share": 0.417
+      },
+      {
+        "hotelA": "hotel-victoria-torino",
+        "hotelB": "nh-collection-piazza-carlina",
+        "share": 0.382
+      },
+      {
+        "hotelA": "doubletree-lingotto",
+        "hotelB": "nh-collection-piazza-carlina",
+        "share": 0.327
+      }
+    ],
+    "intents": [
+      {
+        "intent": "discovery",
+        "prompts": 10,
+        "citedShare": 0.803,
+        "avgPosition": 3.3,
+        "trend": 3
+      },
+      {
+        "intent": "informational",
+        "prompts": 6,
+        "citedShare": 0.954,
+        "avgPosition": 3.7,
+        "trend": 0
+      },
+      {
+        "intent": "comparison",
+        "prompts": 2,
+        "citedShare": 0.844,
+        "avgPosition": 3,
+        "trend": 0
+      },
+      {
+        "intent": "transactional",
+        "prompts": 2,
+        "citedShare": 0.852,
+        "avgPosition": 2.6,
+        "trend": 2
+      }
+    ],
+    "movements": [
+      {
+        "kind": "entered",
+        "hotel": "hotel-victoria-torino",
+        "other": null,
+        "delta": 2
+      },
+      {
+        "kind": "overtook",
+        "hotel": "grand-hotel-sitea",
+        "other": "turin-palace-hotel",
+        "delta": 1
+      },
+      {
+        "kind": "left",
+        "hotel": "bw-plus-executive",
+        "other": null,
+        "delta": -1
+      }
+    ]
+  },
+  {
+    "city": "bologna",
+    "date": "2026-06-30",
+    "windowDays": 30,
+    "responsesAnalyzed": 2400,
+    "modelAgreement": 0.767,
+    "directShare": 0.169,
+    "aggregatorShare": 0.461,
+    "reviewShare": 0.205,
+    "externalShare": 0.165,
+    "top3Concentration": 0.524,
+    "coMentions": [
+      {
+        "hotelA": "grand-hotel-majestic",
+        "hotelB": "i-portici-hotel",
+        "share": 0.556
+      },
+      {
+        "hotelA": "grand-hotel-majestic",
+        "hotelB": "hotel-corona-doro",
+        "share": 0.604
+      },
+      {
+        "hotelA": "grand-hotel-majestic",
+        "hotelB": "hotel-metropolitan",
+        "share": 0.492
+      },
+      {
+        "hotelA": "grand-hotel-majestic",
+        "hotelB": "art-hotel-novecento",
+        "share": 0.393
+      },
+      {
+        "hotelA": "grand-hotel-majestic",
+        "hotelB": "savhotel",
+        "share": 0.269
+      },
+      {
+        "hotelA": "i-portici-hotel",
+        "hotelB": "hotel-corona-doro",
+        "share": 0.566
+      },
+      {
+        "hotelA": "i-portici-hotel",
+        "hotelB": "hotel-metropolitan",
+        "share": 0.351
+      },
+      {
+        "hotelA": "i-portici-hotel",
+        "hotelB": "art-hotel-novecento",
+        "share": 0.369
+      },
+      {
+        "hotelA": "i-portici-hotel",
+        "hotelB": "savhotel",
+        "share": 0.46
+      },
+      {
+        "hotelA": "hotel-corona-doro",
+        "hotelB": "hotel-metropolitan",
+        "share": 0.39
+      },
+      {
+        "hotelA": "hotel-corona-doro",
+        "hotelB": "art-hotel-novecento",
+        "share": 0.314
+      },
+      {
+        "hotelA": "hotel-corona-doro",
+        "hotelB": "savhotel",
+        "share": 0.27
+      },
+      {
+        "hotelA": "hotel-metropolitan",
+        "hotelB": "art-hotel-novecento",
+        "share": 0.328
+      },
+      {
+        "hotelA": "hotel-metropolitan",
+        "hotelB": "savhotel",
+        "share": 0.298
+      },
+      {
+        "hotelA": "art-hotel-novecento",
+        "hotelB": "savhotel",
+        "share": 0.339
+      }
+    ],
+    "intents": [
+      {
+        "intent": "discovery",
+        "prompts": 10,
+        "citedShare": 0.834,
+        "avgPosition": 2.5,
+        "trend": 1
+      },
+      {
+        "intent": "informational",
+        "prompts": 6,
+        "citedShare": 0.965,
+        "avgPosition": 2.9,
+        "trend": 0
+      },
+      {
+        "intent": "comparison",
+        "prompts": 2,
+        "citedShare": 0.634,
+        "avgPosition": 3.1,
+        "trend": -2
+      },
+      {
+        "intent": "transactional",
+        "prompts": 2,
+        "citedShare": 0.941,
+        "avgPosition": 4.6,
+        "trend": 5
+      }
+    ],
+    "movements": [
+      {
+        "kind": "entered",
+        "hotel": "hotel-metropolitan",
+        "other": null,
+        "delta": 2
+      },
+      {
+        "kind": "overtook",
+        "hotel": "i-portici-hotel",
+        "other": "hotel-corona-doro",
+        "delta": 1
+      },
+      {
+        "kind": "left",
+        "hotel": "aemilia-hotel",
+        "other": null,
+        "delta": -2
+      }
+    ]
+  },
+  {
+    "city": "verona",
+    "date": "2026-06-30",
+    "windowDays": 30,
+    "responsesAnalyzed": 2400,
+    "modelAgreement": 0.8,
+    "directShare": 0.166,
+    "aggregatorShare": 0.467,
+    "reviewShare": 0.225,
+    "externalShare": 0.143,
+    "top3Concentration": 0.467,
+    "coMentions": [
+      {
+        "hotelA": "due-torri-hotel",
+        "hotelB": "palazzo-victoria",
+        "share": 0.443
+      },
+      {
+        "hotelA": "due-torri-hotel",
+        "hotelB": "hotel-gabbia-doro",
+        "share": 0.653
+      },
+      {
+        "hotelA": "due-torri-hotel",
+        "hotelB": "byblos-art-hotel",
+        "share": 0.533
+      },
+      {
+        "hotelA": "due-torri-hotel",
+        "hotelB": "hotel-accademia-verona",
+        "share": 0.55
+      },
+      {
+        "hotelA": "due-torri-hotel",
+        "hotelB": "hotel-milano-spa-verona",
+        "share": 0.552
+      },
+      {
+        "hotelA": "palazzo-victoria",
+        "hotelB": "hotel-gabbia-doro",
+        "share": 0.395
+      },
+      {
+        "hotelA": "palazzo-victoria",
+        "hotelB": "byblos-art-hotel",
+        "share": 0.559
+      },
+      {
+        "hotelA": "palazzo-victoria",
+        "hotelB": "hotel-accademia-verona",
+        "share": 0.574
+      },
+      {
+        "hotelA": "palazzo-victoria",
+        "hotelB": "hotel-milano-spa-verona",
+        "share": 0.38
+      },
+      {
+        "hotelA": "hotel-gabbia-doro",
+        "hotelB": "byblos-art-hotel",
+        "share": 0.492
+      },
+      {
+        "hotelA": "hotel-gabbia-doro",
+        "hotelB": "hotel-accademia-verona",
+        "share": 0.38
+      },
+      {
+        "hotelA": "hotel-gabbia-doro",
+        "hotelB": "hotel-milano-spa-verona",
+        "share": 0.584
+      },
+      {
+        "hotelA": "byblos-art-hotel",
+        "hotelB": "hotel-accademia-verona",
+        "share": 0.321
+      },
+      {
+        "hotelA": "byblos-art-hotel",
+        "hotelB": "hotel-milano-spa-verona",
+        "share": 0.553
+      },
+      {
+        "hotelA": "hotel-accademia-verona",
+        "hotelB": "hotel-milano-spa-verona",
+        "share": 0.575
+      }
+    ],
+    "intents": [
+      {
+        "intent": "discovery",
+        "prompts": 10,
+        "citedShare": 0.775,
+        "avgPosition": 3.2,
+        "trend": 2
+      },
+      {
+        "intent": "informational",
+        "prompts": 6,
+        "citedShare": 0.871,
+        "avgPosition": 2.8,
+        "trend": 0
+      },
+      {
+        "intent": "comparison",
+        "prompts": 2,
+        "citedShare": 0.961,
+        "avgPosition": 3,
+        "trend": 0
+      },
+      {
+        "intent": "transactional",
+        "prompts": 2,
+        "citedShare": 0.762,
+        "avgPosition": 3.4,
+        "trend": 4
+      }
+    ],
+    "movements": [
+      {
+        "kind": "entered",
+        "hotel": "byblos-art-hotel",
+        "other": null,
+        "delta": 2
+      },
+      {
+        "kind": "overtook",
+        "hotel": "palazzo-victoria",
+        "other": "hotel-gabbia-doro",
+        "delta": 1
+      },
+      {
+        "kind": "left",
+        "hotel": "escalus-luxury-suites",
+        "other": null,
+        "delta": -1
+      }
+    ]
+  }
+]

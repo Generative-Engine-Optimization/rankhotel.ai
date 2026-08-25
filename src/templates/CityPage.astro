@@ -1,0 +1,264 @@
+---
+import CitationList from "../components/CitationList.astro";
+import RankingTable from "../components/RankingTable.astro";
+import SiteShell from "../components/SiteShell.astro";
+import WipNotice from "../components/WipNotice.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { cityPath, observatoryPath, type Locale } from "../lib/config";
+import { decimal, number, percent, signed } from "../lib/format";
+import { interpolate, messages } from "../lib/i18n";
+import {
+  cityView,
+  hotelName,
+  type City,
+  type CityView,
+} from "../lib/observatory";
+
+const { locale, city } = Astro.props as { locale: Locale; city: City };
+const alternateLocale = locale === "it" ? "en" : "it";
+const t = messages(locale).observatory;
+const view = cityView(city) as CityView;
+const hrefs = [
+  { locale: "it" as const, href: cityPath("it", city.slug.it) },
+  { locale: "en" as const, href: cityPath("en", city.slug.en) },
+];
+const title = interpolate(t.meta["city-title"], { city: city.name[locale] });
+const description = interpolate(t.meta["city-description"], {
+  city: city.name[locale],
+});
+
+// NOTA: i plurali ICU nei JSON non sono interpretati — la sostituzione
+// letterale sotto elimina il sostantivo ("superato X di 1." invece di
+// "di una posizione"). Bug noto, non toccato in questa migrazione.
+function movementLabel(move: any) {
+  const hotel = hotelName(move.hotel);
+  const other = move.other ? hotelName(move.other) : "";
+  if (move.kind === "entered") {
+    return t.movements.kind.entered.replace("{hotel}", hotel);
+  }
+  if (move.kind === "left") {
+    return t.movements.kind.left
+      .replace("{hotel}", hotel)
+      .replace(
+        "{positions, plural, one {una posizione persa} other {# posizioni perse}}",
+        `${Math.abs(move.delta)}`,
+      )
+      .replace(
+        "{positions, plural, one {one position lost} other {# positions lost}}",
+        `${Math.abs(move.delta)}`,
+      );
+  }
+  return t.movements.kind.overtook
+    .replace("{hotel}", hotel)
+    .replace("{other}", other)
+    .replace(
+      "{positions, plural, one {una posizione} other {# posizioni}}",
+      `${Math.abs(move.delta)}`,
+    )
+    .replace(
+      "{positions, plural, one {one position} other {# positions}}",
+      `${Math.abs(move.delta)}`,
+    );
+}
+
+// "Asimmetria intenzionale": composizioni 5/7, mai 6/6.
+const twoCols = "grid items-start gap-[38px] lg:grid-cols-[5fr_7fr]";
+const sectionHead = "grid max-w-[850px] gap-[18px]";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  locale={locale}
+  canonical={cityPath(locale, city.slug[locale])}
+  alternates={hrefs}
+  noindex
+>
+  <SiteShell
+    locale={locale}
+    alternatePath={cityPath(alternateLocale, city.slug[alternateLocale])}
+  >
+    <WipNotice locale={locale} />
+
+    <section class="border-b border-line pt-[70px] pb-14">
+      <div class="shell">
+        <a
+          class="font-mono font-bold text-accent-ink"
+          href={observatoryPath(locale)}
+        >
+          {t.city.back}
+        </a>
+        <h1 class="mt-[18px]">
+          {interpolate(t.city.title, { city: city.name[locale] })}
+        </h1>
+        <p class="lead mt-5 max-w-[760px]">
+          {interpolate(t.city.lead, { city: city.name[locale] })}
+        </p>
+      </div>
+    </section>
+
+    <section class="border-b border-line bg-surface">
+      <div class="shell grid md:grid-cols-2 lg:grid-cols-4">
+        {
+          [
+            {
+              value: number(locale, view.snapshot.responsesAnalyzed),
+              label: t.city.metrics.responses,
+              hint: interpolate(t.city.metrics["responses-hint"], {
+                days: view.snapshot.windowDays,
+              }),
+            },
+            {
+              value: percent(locale, view.snapshot.aggregatorShare),
+              label: t.city.metrics.ota,
+              hint: t.city.metrics["ota-hint"],
+            },
+            {
+              value: percent(locale, view.snapshot.modelAgreement),
+              label: t.city.metrics.agreement,
+              hint: t.city.metrics["agreement-hint"],
+            },
+            {
+              value: view.snapshot.date,
+              label: t.city.metrics.updated,
+              hint: city.region,
+            },
+          ].map((metric) => (
+            <article class="grid gap-1.5 border-line px-[18px] py-[22px] not-last:border-r lg:border-l lg:not-last:border-r-0 lg:last:border-r">
+              <strong class="font-mono text-[clamp(1.5rem,3vw,2.4rem)] leading-none">
+                {metric.value}
+              </strong>
+              <span class="font-bold">{metric.label}</span>
+              <small class="text-muted">{metric.hint}</small>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class={sectionHead}>
+          <h2>{t.city.ranking.title}</h2>
+          <p class="lead">{t.city.ranking.body}</p>
+        </div>
+        <div class="mt-[34px]">
+          <RankingTable locale={locale} labels={t} hotels={view.hotels} />
+        </div>
+      </div>
+    </section>
+
+    <section class="section bg-surface-muted">
+      <div class={`shell ${twoCols}`}>
+        <div>
+          <h2>{t.city.citations.title}</h2>
+          <p class="lead mt-[18px]">
+            {
+              interpolate(t.city.citations.body, {
+                ota: percent(locale, view.snapshot.aggregatorShare),
+              })
+            }
+          </p>
+        </div>
+        <CitationList
+          locale={locale}
+          labels={t}
+          sources={view.sources.slice(0, 12)}
+        />
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class={sectionHead}>
+          <h2>{t.city["co-mentions"].title}</h2>
+          <p class="lead">{t.city["co-mentions"].body}</p>
+        </div>
+        <div
+          class="mt-[34px] grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]"
+        >
+          {
+            view.snapshot.coMentions.slice(0, 12).map((pair) => (
+              <article class="card flex items-center justify-between gap-[18px]">
+                <strong>
+                  {hotelName(pair.hotelA)} / {hotelName(pair.hotelB)}
+                </strong>
+                <span class="font-mono font-extrabold text-accent-ink">
+                  {percent(locale, pair.share)}
+                </span>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section bg-surface-muted">
+      <div class="shell">
+        <div class={sectionHead}>
+          <h2>{t.city.intents.title}</h2>
+          <p class="lead">{t.city.intents.body}</p>
+        </div>
+        <div class="table-wrap mt-[34px]">
+          <table>
+            <thead>
+              <tr>
+                <th>{t.intents["col-intent"]}</th>
+                <th>{t.intents["col-prompts"]}</th>
+                <th>{t.intents["col-cited"]}</th>
+                <th>{t.intents["col-position"]}</th>
+                <th>{t.intents["col-trend"]}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                view.snapshot.intents.map((intent) => (
+                  <tr>
+                    <td>
+                      <strong>{t.intents.kind[intent.intent]}</strong>
+                      <br />
+                      <small class="text-muted">
+                        {t.intents.example[intent.intent]}
+                      </small>
+                    </td>
+                    <td class="font-mono">{number(locale, intent.prompts)}</td>
+                    <td class="font-mono">
+                      {percent(locale, intent.citedShare)}
+                    </td>
+                    <td class="font-mono">
+                      {decimal(locale, intent.avgPosition)}
+                    </td>
+                    <td class="font-mono">{signed(intent.trend)}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class={sectionHead}>
+          <h2>{t.city.movements.title}</h2>
+          <p class="lead">{t.city.movements.body}</p>
+        </div>
+        <div
+          class="mt-[34px] grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]"
+        >
+          {
+            view.snapshot.movements.map((move) => (
+              <article class="card grid gap-3.5">
+                <span class="pill justify-self-start font-mono">
+                  {move.kind}
+                </span>
+                <p>{movementLabel(move)}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </SiteShell>
+</BaseLayout>

@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "title": "RankHotel.ai — more direct bookings from Google and AI",
+    "description": "We make sure your hotel shows up when a traveler asks Google or ChatGPT where to stay. Research, strategy, content and AI agents, run by hospitality specialists."
+  },
+  "hero": {
+    "eyebrow": "Powered by RankWit AI",
+    "title": "Travelers ask AI where to stay.",
+    "lead": "When it's your city's turn, is your hotel one of the names that come up?",
+    "cta": "See what AI says about your hotel",
+    "cta-note": "30 minutes, free: on the call we show you what ChatGPT, Gemini, Perplexity and Claude actually answer when a traveler looks for a hotel like yours.",
+    "models": "ChatGPT · Gemini · Perplexity · Claude",
+    "note": "Market behaviour references come from aggregated travel and AI reports updated to 2025-2026."
+  },
+  "why": {
+    "title": "Why AI search moves bookings",
+    "body": "A traveler types «best boutique hotel in Florence». They don't get ten links to compare: they get a few names, already picked for them.",
+    "consequence": "If your hotel isn't described with clear, consistent information, those names are the OTAs and your competitors. And someone else sells the room."
+  },
+  "how-it-works": {
+    "title": "How we build your hotel's direct booking engine",
+    "intro": "The RankWit AI platform, custom agents and people who grow hotels organically for a living. From strategy to booked rooms.",
+    "phases": [
+      {
+        "name": "Context",
+        "claim": "First we learn your hotel by heart: guests, seasons, experiences, voice."
+      },
+      {
+        "name": "Research",
+        "claim": "We find the 5% of searches that brings 80% of the bookings."
+      },
+      {
+        "name": "Strategy",
+        "claim": "A to-do list, ordered by bookings."
+      },
+      {
+        "name": "Execution",
+        "claim": "Pages your competitors can't copy."
+      },
+      {
+        "name": "Optimisation",
+        "claim": "We watch booked rooms, not rankings."
+      }
+    ]
+  },
+  "ecosystem": {
+    "title": "From a single property to a chain",
+    "body": "Independent hotels, groups and chains, marketing directors, agencies, investors and operators."
+  },
+  "observatory-teaser": {
+    "eyebrow": "Observatory",
+    "title": "The public ranking of who AI recommends, city by city",
+    "body": "We measure which hotels actually come up when ChatGPT, Gemini, Perplexity and Claude answer. Public methodology, free data.",
+    "cta": "Go to the observatory"
+  },
+  "faq": {
+    "title": "FAQ",
+    "items": [
+      {
+        "question": "What does RankHotel do?",
+        "answer": "We bring direct bookings from organic traffic: Google and AI answers. Without depending on OTAs and without building an in-house team. We handle research, strategy, content and automation, and work as a part of your marketing: AI Search Optimization specialists, backed by tools that do the work of several people."
+      },
+      {
+        "question": "What happens on the first call?",
+        "answer": "Half an hour, free, no strings. We ask the models the questions a traveler looking for a hotel like yours would ask, look at the answers together and see who gets recommended instead of you. You leave knowing where you stand today, whether you work with us or not."
+      },
+      {
+        "question": "Can AI do SEO like a human expert?",
+        "answer": "No, and that's why we exist. AI speeds up research, data and content, but on its own it takes shortcuts and produces work with no direction. We use it for scale; the decisions are made by people who know SEO and hospitality. It's an accelerator, not a pilot."
+      },
+      {
+        "question": "How much does it cost?",
+        "answer": "It depends on the property, the market and the goals. There are standard plans to start right away: let's talk and find yours."
+      },
+      {
+        "question": "Is the monitoring real time?",
+        "answer": "We query the main models at regular intervals, so the picture of your visibility is always current."
+      },
+      {
+        "question": "Can I compare myself with my competitors?",
+        "answer": "Yes, the comparison is in every plan: you know where you stand against similar hotels in your market."
+      },
+      {
+        "question": "Does it replace the SEO tools I already use?",
+        "answer": "No, it adds to them. Classic rank trackers can't see how assistants talk about your hotel: that part is on us."
+      }
+    ]
+  },
+  "closing": {
+    "title": "Nobody who invested in SEO twenty years ago regrets it.",
+    "body": "Today the game is AI search. Your guests are already there: your hotel isn't.",
+    "cta": "Book the free call"
+  }
+}

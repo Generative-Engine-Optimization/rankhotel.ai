@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { BRAND } from "../lib/config";
+---
+
+<BaseLayout
+  title={`${BRAND} — AI visibility for hotels`}
+  description="RankHotel.ai helps hotels earn direct bookings from Google and AI search."
+  locale="it"
+  canonical="/"
+  alternates={[
+    { locale: "it", href: "/it" },
+    { locale: "en", href: "/en" },
+  ]}
+>
+  <main
+    class="grid min-h-screen justify-items-center gap-[18px] p-6 text-center content-center"
+  >
+    <img
+      src="/assets/logo.svg"
+      alt={BRAND}
+      width="232"
+      height="52"
+      class="h-auto w-[min(232px,70vw)]"
+    />
+    <h1 class="text-[clamp(1.5rem,3.4vw,2rem)] font-medium text-muted">
+      AI visibility for hotels.
+    </h1>
+    <div class="flex gap-3">
+      <a class="btn" href="/it">Italiano</a>
+      <a class="btn btn-secondary" href="/en">English</a>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,122 @@
+[
+  {
+    "key": "it-discovery-best",
+    "lang": "it",
+    "intent": "discovery",
+    "template": "migliori hotel a {city}"
+  },
+  {
+    "key": "it-discovery-where",
+    "lang": "it",
+    "intent": "discovery",
+    "template": "dove dormire a {city}"
+  },
+  {
+    "key": "it-luxury",
+    "lang": "it",
+    "intent": "discovery",
+    "template": "hotel di lusso a {city}"
+  },
+  {
+    "key": "it-budget",
+    "lang": "it",
+    "intent": "discovery",
+    "template": "hotel economici a {city} in centro"
+  },
+  {
+    "key": "it-romantic",
+    "lang": "it",
+    "intent": "discovery",
+    "template": "hotel romantici a {city} per una coppia"
+  },
+  {
+    "key": "it-family",
+    "lang": "it",
+    "intent": "informational",
+    "template": "hotel per famiglie a {city} con bambini"
+  },
+  {
+    "key": "it-business",
+    "lang": "it",
+    "intent": "informational",
+    "template": "hotel business a {city} ben collegati"
+  },
+  {
+    "key": "it-spa",
+    "lang": "it",
+    "intent": "informational",
+    "template": "hotel con spa a {city}"
+  },
+  {
+    "key": "it-compare",
+    "lang": "it",
+    "intent": "comparison",
+    "template": "meglio dormire in centro o fuori a {city}"
+  },
+  {
+    "key": "it-book",
+    "lang": "it",
+    "intent": "transactional",
+    "template": "dove prenotare un hotel a {city} al prezzo migliore"
+  },
+  {
+    "key": "en-discovery-best",
+    "lang": "en",
+    "intent": "discovery",
+    "template": "best hotels in {city}"
+  },
+  {
+    "key": "en-discovery-where",
+    "lang": "en",
+    "intent": "discovery",
+    "template": "where to stay in {city}"
+  },
+  {
+    "key": "en-luxury",
+    "lang": "en",
+    "intent": "discovery",
+    "template": "luxury hotels in {city}"
+  },
+  {
+    "key": "en-budget",
+    "lang": "en",
+    "intent": "discovery",
+    "template": "cheap hotels in {city} city centre"
+  },
+  {
+    "key": "en-romantic",
+    "lang": "en",
+    "intent": "discovery",
+    "template": "romantic hotels in {city} for couples"
+  },
+  {
+    "key": "en-family",
+    "lang": "en",
+    "intent": "informational",
+    "template": "family hotels in {city} with kids"
+  },
+  {
+    "key": "en-business",
+    "lang": "en",
+    "intent": "informational",
+    "template": "business hotels in {city} near transport"
+  },
+  {
+    "key": "en-view",
+    "lang": "en",
+    "intent": "informational",
+    "template": "hotels in {city} with a view"
+  },
+  {
+    "key": "en-compare",
+    "lang": "en",
+    "intent": "comparison",
+    "template": "hotel or apartment in {city}"
+  },
+  {
+    "key": "en-book",
+    "lang": "en",
+    "intent": "transactional",
+    "template": "where to book a hotel in {city}"
+  }
+]

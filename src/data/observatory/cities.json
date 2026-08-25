@@ -1,0 +1,114 @@
+[
+  {
+    "key": "roma",
+    "region": "Lazio",
+    "hotelsMonitored": 142,
+    "sort": 1,
+    "name": {
+      "it": "Roma",
+      "en": "Rome"
+    },
+    "slug": {
+      "it": "roma",
+      "en": "rome"
+    }
+  },
+  {
+    "key": "milano",
+    "region": "Lombardia",
+    "hotelsMonitored": 128,
+    "sort": 2,
+    "name": {
+      "it": "Milano",
+      "en": "Milan"
+    },
+    "slug": {
+      "it": "milano",
+      "en": "milan"
+    }
+  },
+  {
+    "key": "firenze",
+    "region": "Toscana",
+    "hotelsMonitored": 96,
+    "sort": 3,
+    "name": {
+      "it": "Firenze",
+      "en": "Florence"
+    },
+    "slug": {
+      "it": "firenze",
+      "en": "florence"
+    }
+  },
+  {
+    "key": "venezia",
+    "region": "Veneto",
+    "hotelsMonitored": 88,
+    "sort": 4,
+    "name": {
+      "it": "Venezia",
+      "en": "Venice"
+    },
+    "slug": {
+      "it": "venezia",
+      "en": "venice"
+    }
+  },
+  {
+    "key": "napoli",
+    "region": "Campania",
+    "hotelsMonitored": 74,
+    "sort": 5,
+    "name": {
+      "it": "Napoli",
+      "en": "Naples"
+    },
+    "slug": {
+      "it": "napoli",
+      "en": "naples"
+    }
+  },
+  {
+    "key": "torino",
+    "region": "Piemonte",
+    "hotelsMonitored": 61,
+    "sort": 6,
+    "name": {
+      "it": "Torino",
+      "en": "Turin"
+    },
+    "slug": {
+      "it": "torino",
+      "en": "turin"
+    }
+  },
+  {
+    "key": "bologna",
+    "region": "Emilia-Romagna",
+    "hotelsMonitored": 57,
+    "sort": 7,
+    "name": {
+      "it": "Bologna",
+      "en": "Bologna"
+    },
+    "slug": {
+      "it": "bologna",
+      "en": "bologna"
+    }
+  },
+  {
+    "key": "verona",
+    "region": "Veneto",
+    "hotelsMonitored": 44,
+    "sort": 8,
+    "name": {
+      "it": "Verona",
+      "en": "Verona"
+    },
+    "slug": {
+      "it": "verona",
+      "en": "verona"
+    }
+  }
+]

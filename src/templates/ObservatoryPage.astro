@@ -1,0 +1,243 @@
+---
+import SiteShell from "../components/SiteShell.astro";
+import CitationList from "../components/CitationList.astro";
+import RankingTable from "../components/RankingTable.astro";
+import WipNotice from "../components/WipNotice.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  cityPath,
+  methodologyPath,
+  observatoryPath,
+  type Locale,
+} from "../lib/config";
+import { number, percent } from "../lib/format";
+import { interpolate, messages } from "../lib/i18n";
+import {
+  cityView,
+  ENGINES,
+  italyView,
+  listCities,
+  listPrompts,
+} from "../lib/observatory";
+
+const { locale } = Astro.props as { locale: Locale };
+const alternateLocale = locale === "it" ? "en" : "it";
+const t = messages(locale).observatory;
+const cities = listCities();
+const prompts = listPrompts();
+const italy = italyView();
+const exampleCity = cities.find((city) => city.key === "roma") ?? cities[0];
+const example = cityView(exampleCity);
+const hrefs = [
+  { locale: "it" as const, href: observatoryPath("it") },
+  { locale: "en" as const, href: observatoryPath("en") },
+];
+
+// "Asimmetria intenzionale": composizioni 5/7, mai 6/6.
+const twoCols = "grid items-start gap-[42px] lg:grid-cols-[5fr_7fr]";
+const sectionHead = "grid max-w-[850px] gap-[18px]";
+const textLink = "font-bold text-accent-ink";
+---
+
+<BaseLayout
+  title={t.meta["landing-title"]}
+  description={t.meta["landing-description"]}
+  locale={locale}
+  canonical={observatoryPath(locale)}
+  alternates={hrefs}
+  noindex
+>
+  <SiteShell locale={locale} alternatePath={observatoryPath(alternateLocale)}>
+    <WipNotice locale={locale} />
+
+    <section class="border-b border-line pt-[70px] pb-14">
+      <div class={`shell ${twoCols}`}>
+        <div>
+          <p class="eyebrow">{t.landing.eyebrow}</p>
+          <h1 class="mt-[18px]">{t.landing.title}</h1>
+        </div>
+        <div>
+          <p class="lead">{t.landing.lead}</p>
+          <p class="mt-[18px] font-mono text-[0.85rem] text-muted">
+            {
+              interpolate(t.landing.facts, {
+                prompts: prompts.length,
+                engines: ENGINES.length,
+                hotels: number(locale, italy.hotelsMonitored),
+              })
+            }
+            {" / "}
+            <a class={textLink} href={methodologyPath(locale)}>
+              {t.landing["methodology-link"]}
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section bg-surface-muted">
+      <div class="shell">
+        <div class={sectionHead}>
+          <h2>{t.landing.cities.title}</h2>
+          <p class="lead">{t.landing.cities.body}</p>
+        </div>
+        <div
+          class="mt-9 grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(210px,1fr))]"
+        >
+          {
+            cities.map((city) => (
+              <a
+                class="grid gap-2 rounded-(--radius-brand) border border-line bg-surface p-[18px] hover:border-accent-ink"
+                href={cityPath(locale, city.slug[locale])}
+              >
+                <span class="grid size-[42px] place-items-center rounded-full bg-accent/10 font-extrabold text-accent-ink">
+                  {city.name[locale].slice(0, 1)}
+                </span>
+                <strong>{city.name[locale]}</strong>
+                <small class="text-muted">
+                  {interpolate(t.cities.hotels, {
+                    count: number(locale, city.hotelsMonitored),
+                  })}
+                </small>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {
+      example && (
+        <section class="section">
+          <div class="shell">
+            <div class={sectionHead}>
+              <h2>
+                {interpolate(t.landing.example.title, {
+                  city: example.city.name[locale],
+                })}
+              </h2>
+              <p class="lead">{t.landing.example.body}</p>
+            </div>
+            <div class={`mt-[38px] ${twoCols}`}>
+              <RankingTable
+                locale={locale}
+                labels={t}
+                hotels={example.hotels.slice(0, 5)}
+              />
+              <CitationList
+                locale={locale}
+                labels={t}
+                sources={example.sources.slice(0, 8)}
+              />
+            </div>
+            <a
+              class={`mt-6 inline-flex ${textLink}`}
+              href={cityPath(locale, example.city.slug[locale])}
+            >
+              {interpolate(t.landing.example.link, {
+                city: example.city.name[locale],
+              })}
+            </a>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="section bg-surface-muted">
+      <div class="shell">
+        <div class={sectionHead}>
+          <h2>{t.landing.italy.title}</h2>
+          <p class="lead">
+            {
+              interpolate(t.landing.italy.body, {
+                ota: percent(locale, italy.aggregatorShare),
+              })
+            }
+          </p>
+        </div>
+
+        <div class="table-wrap mt-[34px]">
+          <table>
+            <thead>
+              <tr>
+                <th>{t.italy.cities["col-city"]}</th>
+                <th>{t.italy.cities["col-hotels"]}</th>
+                <th>{t.italy.cities["col-ota"]}</th>
+                <th>{t.italy.cities["col-direct"]}</th>
+                <th>{t.italy.cities["col-agreement"]}</th>
+                <th>{t.italy.cities["col-concentration"]}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                italy.cities.map(({ city, snapshot }) => (
+                  <tr>
+                    <td>
+                      <a href={cityPath(locale, city.slug[locale])}>
+                        <strong>{city.name[locale]}</strong>
+                      </a>
+                    </td>
+                    <td class="font-mono">
+                      {number(locale, city.hotelsMonitored)}
+                    </td>
+                    <td class="font-mono">
+                      {percent(locale, snapshot.aggregatorShare)}
+                    </td>
+                    <td class="font-mono">
+                      {percent(locale, snapshot.directShare)}
+                    </td>
+                    <td class="font-mono">
+                      {percent(locale, snapshot.modelAgreement)}
+                    </td>
+                    <td class="font-mono">
+                      {percent(locale, snapshot.top3Concentration)}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mt-12">{t.landing.italy["leaderboard-title"]}</h3>
+        <p class="text-muted">{t.landing.italy["leaderboard-body"]}</p>
+        <div class="table-wrap mt-[34px]">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{t.ranking.hotel}</th>
+                <th>{t.italy.cities["col-city"]}</th>
+                <th>{t.ranking.presence}</th>
+                <th>{t.ranking.score}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                italy.leaderboard.map((row, index) => (
+                  <tr>
+                    <td class="font-mono">{index + 1}</td>
+                    <td>
+                      <strong>{row.hotel.name}</strong>
+                      <br />
+                      <small class="text-muted">
+                        {interpolate(t.italy.leaderboard.top, {
+                          share: percent(locale, row.stats.percentile),
+                        })}
+                      </small>
+                    </td>
+                    <td>{row.city.name[locale]}</td>
+                    <td class="font-mono">
+                      {percent(locale, row.stats.presence)}
+                    </td>
+                    <td class="font-mono">{row.stats.score}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </SiteShell>
+</BaseLayout>

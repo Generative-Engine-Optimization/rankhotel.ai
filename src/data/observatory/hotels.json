@@ -1,0 +1,514 @@
+[
+  {
+    "key": "hotel-de-russie",
+    "name": "Hotel de Russie",
+    "city": "roma",
+    "area": "Piazza del Popolo",
+    "stars": 5,
+    "domain": "roccofortehotels.com"
+  },
+  {
+    "key": "hotel-hassler-roma",
+    "name": "Hotel Hassler Roma",
+    "city": "roma",
+    "area": "Trinità dei Monti",
+    "stars": 5,
+    "domain": "hotelhasslerroma.com"
+  },
+  {
+    "key": "hotel-eden-roma",
+    "name": "Hotel Eden",
+    "city": "roma",
+    "area": "Via Veneto",
+    "stars": 5,
+    "domain": "dorchestercollection.com"
+  },
+  {
+    "key": "st-regis-rome",
+    "name": "The St. Regis Rome",
+    "city": "roma",
+    "area": "Repubblica",
+    "stars": 5,
+    "domain": "marriott.com"
+  },
+  {
+    "key": "palazzo-manfredi",
+    "name": "Palazzo Manfredi",
+    "city": "roma",
+    "area": "Colosseo",
+    "stars": 5,
+    "domain": "palazzomanfredi.com"
+  },
+  {
+    "key": "hotel-artemide",
+    "name": "Hotel Artemide",
+    "city": "roma",
+    "area": "Via Nazionale",
+    "stars": 4,
+    "domain": "hotelartemide.it"
+  },
+  {
+    "key": "singer-palace-hotel",
+    "name": "Singer Palace Hotel",
+    "city": "roma",
+    "area": "Via del Corso",
+    "stars": 5,
+    "domain": "singerpalacehotel.com"
+  },
+  {
+    "key": "bulgari-hotel-milano",
+    "name": "Bulgari Hotel Milano",
+    "city": "milano",
+    "area": "Brera",
+    "stars": 5,
+    "domain": "bulgarihotels.com"
+  },
+  {
+    "key": "park-hyatt-milano",
+    "name": "Park Hyatt Milano",
+    "city": "milano",
+    "area": "Duomo",
+    "stars": 5,
+    "domain": "hyatt.com"
+  },
+  {
+    "key": "armani-hotel-milano",
+    "name": "Armani Hotel Milano",
+    "city": "milano",
+    "area": "Quadrilatero",
+    "stars": 5,
+    "domain": "armanihotels.com"
+  },
+  {
+    "key": "hotel-principe-di-savoia",
+    "name": "Hotel Principe di Savoia",
+    "city": "milano",
+    "area": "Repubblica",
+    "stars": 5,
+    "domain": "dorchestercollection.com"
+  },
+  {
+    "key": "me-milan-il-duca",
+    "name": "ME Milan Il Duca",
+    "city": "milano",
+    "area": "Repubblica",
+    "stars": 5,
+    "domain": "melia.com"
+  },
+  {
+    "key": "nu-hotel-milano",
+    "name": "NU Hotel Milano",
+    "city": "milano",
+    "area": "Porta Romana",
+    "stars": 4,
+    "domain": "nuhotelmilano.it"
+  },
+  {
+    "key": "four-seasons-firenze",
+    "name": "Four Seasons Hotel Firenze",
+    "city": "firenze",
+    "area": "Sant'Ambrogio",
+    "stars": 5,
+    "domain": "fourseasons.com"
+  },
+  {
+    "key": "portrait-firenze",
+    "name": "Portrait Firenze",
+    "city": "firenze",
+    "area": "Ponte Vecchio",
+    "stars": 5,
+    "domain": "lungarnocollection.com"
+  },
+  {
+    "key": "hotel-savoy-firenze",
+    "name": "Hotel Savoy",
+    "city": "firenze",
+    "area": "Piazza della Repubblica",
+    "stars": 5,
+    "domain": "roccofortehotels.com"
+  },
+  {
+    "key": "the-st-regis-florence",
+    "name": "The St. Regis Florence",
+    "city": "firenze",
+    "area": "Lungarno",
+    "stars": 5,
+    "domain": "marriott.com"
+  },
+  {
+    "key": "hotel-davanzati",
+    "name": "Hotel Davanzati",
+    "city": "firenze",
+    "area": "Centro storico",
+    "stars": 3,
+    "domain": "hoteldavanzati.it"
+  },
+  {
+    "key": "the-gritti-palace",
+    "name": "The Gritti Palace",
+    "city": "venezia",
+    "area": "San Marco",
+    "stars": 5,
+    "domain": "marriott.com"
+  },
+  {
+    "key": "aman-venice",
+    "name": "Aman Venice",
+    "city": "venezia",
+    "area": "Canal Grande",
+    "stars": 5,
+    "domain": "aman.com"
+  },
+  {
+    "key": "hotel-danieli",
+    "name": "Hotel Danieli",
+    "city": "venezia",
+    "area": "Riva degli Schiavoni",
+    "stars": 5,
+    "domain": "marriott.com"
+  },
+  {
+    "key": "ca-sagredo-hotel",
+    "name": "Ca' Sagredo Hotel",
+    "city": "venezia",
+    "area": "Cannaregio",
+    "stars": 5,
+    "domain": "casagredohotel.com"
+  },
+  {
+    "key": "hotel-ai-reali",
+    "name": "Hotel Ai Reali",
+    "city": "venezia",
+    "area": "Castello",
+    "stars": 4,
+    "domain": "hotelaireali.com"
+  },
+  {
+    "key": "grand-hotel-vesuvio",
+    "name": "Grand Hotel Vesuvio",
+    "city": "napoli",
+    "area": "Lungomare",
+    "stars": 5,
+    "domain": "vesuvio.it"
+  },
+  {
+    "key": "romeo-hotel-napoli",
+    "name": "Romeo Hotel",
+    "city": "napoli",
+    "area": "Porto",
+    "stars": 5,
+    "domain": "romeohotel.it"
+  },
+  {
+    "key": "grand-hotel-parkers",
+    "name": "Grand Hotel Parker's",
+    "city": "napoli",
+    "area": "Corso Vittorio Emanuele",
+    "stars": 5,
+    "domain": "grandhotelparkers.it"
+  },
+  {
+    "key": "eurostars-hotel-excelsior",
+    "name": "Eurostars Hotel Excelsior",
+    "city": "napoli",
+    "area": "Lungomare",
+    "stars": 5,
+    "domain": "eurostarshotels.com"
+  },
+  {
+    "key": "principi-di-piemonte",
+    "name": "Principi di Piemonte | UNA Esperienze",
+    "city": "torino",
+    "area": "Centro",
+    "stars": 5,
+    "domain": "gruppouna.it"
+  },
+  {
+    "key": "grand-hotel-sitea",
+    "name": "Grand Hotel Sitea",
+    "city": "torino",
+    "area": "Centro",
+    "stars": 5,
+    "domain": "grandhotelsitea.it"
+  },
+  {
+    "key": "turin-palace-hotel",
+    "name": "Turin Palace Hotel",
+    "city": "torino",
+    "area": "Porta Nuova",
+    "stars": 5,
+    "domain": "turinpalacehotel.com"
+  },
+  {
+    "key": "nh-collection-piazza-carlina",
+    "name": "NH Collection Torino Piazza Carlina",
+    "city": "torino",
+    "area": "Centro",
+    "stars": 4,
+    "domain": "nh-hotels.it"
+  },
+  {
+    "key": "grand-hotel-majestic",
+    "name": "Grand Hotel Majestic già Baglioni",
+    "city": "bologna",
+    "area": "Centro storico",
+    "stars": 5,
+    "domain": "grandhotelmajestic.it"
+  },
+  {
+    "key": "i-portici-hotel",
+    "name": "I Portici Hotel",
+    "city": "bologna",
+    "area": "Via Indipendenza",
+    "stars": 4,
+    "domain": "iporticihotel.com"
+  },
+  {
+    "key": "hotel-corona-doro",
+    "name": "Hotel Corona d'Oro",
+    "city": "bologna",
+    "area": "Centro storico",
+    "stars": 4,
+    "domain": "hco.it"
+  },
+  {
+    "key": "art-hotel-novecento",
+    "name": "Art Hotel Novecento",
+    "city": "bologna",
+    "area": "Piazza Maggiore",
+    "stars": 4,
+    "domain": "bolognarthotels.it"
+  },
+  {
+    "key": "due-torri-hotel",
+    "name": "Due Torri Hotel",
+    "city": "verona",
+    "area": "Centro storico",
+    "stars": 5,
+    "domain": "duetorrihotels.com"
+  },
+  {
+    "key": "palazzo-victoria",
+    "name": "Palazzo Victoria",
+    "city": "verona",
+    "area": "Corso Porta Borsari",
+    "stars": 5,
+    "domain": "palazzovictoria.com"
+  },
+  {
+    "key": "hotel-gabbia-doro",
+    "name": "Hotel Gabbia d'Oro",
+    "city": "verona",
+    "area": "Centro storico",
+    "stars": 4,
+    "domain": "hotelgabbiadoro.it"
+  },
+  {
+    "key": "hotel-accademia-verona",
+    "name": "Hotel Accademia",
+    "city": "verona",
+    "area": "Via Scala",
+    "stars": 4,
+    "domain": "hotelaccademiaverona.it"
+  },
+  {
+    "key": "hotel-locarno",
+    "name": "Hotel Locarno",
+    "city": "roma",
+    "area": "Flaminio",
+    "stars": 4,
+    "domain": "hotellocarno.com"
+  },
+  {
+    "key": "chateau-monfort",
+    "name": "Château Monfort",
+    "city": "milano",
+    "area": "Porta Venezia",
+    "stars": 5,
+    "domain": "hotelchateaumonfort.com"
+  },
+  {
+    "key": "spadari-al-duomo",
+    "name": "Hotel Spadari al Duomo",
+    "city": "milano",
+    "area": "Duomo",
+    "stars": 4,
+    "domain": "spadarihotel.com"
+  },
+  {
+    "key": "hotel-lungarno",
+    "name": "Hotel Lungarno",
+    "city": "firenze",
+    "area": "Lungarno",
+    "stars": 5,
+    "domain": "lungarnocollection.com"
+  },
+  {
+    "key": "palazzo-vecchietti",
+    "name": "Palazzo Vecchietti",
+    "city": "firenze",
+    "area": "Centro storico",
+    "stars": 5,
+    "domain": "palazzovecchietti.com"
+  },
+  {
+    "key": "hotel-calimala",
+    "name": "Hotel Calimala",
+    "city": "firenze",
+    "area": "Mercato Nuovo",
+    "stars": 4,
+    "domain": "hotelcalimala.com"
+  },
+  {
+    "key": "belmond-hotel-cipriani",
+    "name": "Belmond Hotel Cipriani",
+    "city": "venezia",
+    "area": "Giudecca",
+    "stars": 5,
+    "domain": "belmond.com"
+  },
+  {
+    "key": "ca-di-dio",
+    "name": "Ca' di Dio",
+    "city": "venezia",
+    "area": "Castello",
+    "stars": 5,
+    "domain": "vretreats.com"
+  },
+  {
+    "key": "hotel-antiche-figure",
+    "name": "Hotel Antiche Figure",
+    "city": "venezia",
+    "area": "Santa Croce",
+    "stars": 3,
+    "domain": "antichefigure.it"
+  },
+  {
+    "key": "renaissance-mediterraneo",
+    "name": "Renaissance Naples Hotel Mediterraneo",
+    "city": "napoli",
+    "area": "Porto",
+    "stars": 4,
+    "domain": "marriott.com"
+  },
+  {
+    "key": "hotel-britannique",
+    "name": "Britannique Napoli",
+    "city": "napoli",
+    "area": "Corso Vittorio Emanuele",
+    "stars": 4,
+    "domain": "hotelbritannique.it"
+  },
+  {
+    "key": "palazzo-caracciolo",
+    "name": "Palazzo Caracciolo Napoli",
+    "city": "napoli",
+    "area": "Centro storico",
+    "stars": 4,
+    "domain": "accor.com"
+  },
+  {
+    "key": "hotel-piazza-bellini",
+    "name": "Hotel Piazza Bellini",
+    "city": "napoli",
+    "area": "Centro storico",
+    "stars": 4,
+    "domain": "hotelpiazzabellini.com"
+  },
+  {
+    "key": "hotel-victoria-torino",
+    "name": "Hotel Victoria",
+    "city": "torino",
+    "area": "Centro",
+    "stars": 4,
+    "domain": "hotelvictoria-torino.com"
+  },
+  {
+    "key": "doubletree-lingotto",
+    "name": "DoubleTree by Hilton Turin Lingotto",
+    "city": "torino",
+    "area": "Lingotto",
+    "stars": 4,
+    "domain": "hilton.com"
+  },
+  {
+    "key": "hotel-genova-torino",
+    "name": "Hotel Genova",
+    "city": "torino",
+    "area": "Porta Nuova",
+    "stars": 4,
+    "domain": "albergogenova.it"
+  },
+  {
+    "key": "bw-plus-executive",
+    "name": "Best Western Plus Executive",
+    "city": "torino",
+    "area": "Centro",
+    "stars": 4,
+    "domain": "executivehotel.it"
+  },
+  {
+    "key": "hotel-metropolitan",
+    "name": "Hotel Metropolitan",
+    "city": "bologna",
+    "area": "Centro storico",
+    "stars": 4,
+    "domain": "hotelmetropolitan.com"
+  },
+  {
+    "key": "savhotel",
+    "name": "Savhotel",
+    "city": "bologna",
+    "area": "Fiera",
+    "stars": 4,
+    "domain": "savhotel.it"
+  },
+  {
+    "key": "aemilia-hotel",
+    "name": "Aemilia Hotel",
+    "city": "bologna",
+    "area": "Porta San Donato",
+    "stars": 4,
+    "domain": "aemiliahotel.it"
+  },
+  {
+    "key": "hotel-touring-bologna",
+    "name": "Hotel Touring",
+    "city": "bologna",
+    "area": "Centro storico",
+    "stars": 3,
+    "domain": "hoteltouring.it"
+  },
+  {
+    "key": "byblos-art-hotel",
+    "name": "Byblos Art Hotel Villa Amistà",
+    "city": "verona",
+    "area": "Corrubbio",
+    "stars": 5,
+    "domain": "byblosarthotel.com"
+  },
+  {
+    "key": "hotel-milano-spa-verona",
+    "name": "Hotel Milano & SPA",
+    "city": "verona",
+    "area": "Arena",
+    "stars": 4,
+    "domain": "hotelmilano-vr.it"
+  },
+  {
+    "key": "hotel-indigo-verona",
+    "name": "Hotel Indigo Verona Grand Hotel Arti",
+    "city": "verona",
+    "area": "Centro storico",
+    "stars": 4,
+    "domain": "ihg.com"
+  },
+  {
+    "key": "escalus-luxury-suites",
+    "name": "Escalus Luxury Suites",
+    "city": "verona",
+    "area": "Centro storico",
+    "stars": 4,
+    "domain": "escalusverona.it"
+  }
+]

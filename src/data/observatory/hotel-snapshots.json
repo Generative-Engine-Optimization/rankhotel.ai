@@ -1,0 +1,2114 @@
+[
+  {
+    "city": "roma",
+    "rank": 1,
+    "percentile": 0.993,
+    "hotel": "hotel-de-russie",
+    "score": 89,
+    "presence": 0.88,
+    "avgPosition": 1.5,
+    "directShare": 0.367,
+    "trend": -3,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.791,
+        "position": 1
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.9,
+        "position": 1
+      },
+      {
+        "engine": "perplexity",
+        "presence": 1,
+        "position": 1
+      },
+      {
+        "engine": "claude",
+        "presence": 0.831,
+        "position": 3
+      }
+    ]
+  },
+  {
+    "city": "roma",
+    "rank": 2,
+    "percentile": 0.986,
+    "hotel": "st-regis-rome",
+    "score": 78,
+    "presence": 0.852,
+    "avgPosition": 2.5,
+    "directShare": 0.394,
+    "trend": 2,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.771,
+        "position": 3
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.83,
+        "position": 3
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.962,
+        "position": 2
+      },
+      {
+        "engine": "claude",
+        "presence": 0.845,
+        "position": 2
+      }
+    ]
+  },
+  {
+    "city": "roma",
+    "rank": 3,
+    "percentile": 0.979,
+    "hotel": "hotel-hassler-roma",
+    "score": 77,
+    "presence": 0.864,
+    "avgPosition": 2.8,
+    "directShare": 0.283,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.79,
+        "position": 2
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.826,
+        "position": 4
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.839,
+        "position": 4
+      },
+      {
+        "engine": "claude",
+        "presence": 0.999,
+        "position": 1
+      }
+    ]
+  },
+  {
+    "city": "roma",
+    "rank": 4,
+    "percentile": 0.972,
+    "hotel": "hotel-eden-roma",
+    "score": 60,
+    "presence": 0.756,
+    "avgPosition": 4,
+    "directShare": 0.281,
+    "trend": 7,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.717,
+        "position": 4
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.865,
+        "position": 2
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.748,
+        "position": 5
+      },
+      {
+        "engine": "claude",
+        "presence": 0.693,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "city": "roma",
+    "rank": 5,
+    "percentile": 0.965,
+    "hotel": "palazzo-manfredi",
+    "score": 54,
+    "presence": 0.731,
+    "avgPosition": 4.5,
+    "directShare": 0.353,
+    "trend": -5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.578,
+        "position": 5
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.688,
+        "position": 6
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.889,
+        "position": 3
+      },
+      {
+        "engine": "claude",
+        "presence": 0.768,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "city": "roma",
+    "rank": 6,
+    "percentile": 0.958,
+    "hotel": "hotel-artemide",
+    "score": 34,
+    "presence": 0.573,
+    "avgPosition": 5.8,
+    "directShare": 0.297,
+    "trend": -3,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.453,
+        "position": 6
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.739,
+        "position": 5
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.66,
+        "position": 6
+      },
+      {
+        "engine": "claude",
+        "presence": 0.441,
+        "position": 6
+      }
+    ]
+  },
+  {
+    "city": "roma",
+    "rank": 7,
+    "percentile": 0.951,
+    "hotel": "singer-palace-hotel",
+    "score": 23,
+    "presence": 0.418,
+    "avgPosition": null,
+    "directShare": 0.015,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.325,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.582,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.411,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.356,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "roma",
+    "rank": 8,
+    "percentile": 0.944,
+    "hotel": "hotel-locarno",
+    "score": 20,
+    "presence": 0.366,
+    "avgPosition": null,
+    "directShare": 0.012,
+    "trend": -5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.446,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.492,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.231,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.296,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "milano",
+    "rank": 1,
+    "percentile": 0.992,
+    "hotel": "armani-hotel-milano",
+    "score": 89,
+    "presence": 0.916,
+    "avgPosition": 1.8,
+    "directShare": 0.1,
+    "trend": 3,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.966,
+        "position": 1
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.942,
+        "position": 1
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.975,
+        "position": 2
+      },
+      {
+        "engine": "claude",
+        "presence": 0.782,
+        "position": 3
+      }
+    ]
+  },
+  {
+    "city": "milano",
+    "rank": 2,
+    "percentile": 0.984,
+    "hotel": "bulgari-hotel-milano",
+    "score": 82,
+    "presence": 0.872,
+    "avgPosition": 2.3,
+    "directShare": 0.113,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.946,
+        "position": 2
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.787,
+        "position": 2
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.974,
+        "position": 3
+      },
+      {
+        "engine": "claude",
+        "presence": 0.783,
+        "position": 2
+      }
+    ]
+  },
+  {
+    "city": "milano",
+    "rank": 3,
+    "percentile": 0.977,
+    "hotel": "park-hyatt-milano",
+    "score": 79,
+    "presence": 0.824,
+    "avgPosition": 2.3,
+    "directShare": 0.406,
+    "trend": 1,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.743,
+        "position": 4
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.722,
+        "position": 3
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.996,
+        "position": 1
+      },
+      {
+        "engine": "claude",
+        "presence": 0.836,
+        "position": 1
+      }
+    ]
+  },
+  {
+    "city": "milano",
+    "rank": 4,
+    "percentile": 0.969,
+    "hotel": "hotel-principe-di-savoia",
+    "score": 57,
+    "presence": 0.742,
+    "avgPosition": 4.3,
+    "directShare": 0.17,
+    "trend": 3,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.864,
+        "position": 3
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.62,
+        "position": 4
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.891,
+        "position": 4
+      },
+      {
+        "engine": "claude",
+        "presence": 0.595,
+        "position": 6
+      }
+    ]
+  },
+  {
+    "city": "milano",
+    "rank": 5,
+    "percentile": 0.961,
+    "hotel": "me-milan-il-duca",
+    "score": 48,
+    "presence": 0.668,
+    "avgPosition": 4.8,
+    "directShare": 0.047,
+    "trend": 5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.725,
+        "position": 5
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.513,
+        "position": 5
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.708,
+        "position": 5
+      },
+      {
+        "engine": "claude",
+        "presence": 0.726,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "city": "milano",
+    "rank": 6,
+    "percentile": 0.953,
+    "hotel": "chateau-monfort",
+    "score": 34,
+    "presence": 0.584,
+    "avgPosition": 5.8,
+    "directShare": 0,
+    "trend": -5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.701,
+        "position": 6
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.437,
+        "position": 6
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.505,
+        "position": 6
+      },
+      {
+        "engine": "claude",
+        "presence": 0.693,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "city": "milano",
+    "rank": 7,
+    "percentile": 0.945,
+    "hotel": "nu-hotel-milano",
+    "score": 26,
+    "presence": 0.479,
+    "avgPosition": null,
+    "directShare": 0.055,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.548,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.394,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.501,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.474,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "milano",
+    "rank": 8,
+    "percentile": 0.938,
+    "hotel": "spadari-al-duomo",
+    "score": 20,
+    "presence": 0.361,
+    "avgPosition": null,
+    "directShare": 0.136,
+    "trend": 7,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.362,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.271,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.421,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.39,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "firenze",
+    "rank": 1,
+    "percentile": 0.99,
+    "hotel": "four-seasons-firenze",
+    "score": 88,
+    "presence": 0.906,
+    "avgPosition": 1.8,
+    "directShare": 0.3,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.838,
+        "position": 3
+      },
+      {
+        "engine": "gemini",
+        "presence": 1,
+        "position": 1
+      },
+      {
+        "engine": "perplexity",
+        "presence": 1,
+        "position": 1
+      },
+      {
+        "engine": "claude",
+        "presence": 0.787,
+        "position": 2
+      }
+    ]
+  },
+  {
+    "city": "firenze",
+    "rank": 2,
+    "percentile": 0.979,
+    "hotel": "portrait-firenze",
+    "score": 86,
+    "presence": 0.865,
+    "avgPosition": 1.8,
+    "directShare": 0.309,
+    "trend": 0,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.878,
+        "position": 2
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.843,
+        "position": 2
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.927,
+        "position": 2
+      },
+      {
+        "engine": "claude",
+        "presence": 0.811,
+        "position": 1
+      }
+    ]
+  },
+  {
+    "city": "firenze",
+    "rank": 3,
+    "percentile": 0.969,
+    "hotel": "the-st-regis-florence",
+    "score": 57,
+    "presence": 0.71,
+    "avgPosition": 4,
+    "directShare": 0.324,
+    "trend": 5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.642,
+        "position": 5
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.689,
+        "position": 4
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.796,
+        "position": 3
+      },
+      {
+        "engine": "claude",
+        "presence": 0.715,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "city": "firenze",
+    "rank": 4,
+    "percentile": 0.958,
+    "hotel": "hotel-savoy-firenze",
+    "score": 54,
+    "presence": 0.692,
+    "avgPosition": 3.7,
+    "directShare": 0.116,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.69,
+        "position": 4
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.628,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.702,
+        "position": 4
+      },
+      {
+        "engine": "claude",
+        "presence": 0.749,
+        "position": 3
+      }
+    ]
+  },
+  {
+    "city": "firenze",
+    "rank": 5,
+    "percentile": 0.948,
+    "hotel": "hotel-lungarno",
+    "score": 54,
+    "presence": 0.693,
+    "avgPosition": 4.3,
+    "directShare": 0.079,
+    "trend": -1,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.88,
+        "position": 1
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.657,
+        "position": 5
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.57,
+        "position": 6
+      },
+      {
+        "engine": "claude",
+        "presence": 0.664,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "city": "firenze",
+    "rank": 6,
+    "percentile": 0.938,
+    "hotel": "palazzo-vecchietti",
+    "score": 41,
+    "presence": 0.579,
+    "avgPosition": 4.7,
+    "directShare": 0.013,
+    "trend": 6,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.55,
+        "position": 6
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.698,
+        "position": 3
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.606,
+        "position": 5
+      },
+      {
+        "engine": "claude",
+        "presence": 0.461,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "firenze",
+    "rank": 7,
+    "percentile": 0.927,
+    "hotel": "hotel-davanzati",
+    "score": 30,
+    "presence": 0.54,
+    "avgPosition": 6,
+    "directShare": 0.137,
+    "trend": 1,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.484,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.647,
+        "position": 6
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.477,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.55,
+        "position": 6
+      }
+    ]
+  },
+  {
+    "city": "firenze",
+    "rank": 8,
+    "percentile": 0.917,
+    "hotel": "hotel-calimala",
+    "score": 25,
+    "presence": 0.446,
+    "avgPosition": null,
+    "directShare": 0.391,
+    "trend": -4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.44,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.486,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.306,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.55,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "venezia",
+    "rank": 1,
+    "percentile": 0.989,
+    "hotel": "aman-venice",
+    "score": 84,
+    "presence": 0.914,
+    "avgPosition": 2.3,
+    "directShare": 0.394,
+    "trend": 3,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.991,
+        "position": 1
+      },
+      {
+        "engine": "gemini",
+        "presence": 1,
+        "position": 1
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.869,
+        "position": 3
+      },
+      {
+        "engine": "claude",
+        "presence": 0.795,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "city": "venezia",
+    "rank": 2,
+    "percentile": 0.977,
+    "hotel": "hotel-danieli",
+    "score": 79,
+    "presence": 0.861,
+    "avgPosition": 2.5,
+    "directShare": 0.266,
+    "trend": 3,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.961,
+        "position": 2
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.665,
+        "position": 5
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.907,
+        "position": 2
+      },
+      {
+        "engine": "claude",
+        "presence": 0.912,
+        "position": 1
+      }
+    ]
+  },
+  {
+    "city": "venezia",
+    "rank": 3,
+    "percentile": 0.966,
+    "hotel": "the-gritti-palace",
+    "score": 78,
+    "presence": 0.895,
+    "avgPosition": 2.8,
+    "directShare": 0.051,
+    "trend": 2,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.945,
+        "position": 3
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.965,
+        "position": 2
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.841,
+        "position": 4
+      },
+      {
+        "engine": "claude",
+        "presence": 0.829,
+        "position": 2
+      }
+    ]
+  },
+  {
+    "city": "venezia",
+    "rank": 4,
+    "percentile": 0.955,
+    "hotel": "belmond-hotel-cipriani",
+    "score": 76,
+    "presence": 0.851,
+    "avgPosition": 2.8,
+    "directShare": 0,
+    "trend": 5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.857,
+        "position": 4
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.761,
+        "position": 3
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.985,
+        "position": 1
+      },
+      {
+        "engine": "claude",
+        "presence": 0.8,
+        "position": 3
+      }
+    ]
+  },
+  {
+    "city": "venezia",
+    "rank": 5,
+    "percentile": 0.943,
+    "hotel": "ca-di-dio",
+    "score": 46,
+    "presence": 0.672,
+    "avgPosition": 4.7,
+    "directShare": 0,
+    "trend": -5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.729,
+        "position": 5
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.722,
+        "position": 4
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.728,
+        "position": 5
+      },
+      {
+        "engine": "claude",
+        "presence": 0.507,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "venezia",
+    "rank": 6,
+    "percentile": 0.932,
+    "hotel": "ca-sagredo-hotel",
+    "score": 35,
+    "presence": 0.587,
+    "avgPosition": 5.5,
+    "directShare": 0.189,
+    "trend": -2,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.527,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.553,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.578,
+        "position": 6
+      },
+      {
+        "engine": "claude",
+        "presence": 0.69,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "city": "venezia",
+    "rank": 7,
+    "percentile": 0.92,
+    "hotel": "hotel-ai-reali",
+    "score": 31,
+    "presence": 0.567,
+    "avgPosition": 6,
+    "directShare": 0.332,
+    "trend": -1,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.593,
+        "position": 6
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.589,
+        "position": 6
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.528,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.557,
+        "position": 6
+      }
+    ]
+  },
+  {
+    "city": "venezia",
+    "rank": 8,
+    "percentile": 0.909,
+    "hotel": "hotel-antiche-figure",
+    "score": 25,
+    "presence": 0.456,
+    "avgPosition": null,
+    "directShare": 0.37,
+    "trend": -2,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.466,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.519,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.515,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.324,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "napoli",
+    "rank": 1,
+    "percentile": 0.986,
+    "hotel": "romeo-hotel-napoli",
+    "score": 86,
+    "presence": 0.829,
+    "avgPosition": 1.5,
+    "directShare": 0.012,
+    "trend": 0,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.811,
+        "position": 2
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.755,
+        "position": 2
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.869,
+        "position": 1
+      },
+      {
+        "engine": "claude",
+        "presence": 0.879,
+        "position": 1
+      }
+    ]
+  },
+  {
+    "city": "napoli",
+    "rank": 2,
+    "percentile": 0.973,
+    "hotel": "grand-hotel-vesuvio",
+    "score": 85,
+    "presence": 0.844,
+    "avgPosition": 1.8,
+    "directShare": 0.21,
+    "trend": -2,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 1,
+        "position": 1
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.836,
+        "position": 1
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.799,
+        "position": 3
+      },
+      {
+        "engine": "claude",
+        "presence": 0.743,
+        "position": 2
+      }
+    ]
+  },
+  {
+    "city": "napoli",
+    "rank": 3,
+    "percentile": 0.959,
+    "hotel": "grand-hotel-parkers",
+    "score": 70,
+    "presence": 0.736,
+    "avgPosition": 2.8,
+    "directShare": 0,
+    "trend": 6,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.753,
+        "position": 3
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.622,
+        "position": 3
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.834,
+        "position": 2
+      },
+      {
+        "engine": "claude",
+        "presence": 0.736,
+        "position": 3
+      }
+    ]
+  },
+  {
+    "city": "napoli",
+    "rank": 4,
+    "percentile": 0.946,
+    "hotel": "renaissance-mediterraneo",
+    "score": 43,
+    "presence": 0.584,
+    "avgPosition": 4.8,
+    "directShare": 0.15,
+    "trend": 3,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.617,
+        "position": 4
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.507,
+        "position": 5
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.492,
+        "position": 6
+      },
+      {
+        "engine": "claude",
+        "presence": 0.72,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "city": "napoli",
+    "rank": 5,
+    "percentile": 0.932,
+    "hotel": "hotel-britannique",
+    "score": 38,
+    "presence": 0.535,
+    "avgPosition": 4.7,
+    "directShare": 0.137,
+    "trend": -5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.476,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.572,
+        "position": 4
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.519,
+        "position": 5
+      },
+      {
+        "engine": "claude",
+        "presence": 0.573,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "city": "napoli",
+    "rank": 6,
+    "percentile": 0.919,
+    "hotel": "palazzo-caracciolo",
+    "score": 35,
+    "presence": 0.507,
+    "avgPosition": 4.5,
+    "directShare": 0.012,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.525,
+        "position": 5
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.411,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.584,
+        "position": 4
+      },
+      {
+        "engine": "claude",
+        "presence": 0.509,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "napoli",
+    "rank": 7,
+    "percentile": 0.905,
+    "hotel": "eurostars-hotel-excelsior",
+    "score": 27,
+    "presence": 0.486,
+    "avgPosition": 6,
+    "directShare": 0.112,
+    "trend": 6,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.519,
+        "position": 6
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.447,
+        "position": 6
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.45,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.527,
+        "position": 6
+      }
+    ]
+  },
+  {
+    "city": "napoli",
+    "rank": 8,
+    "percentile": 0.892,
+    "hotel": "hotel-piazza-bellini",
+    "score": 16,
+    "presence": 0.287,
+    "avgPosition": null,
+    "directShare": 0.03,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.321,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.244,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.256,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.326,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "torino",
+    "rank": 1,
+    "percentile": 0.984,
+    "hotel": "principi-di-piemonte",
+    "score": 94,
+    "presence": 0.931,
+    "avgPosition": 1.3,
+    "directShare": 0.337,
+    "trend": 6,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.898,
+        "position": 1
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.878,
+        "position": 2
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.974,
+        "position": 1
+      },
+      {
+        "engine": "claude",
+        "presence": 0.976,
+        "position": 1
+      }
+    ]
+  },
+  {
+    "city": "torino",
+    "rank": 2,
+    "percentile": 0.967,
+    "hotel": "grand-hotel-sitea",
+    "score": 83,
+    "presence": 0.817,
+    "avgPosition": 1.8,
+    "directShare": 0.176,
+    "trend": -5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.831,
+        "position": 2
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.904,
+        "position": 1
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.757,
+        "position": 2
+      },
+      {
+        "engine": "claude",
+        "presence": 0.777,
+        "position": 2
+      }
+    ]
+  },
+  {
+    "city": "torino",
+    "rank": 3,
+    "percentile": 0.951,
+    "hotel": "turin-palace-hotel",
+    "score": 63,
+    "presence": 0.695,
+    "avgPosition": 3.3,
+    "directShare": 0.354,
+    "trend": -5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.742,
+        "position": 3
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.718,
+        "position": 3
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.561,
+        "position": 4
+      },
+      {
+        "engine": "claude",
+        "presence": 0.76,
+        "position": 3
+      }
+    ]
+  },
+  {
+    "city": "torino",
+    "rank": 4,
+    "percentile": 0.934,
+    "hotel": "hotel-victoria-torino",
+    "score": 50,
+    "presence": 0.573,
+    "avgPosition": 4,
+    "directShare": 0,
+    "trend": -5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.657,
+        "position": 4
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.473,
+        "position": 4
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.625,
+        "position": 3
+      },
+      {
+        "engine": "claude",
+        "presence": 0.538,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "city": "torino",
+    "rank": 5,
+    "percentile": 0.918,
+    "hotel": "doubletree-lingotto",
+    "score": 31,
+    "presence": 0.433,
+    "avgPosition": 4.5,
+    "directShare": 0.332,
+    "trend": -1,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.385,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.459,
+        "position": 5
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.31,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.577,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "city": "torino",
+    "rank": 6,
+    "percentile": 0.902,
+    "hotel": "nh-collection-piazza-carlina",
+    "score": 30,
+    "presence": 0.457,
+    "avgPosition": 5.5,
+    "directShare": 0,
+    "trend": 3,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.441,
+        "position": 5
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.44,
+        "position": 6
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.468,
+        "position": 5
+      },
+      {
+        "engine": "claude",
+        "presence": 0.48,
+        "position": 6
+      }
+    ]
+  },
+  {
+    "city": "torino",
+    "rank": 7,
+    "percentile": 0.885,
+    "hotel": "hotel-genova-torino",
+    "score": 19,
+    "presence": 0.352,
+    "avgPosition": 6,
+    "directShare": 0.263,
+    "trend": 0,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.397,
+        "position": 6
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.417,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.278,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.315,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "torino",
+    "rank": 8,
+    "percentile": 0.869,
+    "hotel": "bw-plus-executive",
+    "score": 15,
+    "presence": 0.272,
+    "avgPosition": 6,
+    "directShare": 0.231,
+    "trend": 0,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.207,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.22,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.321,
+        "position": 6
+      },
+      {
+        "engine": "claude",
+        "presence": 0.338,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "bologna",
+    "rank": 1,
+    "percentile": 0.982,
+    "hotel": "grand-hotel-majestic",
+    "score": 94,
+    "presence": 0.886,
+    "avgPosition": 1,
+    "directShare": 0.172,
+    "trend": 3,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.846,
+        "position": 1
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.86,
+        "position": 1
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.915,
+        "position": 1
+      },
+      {
+        "engine": "claude",
+        "presence": 0.924,
+        "position": 1
+      }
+    ]
+  },
+  {
+    "city": "bologna",
+    "rank": 2,
+    "percentile": 0.965,
+    "hotel": "i-portici-hotel",
+    "score": 81,
+    "presence": 0.818,
+    "avgPosition": 2,
+    "directShare": 0.286,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.778,
+        "position": 2
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.742,
+        "position": 2
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.897,
+        "position": 2
+      },
+      {
+        "engine": "claude",
+        "presence": 0.855,
+        "position": 2
+      }
+    ]
+  },
+  {
+    "city": "bologna",
+    "rank": 3,
+    "percentile": 0.947,
+    "hotel": "hotel-corona-doro",
+    "score": 64,
+    "presence": 0.674,
+    "avgPosition": 3,
+    "directShare": 0.213,
+    "trend": 4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.63,
+        "position": 3
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.648,
+        "position": 3
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.654,
+        "position": 3
+      },
+      {
+        "engine": "claude",
+        "presence": 0.766,
+        "position": 3
+      }
+    ]
+  },
+  {
+    "city": "bologna",
+    "rank": 4,
+    "percentile": 0.93,
+    "hotel": "hotel-metropolitan",
+    "score": 37,
+    "presence": 0.512,
+    "avgPosition": 4.7,
+    "directShare": 0.133,
+    "trend": 5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.364,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.575,
+        "position": 4
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.47,
+        "position": 6
+      },
+      {
+        "engine": "claude",
+        "presence": 0.639,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "city": "bologna",
+    "rank": 5,
+    "percentile": 0.912,
+    "hotel": "art-hotel-novecento",
+    "score": 33,
+    "presence": 0.432,
+    "avgPosition": 4.7,
+    "directShare": 0.249,
+    "trend": 6,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.409,
+        "position": 4
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.372,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.595,
+        "position": 4
+      },
+      {
+        "engine": "claude",
+        "presence": 0.353,
+        "position": 6
+      }
+    ]
+  },
+  {
+    "city": "bologna",
+    "rank": 6,
+    "percentile": 0.895,
+    "hotel": "savhotel",
+    "score": 32,
+    "presence": 0.456,
+    "avgPosition": 5,
+    "directShare": 0.272,
+    "trend": 5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.393,
+        "position": 5
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.499,
+        "position": 5
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.368,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.563,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "city": "bologna",
+    "rank": 7,
+    "percentile": 0.877,
+    "hotel": "hotel-touring-bologna",
+    "score": 25,
+    "presence": 0.414,
+    "avgPosition": 5.7,
+    "directShare": 0.034,
+    "trend": 6,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.375,
+        "position": 6
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.471,
+        "position": 6
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.471,
+        "position": 5
+      },
+      {
+        "engine": "claude",
+        "presence": 0.34,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "bologna",
+    "rank": 8,
+    "percentile": 0.86,
+    "hotel": "aemilia-hotel",
+    "score": 19,
+    "presence": 0.349,
+    "avgPosition": null,
+    "directShare": 0.34,
+    "trend": 0,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.306,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.435,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.306,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.35,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "verona",
+    "rank": 1,
+    "percentile": 0.977,
+    "hotel": "due-torri-hotel",
+    "score": 89,
+    "presence": 0.839,
+    "avgPosition": 1.3,
+    "directShare": 0.424,
+    "trend": 5,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.767,
+        "position": 2
+      },
+      {
+        "engine": "gemini",
+        "presence": 1,
+        "position": 1
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.771,
+        "position": 1
+      },
+      {
+        "engine": "claude",
+        "presence": 0.82,
+        "position": 1
+      }
+    ]
+  },
+  {
+    "city": "verona",
+    "rank": 2,
+    "percentile": 0.955,
+    "hotel": "palazzo-victoria",
+    "score": 78,
+    "presence": 0.772,
+    "avgPosition": 2,
+    "directShare": 0,
+    "trend": 2,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.913,
+        "position": 1
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.799,
+        "position": 2
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.645,
+        "position": 3
+      },
+      {
+        "engine": "claude",
+        "presence": 0.73,
+        "position": 2
+      }
+    ]
+  },
+  {
+    "city": "verona",
+    "rank": 3,
+    "percentile": 0.932,
+    "hotel": "hotel-gabbia-doro",
+    "score": 53,
+    "presence": 0.628,
+    "avgPosition": 4,
+    "directShare": 0,
+    "trend": -4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.565,
+        "position": 6
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.654,
+        "position": 3
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.644,
+        "position": 4
+      },
+      {
+        "engine": "claude",
+        "presence": 0.649,
+        "position": 3
+      }
+    ]
+  },
+  {
+    "city": "verona",
+    "rank": 4,
+    "percentile": 0.909,
+    "hotel": "byblos-art-hotel",
+    "score": 49,
+    "presence": 0.598,
+    "avgPosition": 4.3,
+    "directShare": 0,
+    "trend": 2,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.59,
+        "position": 4
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.527,
+        "position": 5
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.715,
+        "position": 2
+      },
+      {
+        "engine": "claude",
+        "presence": 0.56,
+        "position": 6
+      }
+    ]
+  },
+  {
+    "city": "verona",
+    "rank": 5,
+    "percentile": 0.886,
+    "hotel": "hotel-accademia-verona",
+    "score": 42,
+    "presence": 0.555,
+    "avgPosition": 4.3,
+    "directShare": 0.307,
+    "trend": 6,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.571,
+        "position": 5
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.607,
+        "position": 4
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.408,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.636,
+        "position": 4
+      }
+    ]
+  },
+  {
+    "city": "verona",
+    "rank": 6,
+    "percentile": 0.864,
+    "hotel": "hotel-milano-spa-verona",
+    "score": 42,
+    "presence": 0.566,
+    "avgPosition": 4.8,
+    "directShare": 0,
+    "trend": -4,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.656,
+        "position": 3
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.432,
+        "position": 6
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.596,
+        "position": 5
+      },
+      {
+        "engine": "claude",
+        "presence": 0.579,
+        "position": 5
+      }
+    ]
+  },
+  {
+    "city": "verona",
+    "rank": 7,
+    "percentile": 0.841,
+    "hotel": "hotel-indigo-verona",
+    "score": 23,
+    "presence": 0.409,
+    "avgPosition": null,
+    "directShare": 0.264,
+    "trend": -1,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.459,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.426,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.423,
+        "position": null
+      },
+      {
+        "engine": "claude",
+        "presence": 0.329,
+        "position": null
+      }
+    ]
+  },
+  {
+    "city": "verona",
+    "rank": 8,
+    "percentile": 0.818,
+    "hotel": "escalus-luxury-suites",
+    "score": 23,
+    "presence": 0.425,
+    "avgPosition": 6,
+    "directShare": 0.162,
+    "trend": 6,
+    "engineStats": [
+      {
+        "engine": "chatgpt",
+        "presence": 0.267,
+        "position": null
+      },
+      {
+        "engine": "gemini",
+        "presence": 0.389,
+        "position": null
+      },
+      {
+        "engine": "perplexity",
+        "presence": 0.542,
+        "position": 6
+      },
+      {
+        "engine": "claude",
+        "presence": 0.503,
+        "position": null
+      }
+    ]
+  }
+]

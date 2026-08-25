@@ -1,0 +1,186 @@
+---
+import SiteShell from "../components/SiteShell.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  absolute,
+  LINKS,
+  methodologyPath,
+  observatoryPath,
+  pathFor,
+  type Locale,
+} from "../lib/config";
+import { messages } from "../lib/i18n";
+
+const { locale } = Astro.props as { locale: Locale };
+const alternateLocale = locale === "it" ? "en" : "it";
+const m = messages(locale);
+const landing = m.landing;
+const hrefs = [
+  { locale: "it" as const, href: "/it" },
+  { locale: "en" as const, href: "/en" },
+];
+
+// "Asimmetria intenzionale": composizioni 4/8, mai 6/6.
+const split = "shell grid gap-13 md:grid-cols-[4fr_8fr]";
+---
+
+<BaseLayout
+  title={landing.meta.title}
+  description={landing.meta.description}
+  locale={locale}
+  canonical={pathFor(locale)}
+  alternates={hrefs}
+>
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          name: "RankHotel.ai",
+          url: absolute(pathFor(locale)),
+          description: landing.meta.description,
+          parentOrganization: {
+            "@type": "Organization",
+            name: "RankWit AI",
+            url: LINKS.rankwit,
+          },
+        },
+        {
+          "@type": "FAQPage",
+          mainEntity: landing.faq.items.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: { "@type": "Answer", text: item.answer },
+          })),
+        },
+      ],
+    })}
+  />
+  <SiteShell locale={locale} alternatePath={pathFor(alternateLocale)}>
+    <section class="pt-18 pb-14">
+      <div
+        class="shell grid items-end gap-10 md:grid-cols-[minmax(0,1.25fr)_minmax(300px,0.75fr)]"
+      >
+        <div>
+          <p class="eyebrow">{landing.hero.eyebrow}</p>
+          <h1 class="mt-5 max-w-[900px]">{landing.hero.title}</h1>
+          <p class="lead mt-[22px] max-w-[680px]">{landing.hero.lead}</p>
+          <div class="mt-[30px] flex flex-wrap gap-3">
+            <a class="btn" href={LINKS.bookCall}>{landing.hero.cta}</a>
+            <a class="btn btn-secondary" href={observatoryPath(locale)}>
+              {landing["observatory-teaser"].cta}
+            </a>
+          </div>
+          <p class="mt-4 max-w-[720px] text-muted">
+            {landing.hero["cta-note"]}
+          </p>
+        </div>
+        <aside
+          class="rounded-(--radius-brand) border border-line bg-surface p-[22px]"
+          aria-label={landing.hero.models}
+        >
+          <p class="font-mono">{landing.hero.models}</p>
+          <div class="mt-7 grid gap-2 border-t border-line pt-5">
+            <span class="text-muted">
+              {locale === "it" ? "Query" : "Prompt"}
+            </span>
+            <strong>
+              {
+                locale === "it"
+                  ? "migliori hotel boutique a Firenze"
+                  : "best boutique hotels in Florence"
+              }
+            </strong>
+          </div>
+          <ol class="my-[22px] grid list-decimal gap-2.5 pl-[22px]">
+            <li>Hotel Lungarno</li>
+            <li>Portrait Firenze</li>
+            <li>Four Seasons Hotel Firenze</li>
+          </ol>
+          <small class="text-muted">{landing.hero.note}</small>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class={split}>
+        <h2>{landing.why.title}</h2>
+        <div class="grid content-start gap-5">
+          <p class="lead">{landing.why.body}</p>
+          <p>{landing.why.consequence}</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section bg-surface-muted">
+      <div class="shell">
+        <div class="grid max-w-[840px] gap-[18px]">
+          <h2>{landing["how-it-works"].title}</h2>
+          <p class="lead">{landing["how-it-works"].intro}</p>
+        </div>
+        <div class="mt-11 grid border-t border-line">
+          {
+            landing["how-it-works"].phases.map((phase, index) => (
+              <article class="grid items-baseline gap-2 border-b border-line py-5 md:grid-cols-[64px_180px_1fr] md:gap-6">
+                <span class="font-mono text-[0.82rem] font-bold text-accent-ink">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3>{phase.name}</h3>
+                <p>{phase.claim}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class={split}>
+        <div>
+          <p class="eyebrow">{landing["observatory-teaser"].eyebrow}</p>
+          <h2 class="mt-3">{landing["observatory-teaser"].title}</h2>
+        </div>
+        <div class="grid content-start justify-items-start gap-5">
+          <p class="lead">{landing["observatory-teaser"].body}</p>
+          <a class="btn" href={observatoryPath(locale)}>
+            {landing["observatory-teaser"].cta}
+          </a>
+          <a
+            class="font-mono text-[0.82rem] font-bold text-accent-ink"
+            href={methodologyPath(locale)}
+          >
+            {m.observatory.landing["methodology-link"]}
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section bg-surface-muted">
+      <div class="shell">
+        <h2>{landing.faq.title}</h2>
+        <div class="mt-[34px] grid gap-2.5">
+          {
+            landing.faq.items.map((item) => (
+              <details class="rounded-(--radius-brand) border border-line bg-surface p-[18px]">
+                <summary class="cursor-pointer font-bold">
+                  {item.question}
+                </summary>
+                <p class="mt-3.5 text-muted">{item.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell grid max-w-[900px] justify-items-start gap-[22px]">
+        <h2>{landing.closing.title}</h2>
+        <p class="lead">{landing.closing.body}</p>
+        <a class="btn" href={LINKS.bookCall}>{landing.closing.cta}</a>
+      </div>
+    </section>
+  </SiteShell>
+</BaseLayout>

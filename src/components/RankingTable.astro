@@ -1,0 +1,70 @@
+---
+import type { Locale } from "../lib/config";
+import { decimal, percent, signed } from "../lib/format";
+import type { RankedHotel } from "../lib/observatory";
+
+const { locale, labels, hotels } = Astro.props as {
+  locale: Locale;
+  labels: any;
+  hotels: RankedHotel[];
+};
+
+// "I colori funzionali sono solo funzionali": verde e rosso solo come
+// segnale dati. Le varianti -ink reggono il testo su fondo chiaro.
+const trend =
+  "inline-flex min-w-[42px] justify-center rounded-full px-2 py-0.5 font-mono text-[0.82rem] font-bold";
+---
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>{labels.ranking.position}</th>
+        <th>{labels.ranking.hotel}</th>
+        <th>{labels.ranking.presence}</th>
+        <th>{labels.ranking["avg-position"]}</th>
+        <th>{labels.ranking.score}</th>
+        <th>{labels.ranking.trend}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        hotels.map(({ hotel, stats }) => (
+          <tr>
+            <td class="font-mono">{stats.rank}</td>
+            <td>
+              <strong>{hotel.name}</strong>
+              <br />
+              <small class="text-muted">{hotel.area}</small>
+            </td>
+            <td>
+              <span class="font-mono">{percent(locale, stats.presence)}</span>
+              <br />
+              <small class="text-muted">
+                {labels.ranking.direct.replace(
+                  "{share}",
+                  percent(locale, stats.directShare),
+                )}
+              </small>
+            </td>
+            <td class="font-mono">{decimal(locale, stats.avgPosition)}</td>
+            <td class="font-mono">
+              <strong>{stats.score}</strong>
+            </td>
+            <td>
+              <span
+                class={
+                  stats.trend >= 0
+                    ? `${trend} bg-success/15 text-success-ink`
+                    : `${trend} bg-danger/15 text-danger-ink`
+                }
+              >
+                {signed(stats.trend)}
+              </span>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

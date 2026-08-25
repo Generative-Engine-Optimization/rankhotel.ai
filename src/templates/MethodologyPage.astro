@@ -1,0 +1,127 @@
+---
+import SiteShell from "../components/SiteShell.astro";
+import PromptList from "../components/PromptList.astro";
+import WipNotice from "../components/WipNotice.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { methodologyPath, observatoryPath, type Locale } from "../lib/config";
+import { number } from "../lib/format";
+import { interpolate, messages } from "../lib/i18n";
+import {
+  ENGINES,
+  MENTION_WEIGHT,
+  POSITION_WEIGHT,
+  WINDOW_DAYS,
+  listPrompts,
+} from "../lib/observatory";
+
+const { locale } = Astro.props as { locale: Locale };
+const alternateLocale = locale === "it" ? "en" : "it";
+const t = messages(locale).observatory;
+const prompts = listPrompts();
+const itPrompts = prompts.filter((prompt) => prompt.lang === "it");
+const enPrompts = prompts.filter((prompt) => prompt.lang === "en");
+const hrefs = [
+  { locale: "it" as const, href: methodologyPath("it") },
+  { locale: "en" as const, href: methodologyPath("en") },
+];
+
+const methodCard = "card grid gap-4 [&>h2]:text-[clamp(1.6rem,3vw,2.4rem)]";
+const cards = [
+  {
+    n: "01",
+    title: interpolate(t.methodology.models.title, { count: ENGINES.length }),
+    body: interpolate(t.methodology.models.body, { list: ENGINES.join(", ") }),
+  },
+  {
+    n: "02",
+    title: interpolate(t.methodology.prompts.title, { count: prompts.length }),
+    body: interpolate(t.methodology.prompts.body, { count: prompts.length }),
+  },
+  {
+    n: "03",
+    title: t.methodology.cadence.title,
+    body: interpolate(t.methodology.cadence.body, {
+      prompts: prompts.length,
+      models: ENGINES.length,
+      responses: number(locale, prompts.length * ENGINES.length),
+      days: WINDOW_DAYS,
+    }),
+  },
+  {
+    n: "04",
+    title: t.methodology.score.title,
+    body: interpolate(t.methodology.score.body, {
+      mentionWeight: Math.round(MENTION_WEIGHT * 100),
+      positionWeight: Math.round(POSITION_WEIGHT * 100),
+    }),
+  },
+];
+---
+
+<BaseLayout
+  title={t.meta["methodology-title"]}
+  description={t.meta["methodology-description"]}
+  locale={locale}
+  canonical={methodologyPath(locale)}
+  alternates={hrefs}
+  noindex
+>
+  <SiteShell locale={locale} alternatePath={methodologyPath(alternateLocale)}>
+    <WipNotice locale={locale} />
+
+    <section class="border-b border-line pt-[70px] pb-14">
+      <div class="shell">
+        <a
+          class="font-mono font-bold text-accent-ink"
+          href={observatoryPath(locale)}
+        >
+          {t.city.back}
+        </a>
+        <h1 class="mt-[18px]">{t.methodology.title}</h1>
+        <p class="lead mt-5 max-w-[760px]">{t.methodology.lead}</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell grid gap-4 md:grid-cols-2">
+        {
+          cards.map((card) => (
+            <article class={methodCard}>
+              <p class="eyebrow">{card.n}</p>
+              <h2>{card.title}</h2>
+              <p class="text-muted">{card.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="section bg-surface-muted">
+      <div class="shell grid gap-4 md:grid-cols-2">
+        <div>
+          <h2 class="mb-[22px]">{t.methodology.prompts["it-title"]}</h2>
+          <PromptList
+            prompts={itPrompts}
+            placeholder={t.methodology.prompts["city-placeholder"]}
+          />
+        </div>
+        <div>
+          <h2 class="mb-[22px]">{t.methodology.prompts["en-title"]}</h2>
+          <PromptList
+            prompts={enPrompts}
+            placeholder={t.methodology.prompts["city-placeholder"]}
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell grid max-w-[860px] gap-[22px]">
+        <h2>{t.methodology.fairness.title}</h2>
+        <ul class="grid list-disc gap-3 pl-[22px] text-muted">
+          {t.methodology.fairness.items.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </section>
+  </SiteShell>
+</BaseLayout>

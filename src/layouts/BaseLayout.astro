@@ -1,0 +1,58 @@
+---
+import "../styles/global.css";
+import { absolute, BRAND, type Locale } from "../lib/config";
+
+type Alternate = { locale: Locale; href: string };
+
+const {
+  title,
+  description,
+  locale,
+  canonical,
+  alternates = [],
+  noindex = false,
+} = Astro.props as {
+  title: string;
+  description: string;
+  locale: Locale;
+  canonical: string;
+  alternates?: Alternate[];
+  noindex?: boolean;
+};
+
+const canonicalUrl = absolute(canonical);
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+    {
+      alternates.map((item) => (
+        <link
+          rel="alternate"
+          hreflang={item.locale}
+          href={absolute(item.href)}
+        />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={absolute("/it")} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={BRAND} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{title}</title>
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "brand": "RankHotel.ai",
+  "nav": {
+    "home": "Home",
+    "how-it-works": "How it works",
+    "faq": "FAQ",
+    "observatory": "Observatory",
+    "methodology": "Methodology"
+  },
+  "cta": {
+    "book-call": "Book a demo",
+    "how-it-works": "See how it works"
+  },
+  "footer": {
+    "tagline": "Organic growth and AI search visibility for hotels and resorts.",
+    "by": "A RankWit AI project",
+    "observatory": "Observatory",
+    "rights": "All rights reserved."
+  },
+  "locale": {
+    "label": "Language",
+    "it": "Italiano",
+    "en": "English"
+  }
+}

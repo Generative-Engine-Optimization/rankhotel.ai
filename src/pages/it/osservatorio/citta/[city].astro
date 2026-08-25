@@ -1,0 +1,16 @@
+---
+import CityPage from "../../../../templates/CityPage.astro";
+import {
+  findCity,
+  localizedCityPaths,
+} from "../../../../lib/observatory";
+
+export function getStaticPaths() {
+  return localizedCityPaths("it");
+}
+
+const city = findCity("it", Astro.params.city ?? "");
+if (!city) return Astro.redirect("/it/osservatorio");
+---
+
+<CityPage locale="it" city={city} />

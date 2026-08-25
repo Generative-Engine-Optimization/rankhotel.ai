@@ -1,0 +1,92 @@
+---
+import {
+  BRAND,
+  LINKS,
+  methodologyPath,
+  observatoryPath,
+  pathFor,
+  type Locale,
+} from "../lib/config";
+import { messages } from "../lib/i18n";
+
+const { locale, alternatePath } = Astro.props as {
+  locale: Locale;
+  alternatePath: string;
+};
+
+const m = messages(locale);
+
+const navLink = "text-[0.92rem] text-muted hover:text-ink whitespace-nowrap";
+const brandLink = "inline-flex items-center gap-2.5 font-extrabold";
+---
+
+<header
+  class="sticky top-0 z-10 border-b border-line bg-paper/90 backdrop-blur-md"
+>
+  <div
+    class="shell flex flex-wrap items-center justify-between gap-x-3 gap-y-2.5 py-3 max-md:pb-2 md:min-h-[72px] md:flex-nowrap md:gap-x-6 md:py-0"
+  >
+    <a class={`${brandLink} mr-auto`} href={pathFor(locale)} aria-label={BRAND}>
+      <img src="/assets/logo-mark.svg" alt="" width="28" height="28" />
+      <span>{BRAND}</span>
+    </a>
+    <nav
+      aria-label="Primary"
+      class="order-3 flex w-full items-center gap-4 overflow-x-auto [scrollbar-width:none] md:order-none md:w-auto md:gap-[18px] md:overflow-visible [&::-webkit-scrollbar]:hidden"
+    >
+      <a class={navLink} href={pathFor(locale)}>{m.common.nav.home}</a>
+      <a class={navLink} href={`${pathFor(locale)}#how-it-works`}>
+        {m.common.nav["how-it-works"]}
+      </a>
+      <a class={navLink} href={observatoryPath(locale)}>
+        {m.common.nav.observatory}
+      </a>
+      <a class={navLink} href={methodologyPath(locale)}>
+        {m.common.nav.methodology}
+      </a>
+      <a class={navLink} href={`${pathFor(locale)}#faq`}>{m.common.nav.faq}</a>
+    </nav>
+    <div class="flex items-center gap-3 md:gap-[18px]">
+      <a
+        class={`${navLink} font-mono font-bold`}
+        href={alternatePath}
+        aria-label={m.common.locale.label}
+      >
+        {locale === "it" ? "EN" : "IT"}
+      </a>
+      <a
+        class="btn max-md:min-h-9 max-md:px-3 max-md:text-[0.86rem]"
+        href={LINKS.bookCall}
+      >
+        {m.common.cta["book-call"]}
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <slot />
+</main>
+
+<footer class="border-t border-line py-[34px]">
+  <div
+    class="shell flex flex-col items-start justify-between gap-6 md:flex-row md:items-center"
+  >
+    <div>
+      <a class={brandLink} href={pathFor(locale)}>
+        <img src="/assets/logo-mark.svg" alt="" width="28" height="28" />
+        <span>{BRAND}</span>
+      </a>
+      <p class="mt-2.5 max-w-[440px] text-muted">{m.common.footer.tagline}</p>
+    </div>
+    <div
+      class="flex flex-col items-start gap-2.5 md:flex-row md:items-center md:gap-[18px]"
+    >
+      <a class={navLink} href={observatoryPath(locale)}>
+        {m.common.footer.observatory}
+      </a>
+      <a class={navLink} href={`mailto:${LINKS.email}`}>{LINKS.email}</a>
+      <a class={navLink} href={LINKS.rankwit}>{m.common.footer.by}</a>
+    </div>
+  </div>
+</footer>

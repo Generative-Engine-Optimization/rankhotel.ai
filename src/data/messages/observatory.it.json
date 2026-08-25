@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "landing-title": "Osservatorio della visibilità AI degli hotel",
+    "landing-description": "Quali hotel raccomandano davvero ChatGPT, Gemini, Perplexity e Claude, città per città. Metodologia pubblica, dati gratuiti.",
+    "methodology-title": "Metodologia",
+    "methodology-description": "I prompt, i modelli, la cadenza e il calcolo dell'AI Visibility Score dell'osservatorio RankHotel.ai.",
+    "city-title": "Visibilità AI degli hotel a {city}",
+    "city-description": "La classifica degli hotel di {city} più raccomandati dai modelli AI, le fonti che l'AI cita e la fetta di traffico che finisce sulle OTA."
+  },
+  "wip": {
+    "title": "Dati in costruzione",
+    "body": "Le classifiche qui sotto sono un campione dimostrativo, generato per mostrare come sarà l'osservatorio. Non sono ancora misurate sui modelli: la raccolta giornaliera è in fase di attivazione. Per questo le pagine dell'osservatorio non sono indicizzate."
+  },
+  "landing": {
+    "eyebrow": "Osservatorio",
+    "title": "Quali hotel raccomanda davvero l'AI, città per città",
+    "lead": "Un viaggiatore che chiede «migliori hotel a Firenze» riceve una risposta con pochi nomi dentro. Quei nomi valgono prenotazioni. Misuriamo chi ci finisce, quanto spesso e in che posizione, e pubblichiamo tutto senza paywall.",
+    "facts": "{prompts} prompt · {engines} modelli · {hotels} hotel",
+    "methodology-link": "come misuriamo",
+    "cities": {
+      "title": "Le città monitorate",
+      "body": "Si parte dalle grandi città italiane. Apri una città per vedere la classifica, le fonti che l'AI cita e quanto pesano le OTA."
+    },
+    "example": {
+      "title": "Un esempio: {city}",
+      "body": "Così si legge una pagina-città: prima chi viene consigliato, poi da dove l'AI prende le informazioni.",
+      "link": "Apri la pagina di {city}"
+    },
+    "italy": {
+      "title": "Il quadro italiano",
+      "body": "Fra città si confronta quello che è confrontabile: quanto pesano le OTA (media {ota}), quanto i modelli sono d'accordo, quanto la classifica è concentrata sui primi tre.",
+      "leaderboard-title": "I più visibili d'Italia",
+      "leaderboard-body": "Ordinati per posto nella propria città, non per score assoluto: un 90 a Roma e un 90 a Verona non sono la stessa cosa."
+    }
+  },
+  "cities": {
+    "hotels": "{count} hotel monitorati"
+  },
+  "ranking": {
+    "position": "#",
+    "hotel": "Hotel",
+    "presence": "Presenza",
+    "avg-position": "Posizione",
+    "score": "Score",
+    "trend": "Trend",
+    "direct": "{share} di link al sito",
+    "not-cited": "—"
+  },
+  "citations": {
+    "kind": {
+      "direct": "Sito dell'hotel",
+      "aggregator": "OTA",
+      "review": "Recensioni",
+      "external": "Guide e media"
+    },
+    "top-sources": "Fonti più citate"
+  },
+  "co-mentions": {
+    "legend": "Numeri in percentuale di risposte: la coppia più frequente esce insieme nel {share} dei casi."
+  },
+  "intents": {
+    "col-intent": "Tipo di domanda",
+    "col-prompts": "Prompt",
+    "col-cited": "Citato",
+    "col-position": "Posizione",
+    "col-trend": "Trend",
+    "kind": {
+      "discovery": "Scoperta",
+      "informational": "Informativa",
+      "comparison": "Confronto",
+      "transactional": "Prenotazione"
+    },
+    "example": {
+      "discovery": "«migliori hotel a…», «dove dormire a…»",
+      "informational": "«hotel con spa», «hotel per famiglie»",
+      "comparison": "«meglio centro o fuori»",
+      "transactional": "«dove prenotare al prezzo migliore»"
+    }
+  },
+  "movements": {
+    "kind": {
+      "entered": "{hotel} è entrato in classifica: il mese scorso nessun modello lo nominava.",
+      "overtook": "{hotel} ha superato {other} di {positions, plural, one {una posizione} other {# posizioni}}.",
+      "left": "{hotel} è uscito dai primi posti: {positions, plural, one {una posizione persa} other {# posizioni perse}}."
+    }
+  },
+  "italy": {
+    "cities": {
+      "col-city": "Città",
+      "col-hotels": "Hotel",
+      "col-ota": "Quota OTA",
+      "col-direct": "Link diretti",
+      "col-agreement": "Accordo",
+      "col-concentration": "Top 3"
+    },
+    "leaderboard": {
+      "top": "top {share} della sua città"
+    }
+  },
+  "city": {
+    "title": "Visibilità AI degli hotel a {city}",
+    "lead": "Chi viene raccomandato dai modelli AI a chi cerca un hotel a {city}, da quali fonti, e quanto di quel traffico finisce sulle OTA.",
+    "back": "Tutte le città",
+    "metrics": {
+      "responses": "Risposte analizzate",
+      "responses-hint": "finestra mobile di {days} giorni",
+      "ota": "Quota OTA",
+      "ota-hint": "citazioni che portano a Booking & simili",
+      "agreement": "Accordo tra modelli",
+      "agreement-hint": "quanto le top 5 dei modelli si somigliano",
+      "updated": "Aggiornato al"
+    },
+    "ranking": {
+      "title": "Chi consiglia l'AI",
+      "body": "Lo score combina quanto spesso un hotel viene citato e in che posizione. «Presenza» è la quota di risposte in cui compare."
+    },
+    "citations": {
+      "title": "Da dove l'AI prende le informazioni",
+      "body": "Ogni risposta cita delle fonti. Qui il {ota} finisce alle OTA: quella è la fetta di prenotazioni che passa da un intermediario invece che dal sito dell'hotel."
+    },
+    "co-mentions": {
+      "title": "Chi esce insieme a chi",
+      "body": "Quando l'AI nomina un hotel, quali altri nomina nella stessa risposta. È la mappa reale dei competitor: non quelli che pensi tu, quelli che il modello ti accosta."
+    },
+    "intents": {
+      "title": "Le domande che contano",
+      "body": "Non tutte le domande valgono uguale. Chi cerca dove prenotare è più vicino alla carta di credito di chi cerca idee."
+    },
+    "movements": {
+      "title": "Cosa è cambiato",
+      "body": "I movimenti dell'ultima finestra: chi è entrato, chi ha superato chi, chi è scivolato fuori."
+    }
+  },
+  "methodology": {
+    "title": "Metodologia",
+    "lead": "La trasparenza è parte del prodotto. Ecco esattamente come produciamo i dati dell'osservatorio.",
+    "models": {
+      "title": "I {count} modelli",
+      "body": "Interroghiamo {list}. Claude è incluso di default: molti strumenti lo trattano come opzione a richiesta, noi no."
+    },
+    "prompts": {
+      "title": "I {count} prompt",
+      "body": "Per ogni città poniamo gli stessi {count} prompt, metà in italiano e metà in inglese, ogni giorno. Coprono l'intero ventaglio di scoperta: dalla query generica alle nicchie ad alto intento. Nessun prompt contiene il nome di un hotel — misuriamo cosa il modello sceglie spontaneamente.",
+      "it-title": "Prompt in italiano",
+      "en-title": "Prompt in inglese",
+      "city-placeholder": "[città]"
+    },
+    "cadence": {
+      "title": "La cadenza",
+      "body": "Ogni prompt viene posto una volta al giorno a ciascun modello: {prompts} × {models} = {responses} risposte al giorno per città. Le metriche pubblicate aggregano una finestra mobile di {days} giorni. Lo storico giornaliero non è ricostruibile a posteriori: è ciò che rende l'osservatorio unico nel tempo."
+    },
+    "score": {
+      "title": "L'AI Visibility Score",
+      "body": "Per ogni hotel combiniamo due segnali: la frequenza di menzione (in quante risposte compare) e la posizione media (quanto in alto viene citato). Lo score è normalizzato 0–100 e pesa la frequenza al {mentionWeight}% e la posizione al {positionWeight}%. Pubblichiamo anche l'accordo tra modelli e la quota di link diretti vs OTA."
+    },
+    "fairness": {
+      "title": "Trasparenza e correttezza",
+      "items": [
+        "Le classifiche riflettono le risposte dei modelli, non un giudizio nostro sugli hotel.",
+        "I dati sono liberamente citabili con attribuzione a RankHotel.ai.",
+        "Un hotel può richiedere correzioni o l'esclusione scrivendo a hello@rankhotel.ai."
+      ]
+    }
+  }
+}
