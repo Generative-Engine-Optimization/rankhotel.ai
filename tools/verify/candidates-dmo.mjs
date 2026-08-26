@@ -1,0 +1,127 @@
+// Candidati di sito ufficiale ed editoriale per ogni destinazione.
+//
+// Due sorgenti, entrambe da verificare prima di entrare nel dataset:
+//   KNOWN    domini che ho ragione di credere esistano e appartengano a un
+//            soggetto del territorio;
+//   PATTERN  forme ricorrenti dei siti turistici italiani, tentate a tappeto.
+//
+// Nessuno dei due è una prova. La prova la produce tools/verify/check-domains.mjs.
+
+export const KNOWN = {
+  // --- mare
+  "costiera-amalfitana": ["amalficoast.com", "costieraamalfitana.it", "amalfitouristoffice.it"],
+  salento: ["viaggiareinpuglia.it", "salento.it", "vivisalento.it"],
+  "cinque-terre": ["parconazionale5terre.it", "cinqueterre.eu.com", "cinqueterre.it"],
+  "costa-smeralda": ["consorziocostasmeralda.com", "portocervo.com"],
+  "isola-elba": ["visitelba.info", "infoelba.it", "elbalink.it"],
+  gargano: ["parcogargano.it", "viestelive.com", "gargano.it"],
+  "riviera-romagnola": ["visitrimini.com", "riccione.it", "cesenatico.it", "emiliaromagnaturismo.it"],
+  taormina: ["comune.taormina.me.it", "taormina.it", "visitsicily.info"],
+  "golfo-orosei": ["dorgali.it", "sardegnaturismo.it"],
+  "riviera-ponente": ["visitrivieradeifiori.it", "sanremo.it", "alassio.eu"],
+  capri: ["capritourism.com", "cittadicapri.it", "capri.it"],
+  "isole-eolie": ["comunelipari.it", "eolie.it"],
+  versilia: ["versilia.it", "comune.forte-dei-marmi.lu.it", "visitviareggio.it"],
+  "riviera-conero": ["parcodelconero.eu", "rivieradelconero.info", "letsmarche.it"],
+  "ischia-procida": ["infoischiaprocida.it", "ischia.it", "procida.info"],
+  trapanese: ["sanvitolocapo.info", "riservazingaro.it", "comune.sanvitolocapo.tp.it"],
+  "isole-tremiti": ["isoletremiti.it", "comune.isoletremiti.fg.it"],
+  "sud-sardegna": ["sardegnaturismo.it", "villasimiusweb.com"],
+  cilento: ["cilentoediano.it", "cilento.it", "visitcampania.it"],
+  "costa-molisana": ["visitmolise.eu", "comune.termoli.cb.it"],
+
+  // --- montagna e parchi
+  dolomiti: ["dolomiti.it", "dolomitiunesco.info", "visittrentino.info"],
+  cortina: ["cortinadolomiti.eu", "dolomiti.org", "comune.cortinadampezzo.bl.it"],
+  "alta-badia": ["altabadia.org"],
+  "val-gardena": ["valgardena.it"],
+  "madonna-campiglio": ["campigliodolomiti.it", "visittrentino.info"],
+  cervinia: ["cervinia.it", "lovevda.it", "visitmatterhorn.com"],
+  courmayeur: ["courmayeurmontblanc.it", "lovevda.it"],
+  "gran-paradiso": ["pngp.it", "granparadisofoundation.it"],
+  "parco-abruzzo": ["parcoabruzzo.it", "abruzzoturismo.it"],
+  "gran-sasso": ["gransassolagapark.it", "abruzzoturismo.it"],
+  stelvio: ["stelviopark.bz.it", "bormio.eu", "parcostelviolombardia.it"],
+  "val-di-fassa": ["fassa.com", "visittrentino.info"],
+  sila: ["parcosila.it", "calabriastraordinaria.it"],
+  pollino: ["parcopollino.gov.it", "parcopollino.it"],
+  sibillini: ["sibillini.net", "letsmarche.it"],
+  "val-pusteria": ["hochpustertal.info", "kronplatz.com", "brunico.info"],
+  "alpe-siusi": ["seiseralm.it", "alpedisiusi.info"],
+  livigno: ["livigno.eu", "bormio.eu"],
+  casentino: ["parcoforestecasentinesi.it", "casentino.toscana.it"],
+  etna: ["parcoetna.it", "etnaportal.it", "visitsicily.info"],
+
+  // --- enogastronomia
+  langhe: ["visitlmr.it", "langhe.net", "langheroero.it"],
+  chianti: ["chianticlassico.com", "visitchianti.com", "visittuscany.com"],
+  franciacorta: ["franciacorta.net", "visitlakeiseo.info", "stradadelfranciacorta.it"],
+  valpolicella: ["consorziovalpolicella.it", "valpolicellaweb.it"],
+  montalcino: ["consorziobrunellodimontalcino.it", "prolocomontalcino.com"],
+  montepulciano: ["consorziovinonobile.it", "prolocomontepulciano.it"],
+  modena: ["visitmodena.it", "motorvalley.it"],
+  "parma-food-valley": ["turismo.comune.parma.it", "parmawelcome.it", "emiliaromagnaturismo.it"],
+  valdobbiadene: ["prosecco.it", "coneglianovaldobbiadene.it", "visitconegliano.it"],
+  bolgheri: ["bolgheridoc.com", "visitcostadeglietruschi.it"],
+  "strada-vino-alto-adige": ["suedtiroler-weinstrasse.it", "suedtirol.info"],
+  collio: ["collio.it", "turismofvg.it"],
+  "etna-doc": ["consorzioetnadoc.com", "stradadelvinodelletna.it"],
+  vulture: ["basilicataturistica.it", "stradadelvinovulture.it"],
+  monferrato: ["monferrato.org", "visitlmr.it"],
+  roero: ["visitlmr.it", "roero.it"],
+  maremma: ["lamaremma.info", "parco-maremma.it", "visittuscany.com"],
+  "primitivo-manduria": ["consorziotutelaprimitivo.com", "viaggiareinpuglia.it"],
+  irpinia: ["irpinia.info", "provincia.avellino.it"],
+  montefalco: ["stradadelsagrantino.it", "comune.montefalco.pg.it", "umbriatourism.it"],
+
+  // --- unesco
+  roma: ["turismoroma.it", "060608.it"],
+  firenze: ["feelflorence.it", "firenzeturismo.it"],
+  venezia: ["veneziaunica.it", "veneziaevents.com"],
+  napoli: ["comune.napoli.it", "visitnaples.eu"],
+  matera: ["materawelcome.it", "basilicataturistica.it"],
+  "val-orcia": ["parcodellavaldorcia.com", "visittuscany.com"],
+  "pompei-ercolano": ["pompeiisites.org", "ercolano.beniculturali.it"],
+  "val-di-noto": ["comune.noto.sr.it", "distrettoturisticosudest.it"],
+  "ferrara-delta-po": ["ferraraterraeacqua.it", "parcodeltapo.it"],
+  aquileia: ["fondazioneaquileia.it", "turismofvg.it"],
+  urbino: ["urbinoculturaturismo.it", "letsmarche.it"],
+  siena: ["terredisiena.it", "comune.siena.it"],
+  assisi: ["visit-assisi.it", "assisiwelcome.it", "umbriatourism.it"],
+  ravenna: ["turismo.ra.it", "ravennamosaici.it"],
+  alberobello: ["comune.alberobello.ba.it", "viaggiareinpuglia.it"],
+  agrigento: ["parcovalledeitempli.it", "visitsicily.info"],
+  verona: ["veronatouristoffice.it", "visitverona.it"],
+  "sacri-monti": ["sacrimonti.org", "sacromontedivarallo.org"],
+  "mantova-sabbioneta": ["turismo.mantova.it", "in-lombardia.it"],
+  tivoli: ["villaadriana.beniculturali.it", "visittivoli.eu"],
+
+  // --- borghi
+  "civita-bagnoregio": ["civitadibagnoregio.cloud", "comunebagnoregio.it"],
+  "san-gimignano": ["sangimignano.com", "comune.sangimignano.si.it"],
+  castelmezzano: ["comune.castelmezzano.pz.it", "volodellangelo.com"],
+  ostuni: ["comune.ostuni.br.it", "viaggiareinpuglia.it"],
+  bosa: ["comune.bosa.or.it", "sardegnaturismo.it"],
+  spello: ["comune.spello.pg.it", "prospello.it"],
+  tropea: ["comune.tropea.vv.it", "calabriastraordinaria.it"],
+  vipiteno: ["sterzing.com", "vipiteno.com"],
+  orvieto: ["inorvieto.it", "comune.orvieto.tr.it"],
+  portovenere: ["comune.portovenere.sp.it", "portovenere.it"],
+  scanno: ["comune.scanno.aq.it", "abruzzoturismo.it"],
+  pitigliano: ["comune.pitigliano.gr.it", "visittuscany.com"],
+  gradara: ["gradara.org", "comune.gradara.pu.it"],
+  castelsardo: ["comune.castelsardo.ss.it", "sardegnaturismo.it"],
+  erice: ["comune.erice.tp.it", "fondazioneerice.it"],
+  dozza: ["comune.dozza.bo.it", "emiliaromagnaturismo.it"],
+  varenna: ["comune.varenna.lc.it", "lakecomo.is", "in-lombardia.it"],
+  apricale: ["apricale.org", "comune.apricale.im.it"],
+  cividale: ["cividale.net", "turismofvg.it"],
+  sperlonga: ["comune.sperlonga.lt.it", "visitlazio.com"],
+};
+
+// Forme ricorrenti dei siti turistici italiani, tentate dove i noti non bastano.
+export const PATTERNS = (slug) => [
+  `visit${slug.replace(/-/g, "")}.it`,
+  `${slug.replace(/-/g, "")}.it`,
+  `${slug.replace(/-/g, "")}turismo.it`,
+];

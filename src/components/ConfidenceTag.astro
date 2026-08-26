@@ -1,0 +1,36 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import Icon from "./Icon.astro";
+
+// Quanto sappiamo di una struttura. Su un sito che misura la visibilità, la
+// differenza fra "questo hotel esiste e l'abbiamo verificato" e "questo nome
+// è generato" non è una nota a piè di pagina: cambia cosa vale la riga.
+const { locale, confidence, size = "md" } = Astro.props as {
+  locale: Locale;
+  confidence: string;
+  size?: "sm" | "md";
+};
+
+const t = messages(locale).observatory.hotelsPage;
+const label = t.confidence[confidence] ?? confidence;
+const help = t["confidence-help"][confidence] ?? "";
+
+const style = {
+  verified: { tone: "text-success-ink border-success-ink/35 bg-success/10", icon: "check" },
+  "registry-web": { tone: "text-accent-ink border-accent/35 bg-accent/8", icon: "column" },
+  registry: { tone: "text-accent-ink border-accent/25", icon: "column" },
+  chain: { tone: "text-muted border-line", icon: "layers" },
+  guarded: { tone: "text-gold-ink border-gold-ink/30 bg-gold/10", icon: "robot" },
+  listed: { tone: "text-muted border-line", icon: "info" },
+  generated: { tone: "text-faint border-line", icon: "minus" },
+}[confidence] ?? { tone: "text-faint border-line", icon: "info" };
+---
+
+<span
+  class={`inline-flex shrink-0 items-center gap-1 rounded-(--radius-brand) border px-1.5 py-0.5 ${style.tone} ${size === "sm" ? "text-[0.7rem]" : "text-[0.76rem]"}`}
+  title={help}
+>
+  <Icon name={style.icon} size={11} />
+  {label}
+</span>

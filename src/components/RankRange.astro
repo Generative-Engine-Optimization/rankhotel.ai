@@ -1,0 +1,29 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import { interpolate } from "../lib/i18n";
+
+// Posizione dichiarata con il suo intervallo reale. Stampare "38ª" accanto a
+// una banda di ±3 è la contraddizione che questo osservatorio esiste per non
+// commettere: qui la si evita dicendo esplicitamente quanto largo sia il dubbio.
+const { locale, rank, range, total } = Astro.props as {
+  locale: Locale;
+  rank: number;
+  range: [number, number];
+  total: number;
+};
+
+const t = messages(locale).observatory;
+const exact = range[0] === range[1];
+---
+
+<span class="grid gap-0.5">
+  <span class="num">{interpolate(t.rank.position, { n: rank, total })}</span>
+  <span class="text-[0.78rem] text-faint">
+    {
+      exact
+        ? t.rank.exact
+        : interpolate(t.rank.range, { from: range[0], to: range[1] })
+    }
+  </span>
+</span>

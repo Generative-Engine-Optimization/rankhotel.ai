@@ -1,0 +1,173 @@
+---
+import CtaBlock from "../components/CtaBlock.astro";
+import DestinationCard from "../components/DestinationCard.astro";
+import DestinationTable from "../components/DestinationTable.astro";
+import EngineCards from "../components/EngineCards.astro";
+import Icon from "../components/Icon.astro";
+import MapIsland from "../components/MapIsland.astro";
+import PageHero from "../components/PageHero.astro";
+import Panel from "../components/Panel.astro";
+import ScoreBreakdown from "../components/ScoreBreakdown.astro";
+import Section from "../components/Section.astro";
+import StatGrid from "../components/StatGrid.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  LINKS,
+  categoryPath,
+  destinationPath,
+  observatoryPath,
+  otherLocale,
+  queriesPath,
+  tagPath,
+  type Locale,
+} from "../lib/config";
+import { compact, decimal, number, signed } from "../lib/format";
+import { interpolate, messages } from "../lib/i18n";
+import { ENGINES, NATIONAL, destinationsOf, taggedWith, type Category } from "../lib/observatory";
+import { itemListSchema } from "../lib/schema";
+
+const { locale, category } = Astro.props as { locale: Locale; category: Category };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+
+const ranked = destinationsOf(category.key);
+const alsoTagged = taggedWith(category.key).filter(
+  (destination) => destination.category !== category.key,
+);
+
+const title = interpolate(t.meta["category-title"], { category: category.name[locale] });
+const description = interpolate(t.meta["category-description"], {
+  category: category.name[locale],
+});
+const schema = itemListSchema(
+  locale,
+  title,
+  ranked.map((destination) => ({
+    name: destination.name[locale],
+    url: destinationPath(locale, destination.slug[locale]),
+  })),
+);
+const delta = Math.round((category.score - NATIONAL.score) * 10) / 10;
+---
+
+<ObsLayout
+  locale={locale}
+  title={title}
+  description={description}
+  path={categoryPath(locale, category.slug[locale])}
+  altPath={categoryPath(other, category.slug[other])}
+  schema={schema}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={t.nav.categories}
+    icon={category.icon}
+    cat={category.key}
+    title={category.name[locale]}
+    lead={category.lead[locale]}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: category.short[locale] },
+    ]}
+  >
+    <StatGrid
+      locale={locale}
+      columns={4}
+      size="sm"
+      items={[
+        {
+          label: t.score.label,
+          value: decimal(locale, category.score, 0),
+          hint: `${signed(delta, 1)} ${t.engines["vs-average"]}`,
+        },
+        { label: t.stats.destinations, value: String(category.size) },
+        { label: t.stats.hotels, value: number(locale, category.hotelsTracked) },
+        {
+          label: t.table.visitors,
+          value: compact(locale, category.visitors * 1000),
+        },
+      ]}
+    />
+    <div class="flex flex-wrap gap-2.5">
+      <a class="btn gap-2" href="#classifica">
+        {t.hero["cta-explore"]}
+        <Icon name="arrowDown" size={17} />
+      </a>
+      <a class="btn btn-secondary gap-2" href={tagPath(locale, category.slug[locale])}>
+        <Icon name="tag" size={16} />
+        {t.tags.title}
+      </a>
+    </div>
+  </PageHero>
+
+  <Section
+    locale={locale}
+    id="fattori"
+    title={t.factors.title}
+    lead={t.factors.lead}
+    info={t.explain.band}
+  >
+    <div class="grid items-start gap-[34px] lg:grid-cols-[5fr_7fr]">
+      <Panel locale={locale}>
+        <ScoreBreakdown locale={locale} factors={category.factors} compact />
+      </Panel>
+      <div class="grid gap-3.5">
+        <p class="text-muted">{t.engines.lead}</p>
+        <EngineCards
+          locale={locale}
+          byEngine={Object.fromEntries(
+            ENGINES.map((engine) => [engine, { score: category.byEngine[engine] }]),
+          )}
+          overall={category.score}
+        />
+      </div>
+    </div>
+  </Section>
+
+  <Section
+    locale={locale}
+    id="classifica"
+    title={t.category["ranking-title"]}
+  >
+    <DestinationTable
+      locale={locale}
+      destinations={ranked}
+      id={`ranking-${category.key}`}
+    />
+  </Section>
+
+  <Section locale={locale} id="mappa" title={t.map.title} lead={t.map.lead}>
+    <MapIsland locale={locale} destinations={ranked} height={440} showFilters={false} />
+  </Section>
+
+  {
+    alsoTagged.length > 0 && (
+      <Section
+        locale={locale}
+        id="tema"
+        title={t.category["tagged-title"]}
+        lead={t.category["tagged-lead"]}
+      >
+        <div class="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
+          {alsoTagged.slice(0, 8).map((destination) => (
+            <DestinationCard locale={locale} destination={destination} />
+          ))}
+        </div>
+      </Section>
+    )
+  }
+
+  <section class="section">
+    <div class="shell">
+      <CtaBlock
+        title={t.queries.title}
+        body={t.queries.lead}
+        primary={{
+          label: t.queries.explore,
+          href: `${queriesPath(locale)}?category=${category.key}`,
+        }}
+        secondary={[{ label: t.destination.back, href: observatoryPath(locale) }]}
+      />
+    </div>
+  </section>
+</ObsLayout>

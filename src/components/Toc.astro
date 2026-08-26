@@ -1,0 +1,58 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import Icon from "./Icon.astro";
+
+// Indice della pagina. Le schede destinazione hanno dodici blocchi: senza un
+// indice, trovare "chi cita l'AI" significa scorrere finché non compare.
+const { locale, items } = Astro.props as {
+  locale: Locale;
+  items: { id: string; label: string; icon?: string }[];
+};
+const t = messages(locale).observatory;
+---
+
+<nav class="toc" aria-label={t.ui.toc}>
+  <p class="mb-2.5 text-[0.78rem] font-bold tracking-widest text-faint uppercase">{t.ui.toc}</p>
+  <ul class="grid gap-0.5">
+    {
+      items.map((item) => (
+        <li>
+          <a
+            class="flex items-center gap-2 rounded-(--radius-brand) px-2 py-1.5 text-[0.88rem] text-muted transition-colors hover:bg-surface-muted hover:text-ink"
+            href={`#${item.id}`}
+            data-toc-link={item.id}
+          >
+            {item.icon && <Icon name={item.icon} size={15} />}
+            <span>{item.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  // Evidenzia la sezione in vista. Nessuna dipendenza, nessun listener di
+  // scroll: l'observer fa il lavoro e si spegne da solo se non serve.
+  const links = new Map<string, HTMLAnchorElement>();
+  document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]").forEach((link) => {
+    links.set(link.dataset.tocLink!, link);
+  });
+  if (links.size) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const link = links.get(entry.target.id);
+          if (!link) continue;
+          link.setAttribute("data-current", String(entry.isIntersecting));
+        }
+      },
+      { rootMargin: "-25% 0px -65% 0px" },
+    );
+    links.forEach((_, id) => {
+      const section = document.getElementById(id);
+      if (section) observer.observe(section);
+    });
+  }
+</script>

@@ -1,0 +1,191 @@
+---
+import CrawlerMark from "./CrawlerMark.astro";
+import EngineLogo from "./EngineLogo.astro";
+import type { Locale } from "../lib/config";
+import { decimal, signed } from "../lib/format";
+import { messages } from "../lib/i18n";
+import { ENGINES, META, engineMeta, type HotelRow } from "../lib/observatory";
+import ConfidenceTag from "./ConfidenceTag.astro";
+import Icon from "./Icon.astro";
+import SiteLink from "./SiteLink.astro";
+
+const { locale, hotels } = Astro.props as { locale: Locale; hotels: HotelRow[] };
+
+const t = messages(locale).observatory;
+const symbol = { allow: "✓", block: "✗", partial: "~" };
+---
+
+<div class="table-wrap table-dense" data-hotels>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col" class="w-12">#</th>
+        <th scope="col">
+          <span class="th-label"><Icon name="hotel" size={13} />{t.table.hotel}</span>
+        </th>
+        <th scope="col" class="text-right">
+          <button class="sortable" type="button" data-hsort="score" aria-sort="descending">
+            {t.table.score}
+          </button>
+        </th>
+        <th scope="col" class="text-right">
+          <button class="sortable" type="button" data-hsort="presence" aria-sort="none">
+            {t.table.presence}
+          </button>
+        </th>
+        <th scope="col" class="text-right">
+          <button class="sortable" type="button" data-hsort="audit" aria-sort="none">
+            {t.table.audit}
+          </button>
+        </th>
+        <th scope="col" class="text-right">{t.table.trend}</th>
+        <th scope="col" class="w-10"><span class="sr-only">{t.table.detail}</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        hotels.map((hotel) => (
+          <>
+            <tr
+              data-hrow
+              data-score={hotel.score.mean}
+              data-presence={hotel.presence}
+              data-audit={hotel.auditScore}
+            >
+              <td class="num text-faint" data-hrank>{hotel.rank}</td>
+              <td>
+                <span class="flex flex-wrap items-center gap-2">
+                  <span class="font-bold">{hotel.name}</span>
+                  <ConfidenceTag locale={locale} confidence={hotel.confidence} size="sm" />
+                </span>
+                <span class="block text-[0.82rem] text-muted">
+                  {hotel.area} · {"★".repeat(hotel.stars)}
+                </span>
+              </td>
+              <td class="num text-right">
+                {decimal(locale, hotel.score.mean, 0)}
+                <span class="text-faint"> ±{decimal(locale, hotel.score.stdDev, 0)}</span>
+              </td>
+              <td class="num text-right text-muted">{Math.round(hotel.presence * 100)}%</td>
+              <td class="num text-right text-muted">{hotel.auditScore}</td>
+              <td
+                class={`num text-right ${hotel.trend > 0 ? "text-success-ink" : hotel.trend < 0 ? "text-danger-ink" : "text-faint"}`}
+              >
+                {signed(hotel.trend)}
+              </td>
+              <td class="text-right">
+                <button
+                  class="sortable text-accent-ink"
+                  type="button"
+                  aria-expanded="false"
+                  data-toggle
+                >
+                  <span aria-hidden="true">+</span>
+                  <span class="sr-only">{t.table.detail}</span>
+                </button>
+              </td>
+            </tr>
+            <tr hidden data-hdetail>
+              <td colspan="7" class="bg-surface-muted">
+                <div class="grid gap-3.5 py-1 lg:grid-cols-[5fr_7fr]">
+                  <div class="grid gap-2">
+                    <p class="flex flex-wrap items-center gap-1.5 text-[0.82rem] text-muted">
+                      <span>{t.table.domain}:</span>
+                      <SiteLink
+                        locale={locale}
+                        domain={hotel.domain}
+                        verified={!hotel.synthetic}
+                        status={hotel.status}
+                        note={hotel.note}
+                        chainDomain={hotel.chainDomain}
+                      />
+                    </p>
+                    <div class="flex flex-wrap gap-1.5">
+                      {META.crawlers.map((crawler) => {
+                        const state = hotel.crawlers[crawler.key] ?? "allow";
+                        return (
+                          <span class={`crawl crawl-${state}`} title={crawler.key}>
+                            <CrawlerMark engine={crawler.engine} size={11} class="mr-1 opacity-70" />
+                            <span aria-hidden="true">
+                              {crawler.key} {symbol[state]}
+                            </span>
+                            <span class="sr-only">
+                              {crawler.key}: {t.sites.state[state]}
+                            </span>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div class="grid gap-2 sm:grid-cols-3">
+                    {ENGINES.map((engine) => (
+                      <div class="grid gap-1">
+                        <EngineLogo engine={engine} size={15} showName={false} class="text-[0.82rem] text-muted" />
+                        <span class="num">
+                          {decimal(locale, hotel.byEngine[engine].score, 0)}
+                        </span>
+                        <span class="text-[0.78rem] text-faint">
+                          {t.table["position-short"]}{" "}
+                          {decimal(locale, hotel.byEngine[engine].position, 1)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Nessuna pagina dedicata per i 2.000 hotel: il dettaglio si apre qui.
+  // 4.000 URL sottili diluirebbero il sito senza aggiungere nulla.
+  document.querySelectorAll<HTMLElement>("[data-hotels]").forEach((root) => {
+    const tbody = root.querySelector("tbody");
+    if (!tbody) return;
+
+    root.querySelectorAll<HTMLButtonElement>("[data-toggle]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const row = button.closest("tr");
+        const detail = row?.nextElementSibling as HTMLElement | null;
+        if (!detail) return;
+        const open = button.getAttribute("aria-expanded") === "true";
+        button.setAttribute("aria-expanded", String(!open));
+        button.querySelector("span[aria-hidden]")!.textContent = open ? "+" : "−";
+        detail.hidden = open;
+        row?.classList.toggle("row-open", !open);
+      });
+    });
+
+    let dir: "asc" | "desc" = "desc";
+    let key = "score";
+    root.querySelectorAll<HTMLButtonElement>("[data-hsort]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const next = button.dataset.hsort ?? "score";
+        dir = key === next && dir === "desc" ? "asc" : "desc";
+        key = next;
+        root.querySelectorAll("[data-hsort]").forEach((b) => b.setAttribute("aria-sort", "none"));
+        button.setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
+
+        // Le righe vanno spostate a coppie: riga + riga di dettaglio.
+        const pairs = Array.from(tbody.querySelectorAll<HTMLTableRowElement>("[data-hrow]")).map(
+          (row) => [row, row.nextElementSibling as HTMLTableRowElement] as const,
+        );
+        pairs.sort(
+          ([a], [b]) =>
+            (Number(a.dataset[key as "score"]) - Number(b.dataset[key as "score"])) *
+            (dir === "asc" ? 1 : -1),
+        );
+        pairs.forEach(([row, detail], index) => {
+          row.querySelector("[data-hrank]")!.textContent = String(index + 1);
+          tbody.appendChild(row);
+          tbody.appendChild(detail);
+        });
+      });
+    });
+  });
+</script>

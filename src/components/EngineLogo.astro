@@ -1,0 +1,41 @@
+---
+import { engineMeta } from "../lib/observatory";
+
+// Marchio + nome. Il nome NON sparisce dall'HTML: resta come testo accessibile.
+// Su un sito che misura cosa i crawler riescono a leggere, sostituire "ChatGPT"
+// con un'immagine e basta sarebbe un autogol — il nome è proprio il termine per
+// cui queste pagine devono essere trovate.
+//
+// NOTA: i marchi in public/assets/engines/ sono rese monocromatiche in
+// currentColor. Per un uso pubblico vanno sostituiti con gli asset ufficiali
+// dei rispettivi brand kit; il componente non cambia.
+const {
+  engine,
+  size = 18,
+  showName = true,
+  class: className = "",
+} = Astro.props as {
+  engine: string;
+  size?: number;
+  showName?: boolean;
+  class?: string;
+};
+
+const meta = engineMeta(engine);
+const label = meta?.label ?? engine;
+---
+
+<span class={`inline-flex items-center gap-1.5 align-middle ${className}`}>
+  <img
+    src={`/assets/engines/${engine}.svg`}
+    width={size}
+    height={size}
+    alt=""
+    title={showName ? undefined : label}
+    loading="lazy"
+    decoding="async"
+    class="shrink-0"
+    style={`width:${size}px;height:${size}px`}
+  />
+  <span class={showName ? "" : "sr-only"}>{label}</span>
+</span>

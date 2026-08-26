@@ -1,0 +1,80 @@
+---
+import type { Locale } from "../lib/config";
+import { decimal, monthLabel, signed } from "../lib/format";
+import { messages } from "../lib/i18n";
+import type { Stat } from "../lib/observatory";
+import Icon from "./Icon.astro";
+
+// Tre rilevazioni non sono una serie storica, e disegnarle come una linea da
+// ventiquattro punti lo farebbe sembrare. Qui ogni mese è un punto con la sua
+// barra di dispersione, e si legge per quello che è: tre misure.
+const { locale, history } = Astro.props as {
+  locale: Locale;
+  history: { month: string; score: Stat }[];
+};
+
+const t = messages(locale).observatory;
+const values = history.flatMap((row) => [row.score.mean + row.score.stdDev, row.score.mean - row.score.stdDev]);
+const rawMin = Math.min(...values);
+const rawMax = Math.max(...values);
+const pad = Math.max(4, (rawMax - rawMin) * 0.3);
+const min = Math.max(0, Math.floor((rawMin - pad) / 5) * 5);
+const max = Math.min(100, Math.ceil((rawMax + pad) / 5) * 5);
+const span = max - min || 1;
+
+const first = history[0];
+const last = history[history.length - 1];
+const delta = last.score.mean - first.score.mean;
+---
+
+<div class="grid gap-3.5">
+  <ol class="grid gap-2.5 sm:grid-cols-3">
+    {
+      history.map((row, index) => {
+        const previous = index > 0 ? history[index - 1].score.mean : null;
+        const step = previous === null ? null : row.score.mean - previous;
+        const height = ((row.score.mean - min) / span) * 100;
+        const band = (row.score.stdDev / span) * 100;
+        return (
+          <li class="grid gap-2.5 rounded-(--radius-brand) border border-line bg-surface p-3.5">
+            <div class="flex items-baseline justify-between gap-2">
+              <span class="num text-[0.82rem] text-muted">{monthLabel(locale, row.month)}</span>
+              {step !== null && (
+                <span
+                  class={`num inline-flex items-center gap-1 text-[0.8rem] ${step > 0 ? "text-success-ink" : step < 0 ? "text-danger-ink" : "text-faint"}`}
+                >
+                  <Icon name={step > 0 ? "arrowUp" : step < 0 ? "arrowDown" : "minus"} size={12} />
+                  {signed(step, 1)}
+                </span>
+              )}
+            </div>
+            <div class="flex items-end gap-2.5">
+              <span class="dial text-[1.55rem]">
+                <span class="dial-value">{decimal(locale, row.score.mean, 0)}</span>
+                <span class="dial-band">±{decimal(locale, row.score.stdDev, 0)}</span>
+              </span>
+              {/* colonnina con la banda di dispersione disegnata sopra */}
+              <span class="relative ml-auto h-[54px] w-8 rounded-sm bg-surface-raised">
+                <span
+                  class="absolute inset-x-0 bottom-0 rounded-sm bg-accent/35"
+                  style={`height:${Math.max(4, height)}%`}
+                />
+                <span
+                  class="absolute inset-x-1 rounded-sm bg-accent-strong/70"
+                  style={`bottom:${Math.max(0, height - band / 2)}%;height:${Math.max(3, band)}%`}
+                />
+              </span>
+            </div>
+          </li>
+        );
+      })
+    }
+  </ol>
+  <p class="text-[0.86rem] text-muted">
+    {t.ui["runs-lead"]}{" "}
+    <span class={delta > 0 ? "text-success-ink" : delta < 0 ? "text-danger-ink" : ""}>
+      {signed(delta, 1)}
+    </span>{" "}
+    {monthLabel(locale, first.month)} → {monthLabel(locale, last.month)}.
+  </p>
+</div>

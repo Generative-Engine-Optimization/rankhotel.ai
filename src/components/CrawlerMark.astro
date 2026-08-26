@@ -1,0 +1,42 @@
+---
+import Icon from "./Icon.astro";
+import { engineMeta } from "../lib/observatory";
+
+// A chi appartiene un bot.
+//
+// Il dato c'è da sempre (`crawler.engine`) ma finiva in un attributo `title`:
+// invisibile a chi guarda, invisibile a chi tocca. Su un osservatorio che
+// sostiene "se blocchi i bot di ChatGPT il tuo punteggio ChatGPT scende", di un
+// bot la cosa più importante è di chi è. GPTBot, OAI-SearchBot e ChatGPT-User
+// sono tre nomi che non si assomigliano e sono lo stesso assistente.
+//
+// CCBot non ha un padrone: è Common Crawl, un archivio pubblico che finisce
+// dentro l'addestramento di molti modelli. Prende un segno neutro, non il
+// marchio di un assistente che non è suo.
+const {
+  engine,
+  size = 15,
+  class: className = "",
+} = Astro.props as { engine?: string | null; size?: number; class?: string };
+
+const meta = engine ? engineMeta(engine) : undefined;
+---
+
+{
+  meta ? (
+    <img
+      src={`/assets/engines/${engine}.svg`}
+      width={size}
+      height={size}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      class={`shrink-0 ${className}`}
+      style={`width:${size}px;height:${size}px`}
+    />
+  ) : (
+    <span class={`inline-flex shrink-0 text-faint ${className}`} style={`width:${size}px;height:${size}px`}>
+      <Icon name="globe" size={size} />
+    </span>
+  )
+}

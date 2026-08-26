@@ -1,0 +1,14 @@
+---
+import DestinationPage from "../../../../templates/DestinationPage.astro";
+import { findDestination, listDestinations } from "../../../../lib/observatory";
+
+export function getStaticPaths() {
+  return listDestinations().map((destination) => ({
+    params: { slug: destination.slug.en },
+  }));
+}
+
+const destination = findDestination("en", Astro.params.slug ?? "")!;
+---
+
+<DestinationPage locale="en" destination={destination} />

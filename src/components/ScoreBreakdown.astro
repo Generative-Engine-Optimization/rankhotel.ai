@@ -1,0 +1,40 @@
+---
+import type { Locale } from "../lib/config";
+import { decimal } from "../lib/format";
+import { messages } from "../lib/i18n";
+import { FACTOR_KEYS, SCORE_WEIGHTS, scoreBand, type FactorKey } from "../lib/observatory";
+
+const { locale, factors, compact = false } = Astro.props as {
+  locale: Locale;
+  factors: Record<FactorKey, number>;
+  compact?: boolean;
+};
+
+const t = messages(locale).observatory;
+---
+
+<div class={compact ? "grid gap-2.5" : "grid gap-[18px]"}>
+  {
+    FACTOR_KEYS.map((key) => {
+      const value = factors[key];
+      const tone = scoreBand(value);
+      return (
+        <div class="grid gap-1.5">
+          <div class="flex items-baseline justify-between gap-3">
+            <span class={compact ? "text-[0.86rem]" : "font-bold"}>
+              {t.factors[key].name}
+            </span>
+            <span class="num text-[0.86rem]">
+              {decimal(locale, value, 0)}
+              <span class="text-faint"> · {t.factors.weight.replace("{n}", String(SCORE_WEIGHTS[key]))}</span>
+            </span>
+          </div>
+          <div class={`bar bar-${tone}`}>
+            <span style={`width:${Math.max(2, value)}%`} />
+          </div>
+          {!compact && <p class="text-[0.9rem] text-muted">{t.factors[key].help}</p>}
+        </div>
+      );
+    })
+  }
+</div>

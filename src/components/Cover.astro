@@ -1,0 +1,176 @@
+---
+// Copertina generata per ogni destinazione.
+//
+// Niente fotografie: servirebbero licenze, richieste di rete e megabyte, e una
+// foto sbagliata su un territorio è peggio di nessuna foto. Qui il disegno
+// nasce dalla chiave della destinazione (stessa chiave, stesso disegno per
+// sempre) e dal motivo della sua categoria, con i colori del brand.
+
+const {
+  destinationKey,
+  category,
+  height = 168,
+  class: className = "",
+} = Astro.props as {
+  destinationKey: string;
+  category: string;
+  height?: number;
+  class?: string;
+};
+
+const W = 800;
+const H = 240;
+
+function seeded(key: string) {
+  let a = 2166136261 >>> 0;
+  for (let i = 0; i < key.length; i += 1) {
+    a ^= key.charCodeAt(i);
+    a = Math.imul(a, 16777619) >>> 0;
+  }
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const rnd = seeded(destinationKey);
+const between = (min: number, max: number) => min + rnd() * (max - min);
+const gradientId = `cover-${destinationKey}`;
+
+type Layer = { d: string; opacity: number; stroke?: boolean };
+const layers: Layer[] = [];
+
+// Catena di cime: vertici alternati alto/basso. Una curva morbida qui darebbe
+// colline, ed è esattamente l'errore che rende ogni copertina uguale all'altra.
+function peaks(baseY: number, count: number, minH: number, maxH: number) {
+  const step = W / count;
+  let d = `M-10 ${H} L-10 ${baseY}`;
+  for (let i = 0; i <= count; i += 1) {
+    const x = i * step;
+    d += ` L${(x - step * 0.5).toFixed(0)} ${(baseY - between(minH, maxH)).toFixed(0)}`;
+    d += ` L${x.toFixed(0)} ${(baseY - between(0, minH * 0.35)).toFixed(0)}`;
+  }
+  return `${d} L${W + 10} ${H} Z`;
+}
+
+// Crinale morbido, per i paesaggi collinari.
+function ridge(baseY: number, count: number, amplitude: number) {
+  const step = W / count;
+  let d = `M-10 ${H} L-10 ${baseY}`;
+  for (let i = 0; i <= count; i += 1) {
+    const x = i * step;
+    d += ` Q${(x - step / 2).toFixed(0)} ${(baseY - between(amplitude * 0.5, amplitude)).toFixed(0)} ${x.toFixed(0)} ${(baseY - amplitude * 0.28).toFixed(0)}`;
+  }
+  return `${d} L${W + 10} ${H} Z`;
+}
+
+if (category === "montagna-parchi") {
+  layers.push({ d: peaks(196, 4, 74, 132), opacity: 0.13 });
+  layers.push({ d: peaks(214, 5, 52, 96), opacity: 0.21 });
+  layers.push({ d: peaks(232, 7, 30, 58), opacity: 0.33 });
+} else if (category === "mare") {
+  const horizon = 150;
+  // Isola all'orizzonte: c'è o non c'è, e cambia da destinazione a destinazione.
+  if (rnd() > 0.35) {
+    const ix = between(90, 600);
+    const iw = between(90, 190);
+    const ih = between(26, 58);
+    layers.push({
+      d: `M${ix.toFixed(0)} ${horizon} Q${(ix + iw * 0.3).toFixed(0)} ${(horizon - ih).toFixed(0)} ${(ix + iw * 0.55).toFixed(0)} ${(horizon - ih * 0.72).toFixed(0)} Q${(ix + iw * 0.8).toFixed(0)} ${(horizon - ih * 1.15).toFixed(0)} ${(ix + iw).toFixed(0)} ${horizon} Z`,
+      opacity: 0.26,
+    });
+  }
+  layers.push({ d: `M0 ${horizon} L${W} ${horizon} L${W} ${H} L0 ${H} Z`, opacity: 0.1 });
+  // Tre bande d'onda con passo e ampiezza diversi. Senza differenza fra loro il
+  // mare resta un rettangolo colorato.
+  for (let i = 0; i < 3; i += 1) {
+    const y = horizon + 18 + i * 26;
+    const period = between(70, 130);
+    const amp = between(7, 13) + i * 2;
+    let d = `M-20 ${y.toFixed(0)}`;
+    for (let x = -20; x <= W + period; x += period) {
+      d += ` q${(period / 2).toFixed(0)} ${(-amp).toFixed(0)} ${period.toFixed(0)} 0`;
+    }
+    layers.push({ d: `${d} L${W + 20} ${H} L-20 ${H} Z`, opacity: 0.14 + i * 0.1 });
+  }
+} else if (category === "enogastronomia") {
+  layers.push({ d: ridge(178, 3, 70), opacity: 0.14 });
+  layers.push({ d: ridge(204, 4, 48), opacity: 0.24 });
+  // Filari: partono dal crinale e scendono con passo irregolare.
+  let rows = "";
+  for (let i = 0; i < 18; i += 1) {
+    const x = between(-10, W);
+    const top = between(192, 214);
+    rows += `M${x.toFixed(0)} ${top.toFixed(0)} L${(x + between(10, 22)).toFixed(0)} ${(H - 4).toFixed(0)} `;
+  }
+  layers.push({ d: rows.trim(), opacity: 0.34, stroke: true });
+} else if (category === "unesco") {
+  layers.push({ d: `M0 ${H} L0 205 L${W} 205 L${W} ${H} Z`, opacity: 0.14 });
+  let skyline = "";
+  let x = 24;
+  while (x < W - 40) {
+    const w = between(38, 88);
+    const h = between(52, 132);
+    const top = 205 - h;
+    skyline +=
+      rnd() > 0.55
+        ? `M${x.toFixed(0)} 205 L${x.toFixed(0)} ${(top + w / 2).toFixed(0)} A${(w / 2).toFixed(0)} ${(w / 2).toFixed(0)} 0 0 1 ${(x + w).toFixed(0)} ${(top + w / 2).toFixed(0)} L${(x + w).toFixed(0)} 205 Z `
+        : `M${x.toFixed(0)} 205 L${x.toFixed(0)} ${top.toFixed(0)} L${(x + w).toFixed(0)} ${top.toFixed(0)} L${(x + w).toFixed(0)} 205 Z `;
+    x += w + between(10, 26);
+  }
+  layers.push({ d: skyline.trim(), opacity: 0.3 });
+} else {
+  // Borghi: case addossate che salgono lungo un pendio.
+  layers.push({ d: ridge(212, 3, 64), opacity: 0.14 });
+  let town = "";
+  let x = 50;
+  let base = 216;
+  while (x < W - 80) {
+    const w = between(34, 62);
+    const h = between(38, 84);
+    town += `M${x.toFixed(0)} ${base.toFixed(0)} L${x.toFixed(0)} ${(base - h).toFixed(0)} L${(x + w / 2).toFixed(0)} ${(base - h - 16).toFixed(0)} L${(x + w).toFixed(0)} ${(base - h).toFixed(0)} L${(x + w).toFixed(0)} ${base.toFixed(0)} Z `;
+    x += w + between(4, 14);
+    base -= between(-6, 10);
+  }
+  layers.push({ d: town.trim(), opacity: 0.32 });
+}
+
+const sunR = between(24, 38);
+const sunX = between(sunR + 50, W - sunR - 50);
+const sunY = between(50, 86);
+---
+
+<div
+  class={`relative overflow-hidden rounded-(--radius-brand) border border-line ${className}`}
+  style={`height:${height}px`}
+  aria-hidden="true"
+>
+  <svg viewBox={`0 0 ${W} ${H}`} class="h-full w-full" preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--color-surface-raised)" />
+        <stop offset="100%" stop-color="var(--color-surface-muted)" />
+      </linearGradient>
+    </defs>
+    <rect width={W} height={H} fill={`url(#${gradientId})`} />
+    <circle cx={sunX} cy={sunY} r={sunR} fill="var(--color-accent)" opacity="0.17" />
+    {
+      layers.map((layer) =>
+        layer.stroke ? (
+          <path
+            d={layer.d}
+            fill="none"
+            stroke="var(--color-accent-ink)"
+            stroke-width="2"
+            opacity={layer.opacity}
+          />
+        ) : (
+          <path d={layer.d} fill="var(--color-accent-ink)" opacity={layer.opacity} />
+        ),
+      )
+    }
+  </svg>
+</div>

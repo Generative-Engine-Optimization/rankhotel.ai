@@ -1,0 +1,472 @@
+---
+import CategorySelect from "../components/CategorySelect.astro";
+import AnswerBoard from "../components/AnswerBoard.astro";
+import ConfidenceTag from "../components/ConfidenceTag.astro";
+import CtaBlock from "../components/CtaBlock.astro";
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/PageHero.astro";
+import Panel from "../components/Panel.astro";
+import Section from "../components/Section.astro";
+import SiteLink from "../components/SiteLink.astro";
+import StatGrid from "../components/StatGrid.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  destinationPath,
+  hotelsIndexPath,
+  methodologyPath,
+  observatoryPath,
+  otherLocale,
+  type Locale,
+} from "../lib/config";
+import { decimal, number } from "../lib/format";
+import { interpolate, messages } from "../lib/i18n";
+import { datasetSchema } from "../lib/schema";
+import {
+  ENGINES,
+  META,
+  NATIONAL,
+  categoryByKey,
+  destinationByKey,
+  engineMeta,
+  listCategories,
+  loadDestination,
+  scoreBand,
+  topHotels,
+} from "../lib/observatory";
+
+const { locale } = Astro.props as { locale: Locale };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+const h = t.hotelsPage;
+
+const hotels = topHotels();
+const categories = listCategories();
+
+// Le destinazioni presenti nella classifica, per il filtro. Non tutte e cento:
+// solo quelle che hanno almeno una struttura fra le trecento più visibili.
+const destinations = [...new Set(hotels.map((row) => row.destination))]
+  .map((key) => destinationByKey(key))
+  .filter((d): d is NonNullable<typeof d> => Boolean(d))
+  .sort((a, b) => a.name[locale].localeCompare(b.name[locale]));
+
+const realCount = hotels.filter((row) => row.confidence !== "generated").length;
+
+// La riga porta la posizione nazionale con sé: filtrare la nasconde, non la
+// riscrive. Sapere che una struttura è 47ª in Italia e 1ª nel suo territorio
+// è metà dell'informazione che questa pagina esiste per dare.
+const ranked = hotels.map((hotel, index) => ({ ...hotel, nationalRank: index + 1 }));
+
+const PAGE_STEP = 60;
+
+// Una risposta per intero, presa dal territorio della struttura prima in
+// classifica. Questa pagina pubblica trecento righe di numeri sugli hotel e
+// non mostra mai il testo da cui quei numeri escono: senza almeno un esempio,
+// la classifica chiede di essere creduta sulla parola.
+const showcase = await loadDestination(ranked[0].destination);
+const showcaseDestination = destinationByKey(ranked[0].destination);
+
+// Le quattro righe di legenda arrivano dai messaggi con il termine in **grassetto**.
+const legend = (["rank", "score", "presence", "confidence"] as const).map((key) => {
+  const [, term, body] = /^\*\*(.+?)\*\*\s*—\s*(.*)$/s.exec(h[`legend-${key}`]) ?? [];
+  return { term: term ?? "", body: body ?? h[`legend-${key}`] };
+});
+---
+
+<ObsLayout
+  locale={locale}
+  title={h["meta-title"]}
+  description={h["meta-description"]}
+  schema={datasetSchema(locale, h["meta-title"], h["meta-description"], hotelsIndexPath(locale))}
+  path={hotelsIndexPath(locale)}
+  altPath={hotelsIndexPath(other)}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={h.eyebrow}
+    icon="hotel"
+    title={h["page-title"]}
+    lead={h.lead}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: h.title },
+    ]}
+  >
+    <StatGrid
+      locale={locale}
+      columns={4}
+      items={[
+        { label: t.stats.hotels, value: number(locale, NATIONAL.hotelsTracked) },
+        {
+          label: h.real,
+          value: number(locale, NATIONAL.hotelsReal),
+          hint: h["real-lead"],
+        },
+        {
+          label: h.verified,
+          value: number(locale, NATIONAL.hotelsVerified),
+          hint: h["confidence-help"].verified,
+        },
+        { label: t.stats.destinations, value: number(locale, NATIONAL.destinations) },
+      ]}
+    />
+    <Panel locale={locale} tone="muted" icon="info">
+      <p class="text-[0.9rem] text-muted">{h["generated-note"]}</p>
+    </Panel>
+  </PageHero>
+
+  <Section
+    locale={locale}
+    id="classifica"
+    title={h.national}
+    lead={h["national-lead"]}
+  >
+    <div class="grid gap-5" data-hotel-index data-step={String(PAGE_STEP)}>
+      <Panel locale={locale} tone="muted" title={h["legend-title"]} icon="info">
+        <dl class="grid gap-x-9 gap-y-3 sm:grid-cols-2">
+          {
+            legend.map((row) => (
+              <div class="grid gap-0.5">
+                <dt class="text-[0.86rem] font-bold">{row.term}</dt>
+                <dd class="text-[0.86rem] leading-relaxed text-muted">{row.body}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </Panel>
+
+      <div class="grid gap-2.5">
+        <div class="grid gap-2.5 md:grid-cols-[2fr_1fr_1fr]">
+          <label class="grid gap-1.5">
+            <span class="text-[0.82rem] text-muted">{h["filter-destination"]}</span>
+            <select class="field" data-filter="destination">
+              <option value="">{t.filters.all}</option>
+              {
+                destinations.map((destination) => (
+                  <option value={destination.key}>{destination.name[locale]}</option>
+                ))
+              }
+            </select>
+          </label>
+          <label class="grid gap-1.5">
+            <span class="text-[0.82rem] text-muted">{h["filter-category"]}</span>
+            <CategorySelect locale={locale} data-filter="category" />
+          </label>
+          <label class="grid gap-1.5">
+            <span class="text-[0.82rem] text-muted">{h["filter-stars"]}</span>
+            <select class="field" data-filter="stars">
+              <option value="">{t.filters.all}</option>
+              {[5, 4, 3].map((n) => <option value={String(n)}>{"★".repeat(n)}</option>)}
+            </select>
+          </label>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p
+            class="num text-[0.85rem] text-muted"
+            data-hotel-count
+            data-template={h["showing-of"]}
+            role="status"
+          ></p>
+          <button class="chip gap-1.5 text-accent-ink" type="button" data-hotel-reset hidden>
+            <Icon name="cross" size={13} />
+            {t.filters.reset}
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrap table-dense table-sticky table-cards">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="w-14">#</th>
+              <th scope="col">
+                <span class="th-label"><Icon name="hotel" size={13} />{t.table.hotel}</span>
+              </th>
+              <th scope="col">
+                <span class="th-label"><Icon name="territory" size={13} />{t.table.destination}</span>
+              </th>
+              <th scope="col" class="w-28 text-right">
+                <button class="sortable" type="button" data-hsort="score" aria-sort="descending">
+                  {t.table.score}
+                </button>
+              </th>
+              <th scope="col" class="w-40">
+                <button class="sortable" type="button" data-hsort="presence" aria-sort="none">
+                  {t.table.presence}
+                </button>
+              </th>
+              <th scope="col">
+                <span class="th-label"><Icon name="domain" size={13} />{t.sites.domain}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              ranked.map((hotel) => (
+                <tr
+                  data-hotel
+                  data-destination={hotel.destination}
+                  data-category={hotel.category}
+                  data-stars={hotel.stars}
+                  data-score={hotel.score.mean}
+                  data-presence={hotel.presence}
+                  data-rank={hotel.nationalRank}
+                >
+                  <td class="num text-faint" data-cell="rank">{hotel.nationalRank}</td>
+                  <td data-cell="head">
+                    <span class="flex flex-wrap items-center gap-2">
+                      <span class="font-bold">{hotel.name}</span>
+                      <ConfidenceTag locale={locale} confidence={hotel.confidence} size="sm" />
+                    </span>
+                    <span class="block text-[0.8rem] text-muted">
+                      {hotel.area} · <span class="text-gold-ink">{"★".repeat(hotel.stars)}</span>
+                    </span>
+                  </td>
+                  <td class="text-[0.86rem]" data-label={t.table.destination}>
+                    <span class="grid gap-0.5">
+                      <a
+                        class="hover:text-accent-ink"
+                        href={`${destinationPath(locale, destinationByKey(hotel.destination)!.slug[locale])}#hotel`}
+                      >
+                        {hotel.destinationName[locale]}
+                      </a>
+                      <span class="text-[0.78rem] text-faint">
+                        {categoryByKey(hotel.category)?.short[locale]}
+                      </span>
+                    </span>
+                  </td>
+                  <td class="text-right" data-label={t.table.score}>
+                    <span class="dial justify-end">
+                      <span class="dial-value text-[1.05rem]">
+                        {decimal(locale, hotel.score.mean, 0)}
+                      </span>
+                      <span class="dial-band">±{decimal(locale, hotel.score.stdDev, 0)}</span>
+                    </span>
+                  </td>
+                  <td data-label={t.table.presence}>
+                    <span class="grid gap-1">
+                      <span class="num text-[0.82rem] text-muted">
+                        {Math.round(hotel.presence * 100)}%
+                      </span>
+                      <span class={`bar bar-${scoreBand(hotel.presence * 100)}`}>
+                        <span style={`width:${Math.max(2, hotel.presence * 100)}%`} />
+                      </span>
+                    </span>
+                  </td>
+                  <td data-label={t.sites.domain}>
+                    <span>
+                    <SiteLink
+                      locale={locale}
+                      domain={hotel.domain}
+                      verified={hotel.confidence !== "generated"}
+                      chainDomain={hotel.confidence === "chain"}
+                      status={hotel.confidence === "guarded" ? "waf" : undefined}
+                    />
+                    </span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p class="card text-[0.9rem] text-muted" data-hotel-empty hidden>{t.filters.none}</p>
+
+      <button
+        class="btn btn-secondary justify-self-center gap-2"
+        type="button"
+        data-hotel-more
+        data-template={h["show-more"]}
+        hidden
+      >
+        <Icon name="arrowDown" size={16} />
+        <span data-hotel-more-label></span>
+      </button>
+    </div>
+  </Section>
+
+  <Section
+    locale={locale}
+    id="risposta"
+    title={t.answers["national-title"]}
+    lead={t.answers["national-lead"]}
+  >
+    <div class="grid gap-3.5">
+      <p class="flex flex-wrap items-center gap-2 text-[0.9rem] text-muted">
+        <Icon name="pin" size={15} class="text-faint" />
+        <span>
+          {interpolate(t.answers["national-note"], {
+            destination: showcaseDestination?.name[locale] ?? "",
+          })}
+        </span>
+        {
+          showcaseDestination && (
+            <a
+              class="link"
+              href={`${destinationPath(locale, showcaseDestination.slug[locale])}#hotel`}
+            >
+              {t.map.open}
+            </a>
+          )
+        }
+      </p>
+      <AnswerBoard locale={locale} answers={showcase.answers.hotels} id="ans-national" />
+    </div>
+  </Section>
+
+  <Section
+    locale={locale}
+    id="territori"
+    title={h["by-destination"]}
+    lead={h["by-destination-lead"]}
+  >
+    <div class="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+      {
+        destinations.slice(0, 24).map((destination) => {
+          const own = hotels.filter((row) => row.destination === destination.key);
+          const real = own.filter((row) => row.confidence !== "generated").length;
+          return (
+            <a
+              class="card lift flex items-center justify-between gap-3"
+              href={`${destinationPath(locale, destination.slug[locale])}#hotel`}
+            >
+              <span class="grid gap-0.5">
+                <strong>{destination.name[locale]}</strong>
+                <span class="text-[0.8rem] text-muted">
+                  {categoryByKey(destination.category)?.short[locale]}
+                </span>
+              </span>
+              <span class="num shrink-0 text-[0.84rem] text-faint">
+                {real}/{own.length}
+              </span>
+            </a>
+          );
+        })
+      }
+    </div>
+  </Section>
+
+  <section class="section">
+    <div class="shell">
+      <CtaBlock
+        title={t.cta.title}
+        body={t.cta.body}
+        primary={{ label: t.cta.button, href: observatoryPath(locale) }}
+        secondary={[{ label: t.methodology.title, href: methodologyPath(locale) }]}
+      />
+    </div>
+  </section>
+</ObsLayout>
+
+<script>
+  // Filtri, ordinamento e paginazione sul posto: le trecento righe sono già
+  // nell'HTML, quindi qui non serve una chiamata. Sarebbe una chiamata finta,
+  // e questo sito ne ha già abbastanza di dichiarate.
+  const root = document.querySelector<HTMLElement>("[data-hotel-index]");
+  if (root) {
+    const tbody = root.querySelector("tbody")!;
+    let rows = Array.from(root.querySelectorAll<HTMLTableRowElement>("[data-hotel]"));
+    const counter = root.querySelector<HTMLElement>("[data-hotel-count]");
+    const empty = root.querySelector<HTMLElement>("[data-hotel-empty]");
+    const more = root.querySelector<HTMLButtonElement>("[data-hotel-more]");
+    const moreLabel = root.querySelector<HTMLElement>("[data-hotel-more-label]");
+    const reset = root.querySelector<HTMLButtonElement>("[data-hotel-reset]");
+
+    const step = Number(root.dataset.step) || 60;
+    const countTemplate = counter?.dataset.template ?? "{n}/{total}";
+    const moreTemplate = more?.dataset.template ?? "+{n}";
+
+    const state: Record<string, string> = { destination: "", category: "", stars: "" };
+    let limit = step;
+
+    const matches = (row: HTMLTableRowElement) =>
+      (!state.destination || row.dataset.destination === state.destination) &&
+      (!state.category || row.dataset.category === state.category) &&
+      (!state.stars || row.dataset.stars === state.stars);
+
+    function apply() {
+      let matched = 0;
+      let shown = 0;
+      for (const row of rows) {
+        const ok = matches(row);
+        if (ok) matched += 1;
+        // Oltre il limite la riga resta nell'HTML — leggibile dai crawler e
+        // dal browser senza JS — ma fuori dalla vista.
+        const visible = ok && shown < limit;
+        row.hidden = !visible;
+        row.classList.toggle("row-alt", visible && shown % 2 === 1);
+        if (visible) shown += 1;
+      }
+
+      if (counter) {
+        counter.textContent = countTemplate
+          .replace("{n}", String(shown))
+          .replace("{total}", String(matched));
+      }
+      if (empty) empty.hidden = matched > 0;
+      if (more && moreLabel) {
+        const rest = matched - shown;
+        more.hidden = rest <= 0;
+        moreLabel.textContent = moreTemplate.replace("{n}", String(Math.min(step, rest)));
+      }
+      if (reset) reset.hidden = !Object.values(state).some(Boolean);
+    }
+
+    function refilter() {
+      limit = step;
+      apply();
+    }
+
+    root.querySelectorAll<HTMLSelectElement>("select[data-filter]").forEach((select) => {
+      select.addEventListener("change", () => {
+        state[select.dataset.filter!] = select.value;
+        refilter();
+      });
+    });
+
+    reset?.addEventListener("click", () => {
+      for (const key of Object.keys(state)) state[key] = "";
+      // Un assegnamento a `.value` non emette eventi: senza `field-sync` il
+      // segno della categoria dentro il campo resterebbe quello di prima.
+      root.querySelectorAll<HTMLSelectElement>("select[data-filter]").forEach((s) => {
+        s.value = "";
+        s.dispatchEvent(new CustomEvent("field-sync", { bubbles: true }));
+      });
+      refilter();
+    });
+
+    more?.addEventListener("click", () => {
+      limit += step;
+      apply();
+    });
+
+    // Ordinamento. La colonna # resta la posizione nazionale: riordinare la
+    // tabella non riscrive dove sta una struttura fra tutte e trecento.
+    let dir: "asc" | "desc" = "desc";
+    let key = "score";
+    root.querySelectorAll<HTMLButtonElement>("[data-hsort]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const next = button.dataset.hsort ?? "score";
+        dir = key === next && dir === "desc" ? "asc" : "desc";
+        key = next;
+        root.querySelectorAll("[data-hsort]").forEach((b) => b.setAttribute("aria-sort", "none"));
+        button.setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
+
+        rows = rows
+          .slice()
+          .sort(
+            (a, b) =>
+              (Number(a.dataset[key as "score"]) - Number(b.dataset[key as "score"])) *
+              (dir === "asc" ? 1 : -1),
+          );
+        rows.forEach((row) => tbody.appendChild(row));
+
+        limit = step;
+        apply();
+      });
+    });
+
+    apply();
+  }
+</script>

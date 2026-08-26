@@ -1,0 +1,56 @@
+---
+import EngineLogo from "./EngineLogo.astro";
+import type { Locale } from "../lib/config";
+import { enginePath } from "../lib/config";
+import { decimal, signed } from "../lib/format";
+import { messages } from "../lib/i18n";
+import { ENGINES, engineMeta, scoreBand, type EngineKey } from "../lib/observatory";
+import ScoreDial from "./ScoreDial.astro";
+
+const { locale, byEngine, overall, detail } = Astro.props as {
+  locale: Locale;
+  byEngine: Record<EngineKey, { score: number; rank?: number }>;
+  overall: number;
+  detail?: Record<EngineKey, { score: { mean: number; stdDev: number; runs: number; min: number; max: number; stability: any } }>;
+};
+
+const t = messages(locale).observatory;
+---
+
+<div class="grid gap-3.5 sm:grid-cols-3">
+  {
+    ENGINES.map((engine) => {
+      const row = byEngine[engine];
+      const meta = engineMeta(engine);
+      const delta = Math.round((row.score - overall) * 10) / 10;
+      const tone = scoreBand(row.score);
+      const toneClass = { high: "text-success-ink", mid: "text-gold-ink", low: "text-danger-ink" }[tone];
+      return (
+        <a class="card grid gap-2.5 hover:border-line-strong" href={enginePath(locale, engine)}>
+          <div class="flex items-center justify-between gap-2">
+            <strong>
+              <EngineLogo engine={engine} size={20} />
+            </strong>
+            <span class="pill">{meta?.vendor}</span>
+          </div>
+          {detail ? (
+            <ScoreDial locale={locale} stat={detail[engine].score} />
+          ) : (
+            <span class={`dial text-[1.8rem]`}>
+              <span class={`dial-value ${toneClass}`}>{decimal(locale, row.score, 0)}</span>
+            </span>
+          )}
+          <p class="text-[0.88rem] text-muted">
+            <span class="num">{signed(delta, 1)}</span> {t.engines["vs-average"]}
+            {row.rank !== undefined && (
+              <>
+                {" · "}
+                {t.engines.rank.replace("{n}", String(row.rank))}
+              </>
+            )}
+          </p>
+        </a>
+      );
+    })
+  }
+</div>

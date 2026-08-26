@@ -1,0 +1,31 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import { META } from "../lib/observatory";
+
+// La fascia è la lettura affidabile della classifica. La posizione secca no,
+// e il componente accanto (RankRange) lo dichiara invece di lasciarlo intuire.
+const { locale, tier, size = "md" } = Astro.props as {
+  locale: Locale;
+  tier: string;
+  size?: "sm" | "md";
+};
+
+const t = messages(locale).observatory;
+const row = META.tiers.find((item) => item.key === tier);
+const tone = {
+  a: "border-success-ink/40 bg-success/12 text-success-ink",
+  b: "border-success-ink/25 bg-success/8 text-success-ink",
+  c: "border-gold-ink/35 bg-gold/12 text-gold-ink",
+  d: "border-danger-ink/25 bg-danger/8 text-danger-ink",
+  e: "border-danger-ink/40 bg-danger/12 text-danger-ink",
+}[tier] ?? "";
+---
+
+<span
+  class={`inline-flex items-center gap-1.5 rounded-(--radius-brand) border px-2 py-0.5 ${tone} ${size === "sm" ? "text-[0.76rem]" : "text-[0.84rem]"}`}
+  title={t.rank.help}
+>
+  <span class="num font-bold">{tier.toUpperCase()}</span>
+  <span>{row?.name[locale]}</span>
+</span>

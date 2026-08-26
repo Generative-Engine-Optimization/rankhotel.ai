@@ -7,16 +7,27 @@
   },
   "scripts": {
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "build": "npm run data:generate && ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "data:generate": "node tools/generate-observatory.mjs",
+    "data:regions": "node tools/generate-regions.mjs",
+    "data:brief": "node tools/export-content-brief.mjs",
+    "verify:sites": "node tools/verify/check-domains.mjs tools/verify/dmo-candidates.json tools/verify/dmo-verified.json && node tools/verify/select-sites.mjs tools/verify/dmo-verified.json tools/verify/dmo-selection.json && node tools/verify/write-sites-seed.mjs tools/verify/dmo-selection.json",
+    "verify:hotels": "node tools/verify/check-hotels.mjs tools/verify/hotels-verified.json && node tools/verify/write-hotels-seed.mjs tools/verify/hotels-verified.json",
+    "data:report": "node tools/export-verification-report.mjs"
   },
   "dependencies": {
     "@fontsource/dm-mono": "^5.3.0",
     "@fontsource/plus-jakarta-sans": "^5.3.0",
+    "@fontsource/source-serif-4": "^5.3.0",
     "@fontsource/unbounded": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.1.6",
+    "leaflet": "^1.9.4",
     "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.22"
   }
 }

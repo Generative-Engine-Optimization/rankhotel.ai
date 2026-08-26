@@ -1,0 +1,42 @@
+---
+import type { Locale } from "../lib/config";
+import { percent } from "../lib/format";
+import { messages } from "../lib/i18n";
+import Flag from "./Flag.astro";
+
+const { locale, it, en } = Astro.props as { locale: Locale; it: number; en: number };
+
+const t = messages(locale).observatory;
+// Le AI raccontano l'Italia in modo diverso a chi è dentro e a chi è fuori.
+// Il divario è un risultato dell'osservatorio, non una nota a piè di pagina.
+const gap = Math.round((it - en) * 100);
+---
+
+<div class="card grid gap-3.5">
+  <div class="grid gap-2.5">
+    {
+      [
+        { key: "it", label: t.lang.it, value: it },
+        { key: "en", label: t.lang.en, value: en },
+      ].map((row) => (
+        <div class="grid gap-1.5">
+          <div class="flex items-baseline justify-between gap-3">
+            <span class="flex items-center gap-2 text-[0.9rem]">
+              <Flag locale={row.key} size={17} />
+              {row.label}
+            </span>
+            <span class="num text-[0.9rem]">{percent(locale, row.value)}</span>
+          </div>
+          <span class="bar">
+            <span
+              style={`width:${Math.max(2, row.value * 100)}%;background:${row.key === "it" ? "var(--color-accent)" : "var(--color-accent-ink)"}`}
+            />
+          </span>
+        </div>
+      ))
+    }
+  </div>
+  <p class="text-[0.88rem] text-muted">
+    {gap === 0 ? t.lang.none : t.lang.gap.replace("{n}", String(Math.abs(gap))).replace("{side}", gap > 0 ? t.lang["side-it"] : t.lang["side-en"])}
+  </p>
+</div>

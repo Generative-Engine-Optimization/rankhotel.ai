@@ -1,25 +1,41 @@
 {
-  "brand": "RankHotel.ai",
+  "brand": "Italian AI Visibility Report",
   "nav": {
     "home": "Home",
     "how-it-works": "How it works",
     "faq": "FAQ",
     "observatory": "Observatory",
-    "methodology": "Methodology"
-  },
-  "cta": {
-    "book-call": "Book a demo",
-    "how-it-works": "See how it works"
+    "methodology": "Methodology",
+    "map": "Map",
+    "queries": "Queries",
+    "destinations": "Destinations",
+    "tags": "Themes",
+    "glossary": "Glossary",
+    "sitemap": "Site map",
+    "hotels": "Hotels"
   },
   "footer": {
-    "tagline": "Organic growth and AI search visibility for hotels and resorts.",
+    "tagline": "Observatory of AI visibility in Italian tourism",
     "by": "A RankWit AI project",
     "observatory": "Observatory",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "map": "Map",
+    "queries": "Query fan-out",
+    "assumptions": "Assumptions",
+    "tags": "Themes",
+    "glossary": "Glossary",
+    "methodology": "Methodology",
+    "sitemap": "Site map",
+    "hotels": "Hotels"
   },
   "locale": {
     "label": "Language",
     "it": "Italiano",
     "en": "English"
-  }
+  },
+  "skip": "Skip to content",
+  "brand-line": "Observatory of AI visibility in Italian tourism",
+  "brand-note": "The data is free to use: cite the source. A project by",
+  "corrections": "Report a correction",
+  "corrections-note": "If something about a place you know is wrong, write to us: we'll fix it and say so."
 }

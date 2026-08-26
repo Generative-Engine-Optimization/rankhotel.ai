@@ -1,0 +1,26 @@
+---
+import { LINKS, type Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import Icon from "./Icon.astro";
+
+// Il nome di chi pubblica l'osservatorio è sempre un link a chi lo pubblica.
+// Nominare qualcuno senza portarci è una cortesia a metà, e su un sito che
+// misura le fonti citate sarebbe anche incoerente.
+const { locale, label, subtle = false } = Astro.props as {
+  locale: Locale;
+  label?: string;
+  subtle?: boolean;
+};
+const m = messages(locale).common;
+---
+
+<a
+  class={`inline-flex items-center gap-1 ${subtle ? "text-muted hover:text-accent-ink" : "text-accent-ink"}`}
+  href={LINKS.rankwit}
+  target="_blank"
+  rel="noopener noreferrer external"
+>
+  {label ?? m.footer.by}
+  <Icon name="share" size={11} class="rotate-90 opacity-60" />
+  <span class="sr-only">{messages(locale).observatory.data["new-tab"]}</span>
+</a>

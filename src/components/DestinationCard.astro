@@ -1,0 +1,68 @@
+---
+import RegionMark from "./RegionMark.astro";
+import { destinationPath, type Locale } from "../lib/config";
+import { compact, decimal, signed } from "../lib/format";
+import { messages } from "../lib/i18n";
+import { categoryByKey, destinationIcon, scoreBand, type Destination } from "../lib/observatory";
+import Icon from "./Icon.astro";
+import ScoreDial from "./ScoreDial.astro";
+import TagList from "./TagList.astro";
+import Sparkline from "./Sparkline.astro";
+import TierBadge from "./TierBadge.astro";
+
+const { locale, destination, showRank = true } = Astro.props as {
+  locale: Locale;
+  destination: Destination;
+  showRank?: boolean;
+};
+
+const t = messages(locale).observatory;
+const category = categoryByKey(destination.category);
+---
+
+<a
+  class="card grid content-start gap-2.5 hover:border-line-strong"
+  href={destinationPath(locale, destination.slug[locale])}
+>
+  <div class="flex items-start justify-between gap-3">
+    <div class="grid gap-1">
+      <strong class="flex items-center gap-2 text-[1.05rem]">
+        <span class="text-accent-ink"><Icon name={destinationIcon(destination)} size={17} /></span>
+        {destination.name[locale]}
+      </strong>
+      <span class="flex items-center gap-1.5 text-[0.85rem] text-muted">
+        <RegionMark region={destination.region} size={16} class="text-faint" />
+        {destination.region}
+      </span>
+    </div>
+    <ScoreDial locale={locale} stat={destination.score} size="sm" />
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="pill gap-1.5" data-cat={destination.category}>
+      <span class="cat-dot"></span>{category?.short[locale]}
+    </span>
+    {showRank && <TierBadge locale={locale} tier={destination.tier} size="sm" />}
+    <TagList
+      locale={locale}
+      category={destination.category}
+      tags={destination.tags}
+      size="sm"
+      limit={2}
+    />
+  </div>
+
+  <div class="flex items-end justify-between gap-3">
+    <span class="text-[0.85rem] text-muted">
+      {t.card.visitors.replace("{n}", compact(locale, destination.visitors * 1000))}
+    </span>
+    <span class="flex items-center gap-2">
+      <Sparkline values={destination.spark} width={64} height={22} />
+      <span
+        class={`num text-[0.82rem] ${destination.trend > 0 ? "text-success-ink" : destination.trend < 0 ? "text-danger-ink" : "text-faint"}`}
+      >
+        {signed(destination.trend, 1)}
+      </span>
+    </span>
+  </div>
+</a>

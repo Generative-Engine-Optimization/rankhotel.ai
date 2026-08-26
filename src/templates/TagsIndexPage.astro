@@ -1,0 +1,73 @@
+---
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/PageHero.astro";
+import Panel from "../components/Panel.astro";
+import Section from "../components/Section.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import { observatoryPath, otherLocale, tagPath, tagsPath, type Locale } from "../lib/config";
+import { messages, plural } from "../lib/i18n";
+import { itemListSchema } from "../lib/schema";
+import { categoryByKey, listTags, taggedWith } from "../lib/observatory";
+
+const { locale } = Astro.props as { locale: Locale };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+const tags = listTags();
+---
+
+<ObsLayout
+  locale={locale}
+  title={t.tags["index-title"]}
+  description={t.tags["index-description"]}
+  schema={itemListSchema(
+    locale,
+    t.tags["index-title"],
+    tags.map((tag) => ({ name: tag.name[locale], url: tagPath(locale, tag.slug[locale]) })),
+    tagsPath(locale),
+  )}
+  path={tagsPath(locale)}
+  altPath={tagsPath(other)}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={t.tags.title}
+    icon="tag"
+    title={t.tags["index-title"]}
+    lead={t.tags.lead}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: t.tags.title },
+    ]}
+    compact
+  />
+
+  <Section locale={locale} id="temi" share={false}>
+    <div class="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-3">
+      {
+        tags.map((tag) => {
+          const category = categoryByKey(tag.key);
+          const top = taggedWith(tag.key)
+            .sort((a, b) => b.score.mean - a.score.mean)
+            .slice(0, 3);
+          return (
+            <a class="card lift grid content-start gap-3" href={tagPath(locale, tag.slug[locale])}>
+              <div class="flex items-center justify-between gap-3">
+                <span class="flex items-center gap-2 font-bold">
+                  <span class="text-accent-ink">
+                    <Icon name={tag.icon} size={19} />
+                  </span>
+                  {tag.name[locale]}
+                </span>
+                <span class="pill num">{tag.count}</span>
+              </div>
+              <p class="text-[0.88rem] text-muted">{tag.lead[locale]}</p>
+              <p class="border-t border-line pt-2.5 text-[0.82rem] text-faint">
+                {top.map((row) => row.name[locale]).join(" · ")}
+              </p>
+            </a>
+          );
+        })
+      }
+    </div>
+  </Section>
+</ObsLayout>

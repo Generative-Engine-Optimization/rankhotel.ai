@@ -1,32 +1,53 @@
 import {
   absolute,
-  cityPath,
+  assumptionsPath,
+  categoryPath,
+  comparePath,
+  destinationPath,
+  glossaryPath,
+  hotelsIndexPath,
+  enginePath,
   LOCALES,
+  mapPath,
   methodologyPath,
+  OBSERVATORY_IS_DEMO,
   observatoryPath,
   pathFor,
-  SITE_URL,
+  queriesPath,
+  sitemapPath,
+  type Locale,
 } from "../lib/config";
-import { OBSERVATORY_IS_DEMO } from "../lib/config";
-import { listCities } from "../lib/observatory";
+import { ENGINES, NATIONAL, listCategories, listDestinations } from "../lib/observatory";
 
 type Entry = {
   loc: string;
-  alternates?: string[];
-  changefreq: "weekly" | "daily";
+  alternates: string[];
+  changefreq: "weekly" | "daily" | "monthly";
+  xDefault?: string;
 };
 
+// La data dell'ultimo aggiornamento del dataset è l'unica <lastmod> onesta che
+// questo sito può dichiarare: le pagine sono generate da quei dati.
+const LASTMOD = NATIONAL.updatedAt;
+
 function url(entry: Entry): string {
-  const alternates = (entry.alternates ?? [])
+  const alternates = entry.alternates
     .map(
       (href) =>
         `    <xhtml:link rel="alternate" hreflang="${href.startsWith("/it") ? "it" : "en"}" href="${absolute(href)}"/>`,
     )
     .join("\n");
+  // x-default nella sitemap quanto nell'head: i due devono dire la stessa cosa,
+  // altrimenti Search Console segnala il cluster come incoerente.
+  const fallback = entry.xDefault ?? entry.alternates.find((href) => href.startsWith("/it"));
   return [
     "  <url>",
     `    <loc>${absolute(entry.loc)}</loc>`,
     alternates,
+    fallback
+      ? `    <xhtml:link rel="alternate" hreflang="x-default" href="${absolute(fallback)}"/>`
+      : "",
+    `    <lastmod>${LASTMOD}</lastmod>`,
     `    <changefreq>${entry.changefreq}</changefreq>`,
     "  </url>",
   ]
@@ -34,54 +55,52 @@ function url(entry: Entry): string {
     .join("\n");
 }
 
+// Una coppia IT/EN per ogni pagina: due entry, stessi alternates. Scriverle a
+// mano per ~230 pagine sarebbe l'unico modo di sbagliarle.
+function pair(
+  build: (locale: Locale) => string,
+  changefreq: Entry["changefreq"],
+  xDefault?: string,
+): Entry[] {
+  const alternates = LOCALES.map((locale) => build(locale));
+  return LOCALES.map((locale) => ({ loc: build(locale), alternates, changefreq, xDefault }));
+}
+
 export function GET() {
+  // La radice mancava: è la URL più linkata del dominio e la pagina di scelta
+  // lingua, cioè l'x-default dichiarato dalle due home.
+  const homeAlternates = LOCALES.map((locale) => pathFor(locale));
   const entries: Entry[] = [
-    {
-      loc: pathFor("it"),
-      alternates: LOCALES.map((locale) => pathFor(locale)),
-      changefreq: "weekly",
-    },
-    {
-      loc: pathFor("en"),
-      alternates: LOCALES.map((locale) => pathFor(locale)),
-      changefreq: "weekly",
-    },
+    { loc: "/", alternates: homeAlternates, changefreq: "weekly", xDefault: "/" },
+    ...pair((locale) => pathFor(locale), "weekly", "/"),
   ];
 
+  // Le pagine di metodo non pubblicano misurazioni: stanno in sitemap sempre.
+  entries.push(
+    ...pair(methodologyPath, "monthly"),
+    ...pair(assumptionsPath, "monthly"),
+    ...pair(glossaryPath, "monthly"),
+    ...pair(sitemapPath, "monthly"),
+  );
+
+  // Finché il dataset è simulato le pagine che pubblicano numeri restano fuori
+  // dalla sitemap e in noindex: darli per misurati non si fa.
   if (!OBSERVATORY_IS_DEMO) {
     entries.push(
-      {
-        loc: observatoryPath("it"),
-        alternates: [observatoryPath("it"), observatoryPath("en")],
-        changefreq: "daily",
-      },
-      {
-        loc: observatoryPath("en"),
-        alternates: [observatoryPath("it"), observatoryPath("en")],
-        changefreq: "daily",
-      },
-      {
-        loc: methodologyPath("it"),
-        alternates: [methodologyPath("it"), methodologyPath("en")],
-        changefreq: "weekly",
-      },
-      {
-        loc: methodologyPath("en"),
-        alternates: [methodologyPath("it"), methodologyPath("en")],
-        changefreq: "weekly",
-      },
-      ...listCities().flatMap((city) => [
-        {
-          loc: cityPath("it", city.slug.it),
-          alternates: [cityPath("it", city.slug.it), cityPath("en", city.slug.en)],
-          changefreq: "daily" as const,
-        },
-        {
-          loc: cityPath("en", city.slug.en),
-          alternates: [cityPath("it", city.slug.it), cityPath("en", city.slug.en)],
-          changefreq: "daily" as const,
-        },
-      ]),
+      ...pair(observatoryPath, "daily"),
+      ...pair(mapPath, "weekly"),
+      ...pair(queriesPath, "weekly"),
+      ...pair(hotelsIndexPath, "daily"),
+      ...pair(comparePath, "monthly"),
+      ...ENGINES.flatMap((engine) =>
+        pair((locale) => enginePath(locale, engine), "weekly"),
+      ),
+      ...listCategories().flatMap((category) =>
+        pair((locale) => categoryPath(locale, category.slug[locale]), "daily"),
+      ),
+      ...listDestinations().flatMap((destination) =>
+        pair((locale) => destinationPath(locale, destination.slug[locale]), "daily"),
+      ),
     );
   }
 

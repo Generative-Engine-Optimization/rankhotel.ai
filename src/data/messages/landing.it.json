@@ -1,94 +1,119 @@
 {
   "meta": {
-    "title": "RankHotel.ai — più prenotazioni dirette da Google e dall'AI",
-    "description": "Facciamo in modo che il tuo hotel esca quando un viaggiatore chiede a Google o a ChatGPT dove dormire. Ricerca, strategia, contenuti e agenti AI, con specialisti hospitality."
+    "title": "Quali destinazioni italiane consiglia l'AI",
+    "description": "Osservatorio pubblico della visibilità AI del turismo italiano. Cento territori, duemila hotel, tre assistenti. Metodo dichiarato, dati aperti."
   },
   "hero": {
-    "eyebrow": "Powered by RankWit AI",
-    "title": "I viaggiatori chiedono all'AI dove dormire.",
-    "lead": "Quando tocca alla tua città, il tuo hotel è tra i nomi che escono?",
-    "cta": "Scopri cosa dice l'AI del tuo hotel",
-    "cta-note": "30 minuti, gratis: in call ti mostriamo cosa rispondono davvero ChatGPT, Gemini, Perplexity e Claude quando un viaggiatore cerca un hotel come il tuo.",
-    "models": "ChatGPT · Gemini · Perplexity · Claude",
-    "note": "I riferimenti sui comportamenti di mercato derivano da report aggregati travel e AI aggiornati al 2025-2026."
+    "eyebrow": "Osservatorio pubblico",
+    "title": "Chiedi a un'AI dove andare in Italia. Escono cinque nomi.",
+    "lead": "Non cinquanta link da confrontare: cinque nomi, già scelti. Misuriamo quali territori ci finiscono, quali hotel ci finiscono e da quali fonti l'AI ha preso le informazioni.",
+    "cta": "Apri la classifica",
+    "cta-secondary": "Come funziona",
+    "note": "Tre assistenti interrogati ogni mese, cinque volte per domanda. Ogni numero è una media, e accanto trovi quanto ha oscillato."
   },
-  "why": {
-    "title": "Perché la ricerca AI sposta prenotazioni",
-    "body": "Un viaggiatore scrive «migliore hotel boutique a Firenze». Non riceve dieci link da confrontare: riceve pochi nomi, già scelti per lui.",
-    "consequence": "Se il tuo hotel non è raccontato con informazioni chiare e coerenti, quei nomi sono le OTA e i tuoi competitor. E la camera la vende qualcun altro."
+  "what": {
+    "title": "Cosa misura",
+    "lead": "Quattro cose, che insieme fanno un voto da 0 a 100. Ognuna risponde a una domanda che un ente turistico o un albergatore si pone davvero."
   },
-  "how-it-works": {
-    "title": "Come costruiamo il motore di prenotazioni dirette del tuo hotel",
-    "intro": "Piattaforma RankWit AI, agenti su misura e chi la crescita organica degli hotel la fa di mestiere. Dalla strategia alle camere prenotate.",
-    "phases": [
+  "how": {
+    "title": "Com'è fatto",
+    "lead": "Nessun numero arriva da un'intuizione. Questo è il percorso che ogni valore fa prima di comparire in pagina.",
+    "rules-title": "Prima di leggere un numero",
+    "steps": [
       {
-        "name": "Contesto",
-        "claim": "Prima impariamo il tuo hotel a memoria: ospiti, stagioni, esperienze, voce."
+        "name": "Le domande",
+        "body": "Cinquanta domande per territorio, nelle due lingue in cui l'Italia viene cercata. Metà mettono il territorio in gara con gli altri della sua categoria, metà verificano solo se l'AI lo conosce."
       },
       {
-        "name": "Ricerca",
-        "claim": "Troviamo il 5% delle ricerche che porta l'80% delle prenotazioni."
+        "name": "Le rilevazioni",
+        "body": "Ogni domanda viene posta cinque volte al mese a ciascun assistente. La stessa domanda dà risposte diverse: una sola interrogazione non è un dato, è un aneddoto."
       },
       {
-        "name": "Strategia",
-        "claim": "Una lista di cose da fare, in ordine di prenotazioni."
+        "name": "I siti",
+        "body": "Per ogni territorio guardiamo chi lo racconta e se i programmi delle AI riescono a leggerlo. Un'AI non consiglia quello che non ha potuto leggere."
       },
       {
-        "name": "Esecuzione",
-        "claim": "Pagine che i tuoi competitor non possono copiare."
-      },
-      {
-        "name": "Ottimizzazione",
-        "claim": "Guardiamo le camere prenotate, non le posizioni."
+        "name": "Il numero",
+        "body": "I quattro fattori, pesati, danno il punteggio. Pubblichiamo la media con la sua oscillazione e la fascia, perché fra la trentottesima e la quarantunesima posizione non c'è differenza misurabile."
       }
     ]
   },
-  "ecosystem": {
-    "title": "Dalla struttura singola alla catena",
-    "body": "Hotel indipendenti, gruppi e catene, direttori marketing, agenzie, investitori e operatori."
+  "start": {
+    "title": "Da dove si comincia",
+    "lead": "Tre porte, a seconda di cosa stai cercando.",
+    "paths": [
+      {
+        "name": "Ho un territorio in mente",
+        "body": "Vai alla scheda: punteggio, fascia, cosa l'AI sa di quel posto, chi lo racconta e i venti hotel che ci seguiamo.",
+        "cta": "Cerca sulla mappa"
+      },
+      {
+        "name": "Voglio vedere la classifica",
+        "body": "Cento territori ordinati, filtrabili per assistente. Oppure una categoria alla volta, che è il confronto che ha senso.",
+        "cta": "Apri la classifica"
+      },
+      {
+        "name": "Voglio guardare gli hotel",
+        "body": "Duemila strutture in cento territori, con la classifica nazionale e quella di ciascun territorio. Il confronto che conta è il secondo.",
+        "cta": "Apri gli hotel"
+      },
+      {
+        "name": "Voglio capire il metodo",
+        "body": "La formula, i pesi, quante rilevazioni, e le sette cose che diamo per scontate prima ancora di misurare.",
+        "cta": "Leggi il metodo"
+      }
+    ]
   },
-  "observatory-teaser": {
-    "eyebrow": "Osservatorio",
-    "title": "La classifica pubblica di chi l'AI consiglia, città per città",
-    "body": "Misuriamo quali hotel escono davvero quando ChatGPT, Gemini, Perplexity e Claude rispondono. Metodologia pubblica, dati gratuiti.",
-    "cta": "Vai all'osservatorio"
+  "read": {
+    "title": "Come si legge un punteggio",
+    "lead": "Tre cose da sapere prima di guardare un numero, altrimenti si legge male."
   },
   "faq": {
-    "title": "FAQ",
+    "title": "Domande frequenti",
+    "lead": "Le cose che ci vengono chieste prima ancora di guardare un numero.",
     "items": [
       {
-        "question": "Cosa fa RankHotel?",
-        "answer": "Portiamo prenotazioni dirette dal traffico organico: Google e le risposte dell'AI. Senza dipendere dalle OTA e senza montare un team interno. Ci occupiamo di ricerca, strategia, contenuti e automazioni, e lavoriamo come un pezzo del tuo marketing: specialisti di AI Search Optimization, affiancati da strumenti che fanno il lavoro di più persone."
+        "q": "Cos'è la visibilità AI di una destinazione turistica?",
+        "a": "È quanto spesso un assistente conversazionale nomina quel territorio quando qualcuno gli chiede dove andare, e in che posizione lo mette. A differenza di una ricerca tradizionale, che restituisce cinquanta link fra cui scegliere, un'AI restituisce cinque nomi già scelti: o ci sei, o non esisti."
       },
       {
-        "question": "Cosa succede nella prima call?",
-        "answer": "Mezz'ora, gratis, senza impegno. Poniamo ai modelli le domande che farebbe un viaggiatore in cerca di un hotel come il tuo, guardiamo insieme cosa rispondono e chi viene consigliato al posto tuo. Esci con il quadro di dove sei oggi, che tu decida di lavorare con noi o no."
+        "q": "Quali assistenti misura l'osservatorio?",
+        "a": "Tre: ChatGPT, Gemini e Perplexity. Ogni assistente ha un punteggio suo, oltre al punteggio generale che è la media semplice dei tre. Nessun peso nascosto fra un assistente e l'altro: se ChatGPT contasse più di Perplexity sarebbe una nostra opinione travestita da misura."
       },
       {
-        "question": "L'AI può fare SEO come un esperto umano?",
-        "answer": "No, ed è il motivo per cui esistiamo. L'AI accelera ricerca, dati e contenuti, ma da sola prende scorciatoie e produce roba senza direzione. Noi la usiamo per la scala; le decisioni le prende chi conosce SEO e hospitality. È un acceleratore, non un pilota."
+        "q": "Come si calcola il punteggio da 0 a 100?",
+        "a": "Da quattro fattori pesati: presenza comparativa (quanto il territorio esce quando gareggia con gli altri della sua categoria), profondità interna (quanto l'AI conosce davvero il posto), fonti citate (da dove prende le informazioni) e accessibilità tecnica (se i programmi delle AI riescono a leggere i siti del territorio). La formula e i pesi sono pubblici."
       },
       {
-        "question": "Quanto costa?",
-        "answer": "Dipende da struttura, mercato e obiettivi. Ci sono piani standard per partire subito: sentiamoci e vediamo qual è il tuo."
+        "q": "Perché cinque rilevazioni al mese e non una?",
+        "a": "La stessa domanda posta due volte allo stesso modello dà due risposte diverse. Una domanda sola non è un dato, è un aneddoto. Ogni mese ripetiamo tutto cinque volte per assistente e pubblichiamo la media con quanto ha oscillato."
       },
       {
-        "question": "Il monitoraggio è in tempo reale?",
-        "answer": "Interroghiamo i principali modelli a intervalli regolari, così il quadro della tua visibilità è sempre aggiornato."
+        "q": "Cosa vuol dire il ± accanto al punteggio?",
+        "a": "Dice di quanto la risposta è cambiata fra una rilevazione e l'altra nello stesso mese. Più è piccolo, più il punteggio è affidabile. È anche il motivo per cui pubblichiamo una fascia e non solo una posizione: fra la trentottesima e la quarantunesima posizione non c'è differenza misurabile."
       },
       {
-        "question": "Posso confrontarmi con i miei competitor?",
-        "answer": "Sì, il confronto è in tutti i piani: sai dove sei rispetto agli hotel simili nel tuo mercato."
+        "q": "Perché conta se il sito di una destinazione si lascia leggere dai bot?",
+        "a": "Un'AI non consiglia quello che non ha potuto leggere. Ogni assistente manda i suoi programmi a leggere i siti: se un territorio blocca quelli di ChatGPT, il suo punteggio su ChatGPT scende. Non è igiene tecnica, è visibilità."
       },
       {
-        "question": "Sostituisce i tool SEO che uso già?",
-        "answer": "No, si aggiunge. I rank tracker classici non vedono come gli assistenti parlano del tuo hotel: quel pezzo lo copriamo noi."
+        "q": "I dati dell'osservatorio sono aperti?",
+        "a": "Sì. Nessun paywall e nessuna registrazione: le classifiche sono in pagina e gli stessi dati sono scaricabili in JSON dalle API pubbliche. Il metodo è dichiarato per intero, così chiunque può contestare un numero sapendo come è nato."
+      },
+      {
+        "q": "I numeri pubblicati adesso sono misurazioni reali?",
+        "a": "No, non ancora. In questa fase i valori sono generati a scopo dimostrativo per costruire e mostrare lo strumento, e lo dichiariamo su ogni pagina. Non vanno citati come risultati. Quando partiranno le rilevazioni vere il banner sparirà e i numeri diventeranno misurati."
       }
     ]
   },
+  "open": {
+    "title": "Dati aperti",
+    "lead": "Gli stessi numeri che vedi nelle pagine, in JSON, senza registrazione e senza chiave. Se li usi, cita la fonte.",
+    "cta": "Vedi gli endpoint"
+  },
   "closing": {
-    "title": "Chi ha investito nella SEO vent'anni fa non se n'è pentito.",
-    "body": "Oggi la partita è la ricerca AI. I tuoi ospiti ci sono già: manca il tuo hotel.",
-    "cta": "Prenota la call gratuita"
+    "title": "L'osservatorio è pubblico e resta pubblico",
+    "body": "Nessun paywall, nessun accesso riservato, metodo dichiarato. Se un dato su un territorio che conosci è sbagliato, scrivici.",
+    "cta": "Apri l'osservatorio"
   }
 }

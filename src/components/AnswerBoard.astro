@@ -1,0 +1,238 @@
+---
+import EngineLogo from "./EngineLogo.astro";
+import FunnelTag from "./FunnelTag.astro";
+import Icon from "./Icon.astro";
+import LangTag from "./LangTag.astro";
+import SiteLink from "./SiteLink.astro";
+import type { Locale } from "../lib/config";
+import { dateLabel, decimal, percent } from "../lib/format";
+import { interpolate, messages } from "../lib/i18n";
+import { ENGINES, type AnswerRow } from "../lib/observatory";
+
+// La risposta, per intero.
+//
+// Ogni altra sezione dell'osservatorio dice quanto e dove un nome compare.
+// Qui si vede la cosa misurata. È l'unico blocco del sito in cui il lettore
+// non deve fidarsi di un numero: legge il testo e giudica da sé.
+//
+// Il testo è una RICOSTRUZIONE — montata sugli stessi numeri che il resto del
+// dataset pubblica — e il riquadro in cima lo dice senza giri di parole. È
+// l'unico contenuto del sito che non può essere sintetico e restare credibile
+// senza dichiararlo: un punteggio inventato passa, un paragrafo di ChatGPT
+// inventato e spacciato per vero brucia la fiducia sull'intero osservatorio.
+const { locale, answers, id } = Astro.props as {
+  locale: Locale;
+  answers: AnswerRow[];
+  id: string;
+};
+
+const t = messages(locale).observatory;
+const a = t.answers;
+
+// Un gruppo per prompt. Prima quelli nella lingua della pagina: chi legge in
+// italiano vuole vedere per prima la risposta in italiano, ma quella nell'altra
+// lingua è a un clic, ed è spesso la più interessante delle due.
+const order = [...answers].sort((x, y) => {
+  if (x.lang !== y.lang) return x.lang === locale ? -1 : 1;
+  return 0;
+});
+
+// Il prompt per intero non entra in una chip: in maiuscolo e monospaziato
+// occuperebbe una riga da solo e i quattro pulsanti diventerebbero un muro.
+const shorten = (value: string) => (value.length > 44 ? `${value.slice(0, 43)}…` : value);
+
+const groups: {
+  key: string;
+  text: string;
+  lang: Locale;
+  funnel: string;
+  rows: AnswerRow[];
+}[] = [];
+for (const row of order) {
+  let group = groups.find((g) => g.key === row.promptKey);
+  if (!group) {
+    group = {
+      key: row.promptKey,
+      text: row.promptText,
+      lang: row.lang,
+      funnel: row.funnel,
+      rows: [],
+    };
+    groups.push(group);
+  }
+  group.rows.push(row);
+}
+
+const escapeHtml = (value: string) =>
+  value.replace(
+    /[&<>"]/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c,
+  );
+
+const escapeRe = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Evidenziazione e note in un solo passaggio, su testo già neutralizzato.
+// I termini si ordinano dal più lungo al più corto e si sostituiscono con una
+// sola alternanza: così "Roma" non finisce dentro l'evidenziazione di
+// "Roma Capitale" annidando due <mark>.
+function decorate(text: string, highlights: string[]) {
+  let html = escapeHtml(text);
+  const terms = highlights
+    .filter(Boolean)
+    .map(escapeHtml)
+    .sort((x, y) => y.length - x.length)
+    .map(escapeRe);
+  if (terms.length) {
+    // I confini di parola sono obbligatori: senza, evidenziare "Roma" dentro
+    // "Foro Romano" spezzava il nome in "Foro Roma|no" nel mezzo della
+    // risposta. \b non basta perché i nomi hanno accenti e apostrofi.
+    html = html.replace(
+      new RegExp(`(?<![\\p{L}\\p{N}])(${terms.join("|")})(?![\\p{L}\\p{N}])`, "gu"),
+      "<mark>$1</mark>",
+    );
+  }
+  return html.replace(/\[(\d+)\]/g, '<sup>$1</sup>');
+}
+---
+
+<div class="grid gap-[22px]" data-answers id={id}>
+  <p class="answer-warning">
+    <span class="mt-0.5 shrink-0"><Icon name="info" size={17} /></span>
+    <span set:html={a.disclaimer}></span>
+  </p>
+
+  {
+    groups.length > 1 && (
+      <div class="flex flex-wrap items-center gap-2">
+        {groups.map((group, index) => (
+          <button
+            class="chip gap-1.5"
+            type="button"
+            title={group.text}
+            data-answer-tab={group.key}
+            data-active={String(index === 0)}
+          >
+            <LangTag locale={locale} lang={group.lang} showCode={false} />
+            <span class="font-mono">«{shorten(group.text)}»</span>
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    groups.map((group, index) => (
+      <div class="grid gap-3.5" data-answer-panel={group.key} hidden={index !== 0}>
+        <p class="flex flex-wrap items-center gap-2.5 text-[0.9rem] text-muted">
+          <Icon name="search" size={15} class="text-faint" />
+          <span class="font-mono text-ink">«{group.text}»</span>
+          <LangTag locale={locale} lang={group.lang} />
+          <FunnelTag
+            locale={locale}
+            funnel={group.funnel}
+            size={14}
+            class="text-[0.8rem] font-bold"
+          />
+        </p>
+
+        <div class="grid items-start gap-2.5 lg:grid-cols-3">
+          {ENGINES.map((engine) => {
+            const row = group.rows.find((r) => r.engine === engine);
+            if (!row) return null;
+            return (
+              <article class="card grid content-start gap-3.5">
+                <header class="grid gap-2.5 border-b border-line pb-3">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <EngineLogo engine={engine} size={18} />
+                    <span class="pill whitespace-nowrap" data-state={row.mentioned ? "in" : "out"}>
+                      {row.subject === "hotels"
+                        ? row.mentioned
+                          ? interpolate(a["hotels-in"], { n: String(row.hotelKeys.length) })
+                          : a["hotels-out"]
+                        : row.mentioned
+                          ? interpolate(a.in, { position: decimal(locale, row.position ?? 0) })
+                          : a.out}
+                    </span>
+                  </div>
+                  <p class="text-[0.78rem] text-muted">
+                    {interpolate(a.capture, {
+                      date: dateLabel(locale, row.capturedAt),
+                      run: String(row.run),
+                      rate: percent(locale, row.mentionRate),
+                    })}
+                  </p>
+                </header>
+
+                <div class="answer">
+                  {row.blocks.map((block) =>
+                    block.kind === "p" ? (
+                      <p set:html={decorate(block.text, row.highlights)} />
+                    ) : block.ordered ? (
+                      <ol>
+                        {block.items.map((item) => (
+                          <li>
+                            <strong set:html={decorate(item.label, row.highlights)} />
+                            {" — "}
+                            <span set:html={decorate(item.text, row.highlights)} />
+                          </li>
+                        ))}
+                      </ol>
+                    ) : (
+                      <ul>
+                        {block.items.map((item) => (
+                          <li>
+                            <strong set:html={decorate(item.label, row.highlights)} />
+                            {" — "}
+                            <span set:html={decorate(item.text, row.highlights)} />
+                          </li>
+                        ))}
+                      </ul>
+                    ),
+                  )}
+                </div>
+
+                <footer class="grid gap-2 border-t border-line pt-3">
+                  <p class="text-[0.78rem] text-muted">
+                    {row.citations.length ? a.sources : a["no-sources"]}
+                  </p>
+                  {row.citations.length > 0 && (
+                    <ul class="grid gap-1.5">
+                      {row.citations.map((citation, position) => (
+                        <li class="flex items-baseline gap-2 text-[0.84rem]">
+                          <span class="num shrink-0 text-faint">
+                            {citation.index ?? position + 1}
+                          </span>
+                          <SiteLink
+                            locale={locale}
+                            domain={citation.domain}
+                            label={citation.label}
+                            verified={!citation.synthetic}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </footer>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-answers]").forEach((root) => {
+    const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-answer-panel]"));
+    root.querySelectorAll<HTMLButtonElement>("[data-answer-tab]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const key = button.dataset.answerTab;
+        for (const panel of panels) panel.hidden = panel.dataset.answerPanel !== key;
+        root
+          .querySelectorAll("[data-answer-tab]")
+          .forEach((other) => other.setAttribute("data-active", String(other === button)));
+      });
+    });
+  });
+</script>

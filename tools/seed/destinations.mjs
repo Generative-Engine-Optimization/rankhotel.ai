@@ -1,0 +1,136 @@
+// Le 100 destinazioni dell'osservatorio: 20 per categoria primaria.
+// Selezione per volume di visitatori e rilevanza territoriale.
+// Coordinate reali (centroide del territorio), regione reale, entità reali in
+// `knownFor` — sono le entità che un'AI dovrebbe saper citare quando le si
+// chiede "cosa vedere a/in ...", e sono la base del fattore "profondità interna".
+//
+// visitors = arrivi turistici stimati in migliaia/anno. Ordine di grandezza
+// realistico, non un dato ufficiale: serve a dimensionare i pin sulla mappa e a
+// correlare la domanda di query.
+
+function d(key, it, en, slugEn, region, lat, lng, category, tags, visitors, knownFor) {
+  return {
+    key,
+    name: { it, en },
+    slug: { it: key, en: slugEn },
+    region,
+    lat,
+    lng,
+    category,
+    tags,
+    visitors,
+    knownFor,
+  };
+}
+
+export const DESTINATIONS = [
+  // ---------------------------------------------------------------- MARE (20)
+  d("costiera-amalfitana", "Costiera Amalfitana", "Amalfi Coast", "amalfi-coast", "Campania", 40.6333, 14.6027, "mare", ["unesco", "borghi", "luxury"], 5200, ["Positano", "Amalfi", "Ravello", "Villa Cimbrone", "Sentiero degli Dei"]),
+  d("salento", "Salento", "Salento", "salento", "Puglia", 40.1500, 18.1667, "mare", ["borghi", "family"], 4100, ["Otranto", "Gallipoli", "Santa Maria di Leuca", "Torre dell'Orso", "Grotta della Poesia"]),
+  d("cinque-terre", "Cinque Terre", "Cinque Terre", "cinque-terre", "Liguria", 44.1268, 9.7095, "mare", ["unesco", "borghi", "outdoor"], 3800, ["Vernazza", "Manarola", "Monterosso al Mare", "Sentiero Azzurro", "Riomaggiore"]),
+  d("costa-smeralda", "Costa Smeralda", "Costa Smeralda", "costa-smeralda", "Sardegna", 41.1300, 9.5300, "mare", ["luxury"], 1900, ["Porto Cervo", "Spiaggia del Principe", "Arcipelago della Maddalena", "Baja Sardinia", "Capriccioli"]),
+  d("isola-elba", "Isola d'Elba", "Elba Island", "elba-island", "Toscana", 42.7700, 10.2800, "mare", ["family", "outdoor"], 2300, ["Portoferraio", "Villa dei Mulini", "Monte Capanne", "Spiaggia di Sansone", "Capoliveri"]),
+  d("gargano", "Gargano", "Gargano", "gargano", "Puglia", 41.8000, 16.0000, "mare", ["montagna-parchi", "family"], 2600, ["Vieste", "Peschici", "Foresta Umbra", "Baia delle Zagare", "Monte Sant'Angelo"]),
+  d("riviera-romagnola", "Riviera Romagnola", "Romagna Riviera", "romagna-riviera", "Emilia-Romagna", 44.0600, 12.5700, "mare", ["family"], 8200, ["Rimini", "Riccione", "Cesenatico", "Mirabilandia", "Cattolica"]),
+  d("taormina", "Taormina e Riviera dei Ciclopi", "Taormina and the Riviera dei Ciclopi", "taormina", "Sicilia", 37.8516, 15.2853, "mare", ["unesco", "luxury"], 2400, ["Teatro Antico di Taormina", "Isola Bella", "Castelmola", "Giardini Naxos", "Aci Trezza"]),
+  d("golfo-orosei", "Golfo di Orosei", "Gulf of Orosei", "gulf-of-orosei", "Sardegna", 40.2500, 9.6800, "mare", ["outdoor"], 900, ["Cala Goloritzè", "Cala Luna", "Cala Mariolu", "Gola di Gorropu", "Selvaggio Blu"]),
+  d("riviera-ponente", "Riviera Ligure di Ponente", "Ligurian Riviera di Ponente", "ligurian-riviera-ponente", "Liguria", 43.8167, 8.0333, "mare", ["family"], 3100, ["Sanremo", "Alassio", "Bordighera", "Grotte di Toirano", "Finale Ligure"]),
+  d("capri", "Isola di Capri", "Capri", "capri", "Campania", 40.5532, 14.2222, "mare", ["luxury"], 2700, ["Grotta Azzurra", "Faraglioni", "Villa Jovis", "Monte Solaro", "Anacapri"]),
+  d("isole-eolie", "Isole Eolie", "Aeolian Islands", "aeolian-islands", "Sicilia", 38.4900, 14.9400, "mare", ["unesco", "outdoor"], 1100, ["Stromboli", "Vulcano", "Lipari", "Panarea", "Salina"]),
+  d("versilia", "Versilia", "Versilia", "versilia", "Toscana", 43.9600, 10.2100, "mare", ["family", "luxury"], 2900, ["Forte dei Marmi", "Viareggio", "Carnevale di Viareggio", "Pietrasanta", "Lago di Massaciuccoli"]),
+  d("riviera-conero", "Riviera del Conero", "Conero Riviera", "conero-riviera", "Marche", 43.5500, 13.6000, "mare", ["montagna-parchi", "outdoor"], 1200, ["Sirolo", "Numana", "Spiaggia delle Due Sorelle", "Portonovo", "Monte Conero"]),
+  d("costa-molisana", "Costa Molisana", "Molise Coast", "molise-coast", "Molise", 42.0000, 14.9950, "mare", ["borghi", "slow"], 700, ["Termoli", "Borgo Antico di Termoli", "Trabucchi molisani", "Petacciato", "Campomarino"]),
+  d("ischia-procida", "Ischia e Procida", "Ischia and Procida", "ischia-and-procida", "Campania", 40.7300, 13.9000, "mare", ["wellness", "borghi"], 2200, ["Castello Aragonese", "Giardini La Mortella", "Marina Corricella", "Terme di Poseidon", "Sant'Angelo"]),
+  d("trapanese", "San Vito Lo Capo e Trapanese", "San Vito Lo Capo and the Trapani coast", "san-vito-lo-capo", "Sicilia", 38.1740, 12.7350, "mare", ["borghi", "enogastronomia"], 1400, ["Riserva dello Zingaro", "Scopello", "Saline di Trapani", "Tonnara di Scopello", "Segesta"]),
+  d("isole-tremiti", "Isole Tremiti", "Tremiti Islands", "tremiti-islands", "Puglia", 42.1200, 15.5000, "mare", ["outdoor"], 300, ["San Domino", "San Nicola", "Cala delle Arene", "Abbazia di Santa Maria a Mare", "Grotta del Bue Marino"]),
+  d("sud-sardegna", "Costa del Sud Sardegna", "Southern Sardinia coast", "southern-sardinia", "Sardegna", 39.2700, 9.5700, "mare", ["family", "outdoor"], 1700, ["Costa Rei", "Villasimius", "Chia", "Spiaggia di Tuerredda", "Capo Carbonara"]),
+  d("cilento", "Cilento", "Cilento", "cilento", "Campania", 40.2000, 15.1500, "mare", ["unesco", "montagna-parchi", "enogastronomia"], 2000, ["Paestum", "Palinuro", "Grotte di Castelcivita", "Certosa di Padula", "Monte Cervati"]),
+
+  // -------------------------------------------------- MONTAGNA E PARCHI (20)
+  d("dolomiti", "Dolomiti", "Dolomites", "dolomites", "Trentino-Alto Adige", 46.4102, 11.8440, "montagna-parchi", ["unesco", "outdoor", "luxury"], 4600, ["Tre Cime di Lavaredo", "Lago di Braies", "Sassolungo", "Val di Funes", "Passo Sella"]),
+  d("cortina", "Cortina d'Ampezzo", "Cortina d'Ampezzo", "cortina-dampezzo", "Veneto", 46.5405, 12.1357, "montagna-parchi", ["luxury", "outdoor"], 1300, ["Tofane", "Lago di Sorapis", "Cinque Torri", "Faloria", "Corso Italia"]),
+  d("alta-badia", "Alta Badia", "Alta Badia", "alta-badia", "Trentino-Alto Adige", 46.5600, 11.8900, "montagna-parchi", ["luxury", "enogastronomia"], 1100, ["Corvara", "Sellaronda", "Passo Gardena", "Piz Boè", "La Villa"]),
+  d("val-gardena", "Val Gardena", "Val Gardena", "val-gardena", "Trentino-Alto Adige", 46.5600, 11.6700, "montagna-parchi", ["outdoor", "family"], 1400, ["Ortisei", "Seceda", "Selva di Val Gardena", "Santa Cristina Valgardena", "Rasciesa"]),
+  d("madonna-campiglio", "Madonna di Campiglio", "Madonna di Campiglio", "madonna-di-campiglio", "Trentino-Alto Adige", 46.2300, 10.8300, "montagna-parchi", ["luxury", "outdoor"], 900, ["Dolomiti di Brenta", "Lago di Tovel", "Passo Groste", "Val Rendena", "Pinzolo"]),
+  d("cervinia", "Cervinia e Valtournenche", "Cervinia and Valtournenche", "cervinia", "Valle d'Aosta", 45.9360, 7.6300, "montagna-parchi", ["outdoor"], 700, ["Cervino", "Plateau Rosa", "Lago Blu", "Breuil-Cervinia", "Ghiacciaio del Teodulo"]),
+  d("courmayeur", "Courmayeur e Monte Bianco", "Courmayeur and Mont Blanc", "courmayeur", "Valle d'Aosta", 45.7920, 6.9690, "montagna-parchi", ["luxury", "outdoor"], 800, ["Skyway Monte Bianco", "Punta Helbronner", "Val Ferret", "Val Veny", "Terme di Pré-Saint-Didier"]),
+  d("gran-paradiso", "Parco Nazionale del Gran Paradiso", "Gran Paradiso National Park", "gran-paradiso", "Valle d'Aosta", 45.5200, 7.2700, "montagna-parchi", ["outdoor", "slow"], 600, ["Valnontey", "Cogne", "Cascate di Lillaz", "Rifugio Vittorio Emanuele II", "Valsavarenche"]),
+  d("parco-abruzzo", "Parco Nazionale d'Abruzzo", "Abruzzo National Park", "abruzzo-national-park", "Abruzzo", 41.8000, 13.7800, "montagna-parchi", ["borghi", "outdoor"], 700, ["Pescasseroli", "Val Fondillo", "Camosciara", "Barrea", "Lago di Barrea"]),
+  d("gran-sasso", "Gran Sasso e Campo Imperatore", "Gran Sasso and Campo Imperatore", "gran-sasso", "Abruzzo", 42.4400, 13.5600, "montagna-parchi", ["outdoor", "borghi"], 800, ["Corno Grande", "Campo Imperatore", "Rocca Calascio", "Santo Stefano di Sessanio", "Castelli"]),
+  d("stelvio", "Parco Nazionale dello Stelvio", "Stelvio National Park", "stelvio-national-park", "Trentino-Alto Adige", 46.5300, 10.4500, "montagna-parchi", ["outdoor"], 900, ["Passo dello Stelvio", "Ortles", "Val Martello", "Solda", "Gran Zebrù"]),
+  d("val-di-fassa", "Val di Fassa", "Val di Fassa", "val-di-fassa", "Trentino-Alto Adige", 46.4300, 11.7600, "montagna-parchi", ["family", "outdoor"], 1200, ["Marmolada", "Catinaccio", "Canazei", "Passo Pordoi", "Vigo di Fassa"]),
+  d("sila", "Sila", "Sila", "sila", "Calabria", 39.2500, 16.5500, "montagna-parchi", ["slow", "enogastronomia"], 400, ["Lago Arvo", "Lago Ampollino", "Giganti della Sila", "Camigliatello Silano", "Monte Botte Donato"]),
+  d("pollino", "Parco Nazionale del Pollino", "Pollino National Park", "pollino-national-park", "Basilicata", 39.9000, 16.2000, "montagna-parchi", ["outdoor", "borghi"], 350, ["Gole del Raganello", "Pino Loricato", "Civita", "Serra Dolcedorme", "Morano Calabro"]),
+  d("sibillini", "Monti Sibillini", "Sibillini Mountains", "sibillini-mountains", "Marche", 42.9000, 13.2500, "montagna-parchi", ["borghi", "outdoor"], 500, ["Castelluccio di Norcia", "Piano Grande", "Lago di Fiastra", "Monte Vettore", "Gole dell'Infernaccio"]),
+  d("val-pusteria", "Val Pusteria", "Val Pusteria", "val-pusteria", "Trentino-Alto Adige", 46.7400, 12.1000, "montagna-parchi", ["family", "outdoor"], 1500, ["Plan de Corones", "Brunico", "Val di Landro", "Dobbiaco", "Lago di Dobbiaco"]),
+  d("alpe-siusi", "Alpe di Siusi", "Alpe di Siusi", "alpe-di-siusi", "Trentino-Alto Adige", 46.5400, 11.6300, "montagna-parchi", ["outdoor", "wellness"], 1000, ["Sciliar", "Compatsch", "Castelrotto", "Denti di Terrarossa", "Malga Sanon"]),
+  d("livigno", "Livigno e Alta Valtellina", "Livigno and Alta Valtellina", "livigno", "Lombardia", 46.5380, 10.1350, "montagna-parchi", ["outdoor", "family"], 1100, ["Livigno", "Bormio", "Bagni Vecchi di Bormio", "Passo del Foscagno", "Valdidentro"]),
+  d("casentino", "Foreste Casentinesi", "Casentino Forests", "casentino-forests", "Toscana", 43.8300, 11.8000, "montagna-parchi", ["slow", "borghi"], 300, ["Camaldoli", "La Verna", "Cascata dell'Acquacheta", "Foresta della Lama", "Poppi"]),
+  d("etna", "Etna", "Mount Etna", "mount-etna", "Sicilia", 37.7510, 14.9934, "montagna-parchi", ["unesco", "enogastronomia", "outdoor"], 1800, ["Crateri Silvestri", "Rifugio Sapienza", "Valle del Bove", "Grotta del Gelo", "Ferrovia Circumetnea"]),
+
+  // ----------------------------------------------------- ENOGASTRONOMIA (20)
+  d("langhe", "Langhe", "Langhe", "langhe", "Piemonte", 44.6300, 8.0300, "enogastronomia", ["unesco", "slow", "luxury"], 1200, ["Barolo", "Barbaresco", "Alba", "Castello di Grinzane Cavour", "Tartufo Bianco d'Alba"]),
+  d("chianti", "Chianti Classico", "Chianti Classico", "chianti-classico", "Toscana", 43.4700, 11.3000, "enogastronomia", ["slow", "luxury", "borghi"], 1600, ["Greve in Chianti", "Castellina in Chianti", "Radda in Chianti", "Badia a Passignano", "Gallo Nero"]),
+  d("franciacorta", "Franciacorta", "Franciacorta", "franciacorta", "Lombardia", 45.6100, 10.0300, "enogastronomia", ["lago", "wellness"], 700, ["Lago d'Iseo", "Monte Isola", "Abbazia di San Nicola", "Torbiere del Sebino", "Erbusco"]),
+  d("valpolicella", "Valpolicella", "Valpolicella", "valpolicella", "Veneto", 45.5300, 10.9200, "enogastronomia", ["slow"], 800, ["Amarone", "San Giorgio di Valpolicella", "Villa della Torre", "Fumane", "Negrar"]),
+  d("montalcino", "Montalcino", "Montalcino", "montalcino", "Toscana", 43.0570, 11.4890, "enogastronomia", ["borghi", "unesco"], 600, ["Brunello di Montalcino", "Abbazia di Sant'Antimo", "Fortezza di Montalcino", "Poggio Antico", "Castelnuovo dell'Abate"]),
+  d("montepulciano", "Montepulciano", "Montepulciano", "montepulciano", "Toscana", 43.0990, 11.7810, "enogastronomia", ["borghi", "slow"], 700, ["Vino Nobile di Montepulciano", "Piazza Grande", "Tempio di San Biagio", "Palazzo Comunale di Montepulciano", "Fortezza di Montepulciano"]),
+  d("modena", "Modena e Terre di Motori", "Modena and Motor Valley", "modena", "Emilia-Romagna", 44.6471, 10.9252, "enogastronomia", ["unesco"], 1100, ["Duomo di Modena", "Aceto Balsamico Tradizionale", "Museo Ferrari", "Torre Ghirlandina", "Mercato Albinelli"]),
+  d("parma-food-valley", "Parma e Food Valley", "Parma and the Food Valley", "parma-food-valley", "Emilia-Romagna", 44.8015, 10.3279, "enogastronomia", ["unesco", "slow"], 1000, ["Parmigiano Reggiano", "Prosciutto di Parma", "Teatro Farnese", "Labirinto della Masone", "Castello di Torrechiara"]),
+  d("valdobbiadene", "Conegliano Valdobbiadene", "Conegliano Valdobbiadene", "conegliano-valdobbiadene", "Veneto", 45.8900, 12.0000, "enogastronomia", ["unesco", "slow"], 900, ["Prosecco Superiore", "Cartizze", "Rive di Valdobbiadene", "Molinetto della Croda", "Follina"]),
+  d("bolgheri", "Bolgheri", "Bolgheri", "bolgheri", "Toscana", 43.2300, 10.6000, "enogastronomia", ["luxury", "mare"], 400, ["Viale dei Cipressi", "Sassicaia", "Castagneto Carducci", "Oratorio di San Guido", "Rifugio Faunistico"]),
+  d("strada-vino-alto-adige", "Strada del Vino dell'Alto Adige", "South Tyrol Wine Road", "south-tyrol-wine-road", "Trentino-Alto Adige", 46.4000, 11.2500, "enogastronomia", ["montagna-parchi", "slow"], 800, ["Caldaro", "Termeno", "Lago di Caldaro", "Appiano", "Gewürztraminer"]),
+  d("collio", "Collio Goriziano", "Collio", "collio", "Friuli-Venezia Giulia", 45.9500, 13.5300, "enogastronomia", ["slow"], 300, ["Cormons", "Oslavia", "Ribolla Gialla", "San Floriano del Collio", "Castello di Spessa"]),
+  d("etna-doc", "Etna del Vino", "Etna Wine Country", "etna-wine", "Sicilia", 37.8500, 15.1500, "enogastronomia", ["montagna-parchi", "unesco"], 500, ["Nerello Mascalese", "Randazzo", "Linguaglossa", "Contrada Rampante", "Castiglione di Sicilia"]),
+  d("vulture", "Vulture e Aglianico", "Vulture and Aglianico", "vulture", "Basilicata", 40.9200, 15.7000, "enogastronomia", ["slow", "borghi"], 200, ["Aglianico del Vulture", "Laghi di Monticchio", "Melfi", "Venosa", "Rionero in Vulture"]),
+  d("monferrato", "Monferrato", "Monferrato", "monferrato", "Piemonte", 44.9000, 8.3000, "enogastronomia", ["unesco", "slow"], 600, ["Infernot", "Casale Monferrato", "Nizza Monferrato", "Barbera d'Asti", "Sacro Monte di Crea"]),
+  d("roero", "Roero", "Roero", "roero", "Piemonte", 44.7500, 7.9500, "enogastronomia", ["unesco", "outdoor"], 300, ["Rocche del Roero", "Arneis", "Bra", "Guarene", "Canale"]),
+  d("maremma", "Maremma Toscana", "Tuscan Maremma", "tuscan-maremma", "Toscana", 42.7700, 11.1100, "enogastronomia", ["mare", "slow", "outdoor"], 1300, ["Parco della Maremma", "Saturnia", "Massa Marittima", "Morellino di Scansano", "Talamone"]),
+  d("primitivo-manduria", "Terre del Primitivo", "Primitivo Wine Country", "primitivo-wine-country", "Puglia", 40.4000, 17.6300, "enogastronomia", ["mare", "slow"], 400, ["Manduria", "Primitivo di Manduria", "Riserva Naturale Torre Colimena", "Avetrana", "Sava"]),
+  d("irpinia", "Irpinia", "Irpinia", "irpinia", "Campania", 40.9300, 14.9500, "enogastronomia", ["borghi", "slow"], 250, ["Taurasi", "Greco di Tufo", "Fiano di Avellino", "Montella", "Grotte di Pertosa"]),
+  d("montefalco", "Montefalco e Sagrantino", "Montefalco and Sagrantino", "montefalco", "Umbria", 42.8900, 12.6500, "enogastronomia", ["borghi", "slow"], 300, ["Sagrantino", "Chiesa di San Francesco", "Bevagna", "Trevi", "Fonti del Clitunno"]),
+
+  // ------------------------------------------------------------- UNESCO (20)
+  d("roma", "Roma", "Rome", "rome", "Lazio", 41.9028, 12.4964, "unesco", ["luxury", "family"], 22000, ["Colosseo", "Musei Vaticani", "Fontana di Trevi", "Pantheon", "Foro Romano"]),
+  d("firenze", "Firenze", "Florence", "florence", "Toscana", 43.7696, 11.2558, "unesco", ["luxury", "enogastronomia"], 11000, ["Galleria degli Uffizi", "Duomo di Firenze", "Ponte Vecchio", "Galleria dell'Accademia", "Palazzo Pitti"]),
+  d("venezia", "Venezia e Laguna", "Venice and its Lagoon", "venice", "Veneto", 45.4408, 12.3155, "unesco", ["luxury"], 13000, ["Piazza San Marco", "Palazzo Ducale di Venezia", "Ponte di Rialto", "Murano", "Burano"]),
+  d("napoli", "Napoli", "Naples", "naples", "Campania", 40.8518, 14.2681, "unesco", ["enogastronomia", "family"], 6800, ["Napoli Sotterranea", "Cappella Sansevero", "Museo Archeologico Nazionale di Napoli", "Spaccanapoli", "Certosa di San Martino"]),
+  d("matera", "Matera", "Matera", "matera", "Basilicata", 40.6664, 16.6043, "unesco", ["borghi", "slow"], 900, ["Sassi di Matera", "Cripta del Peccato Originale", "Casa Grotta", "Murgia Materana", "Cattedrale di Matera"]),
+  d("val-orcia", "Val d'Orcia", "Val d'Orcia", "val-dorcia", "Toscana", 43.0300, 11.6100, "unesco", ["enogastronomia", "slow"], 1400, ["Pienza", "Bagno Vignoni", "Cappella della Madonna di Vitaleta", "San Quirico d'Orcia", "Monte Amiata"]),
+  d("pompei-ercolano", "Pompei ed Ercolano", "Pompeii and Herculaneum", "pompeii-herculaneum", "Campania", 40.7497, 14.4869, "unesco", ["family"], 4200, ["Scavi di Pompei", "Villa dei Misteri", "Ercolano", "Vesuvio", "Villa Oplontis"]),
+  d("val-di-noto", "Val di Noto", "Val di Noto", "val-di-noto", "Sicilia", 36.8900, 14.9000, "unesco", ["borghi", "enogastronomia"], 1500, ["Noto", "Ragusa Ibla", "Modica", "Scicli", "Cioccolato di Modica"]),
+  d("ferrara-delta-po", "Ferrara e Delta del Po", "Ferrara and the Po Delta", "ferrara-po-delta", "Emilia-Romagna", 44.8378, 11.6197, "unesco", ["montagna-parchi", "slow"], 800, ["Castello Estense", "Palazzo dei Diamanti", "Comacchio", "Abbazia di Pomposa", "Valli di Comacchio"]),
+  d("aquileia", "Aquileia", "Aquileia", "aquileia", "Friuli-Venezia Giulia", 45.7700, 13.3600, "unesco", ["slow"], 300, ["Basilica di Aquileia", "Mosaici paleocristiani di Aquileia", "Museo Archeologico Nazionale di Aquileia", "Foro Romano di Aquileia", "Grado"]),
+  d("urbino", "Urbino", "Urbino", "urbino", "Marche", 43.7262, 12.6365, "unesco", ["borghi", "slow"], 400, ["Palazzo Ducale di Urbino", "Galleria Nazionale delle Marche", "Casa di Raffaello", "Fortezza Albornoz", "Studiolo di Federico"]),
+  d("siena", "Siena", "Siena", "siena", "Toscana", 43.3188, 11.3308, "unesco", ["enogastronomia", "borghi"], 2100, ["Piazza del Campo", "Palio di Siena", "Duomo di Siena", "Torre del Mangia", "Santa Maria della Scala"]),
+  d("assisi", "Assisi", "Assisi", "assisi", "Umbria", 43.0707, 12.6196, "unesco", ["borghi", "slow"], 1200, ["Basilica di San Francesco", "Eremo delle Carceri", "Rocca Maggiore", "Basilica di Santa Chiara", "Porziuncola"]),
+  d("ravenna", "Ravenna", "Ravenna", "ravenna", "Emilia-Romagna", 44.4184, 12.2035, "unesco", ["slow"], 1100, ["Basilica di San Vitale", "Mausoleo di Galla Placidia", "Basilica di Sant'Apollinare in Classe", "Battistero Neoniano", "Tomba di Dante"]),
+  d("alberobello", "Alberobello e Valle d'Itria", "Alberobello and Valle d'Itria", "alberobello", "Puglia", 40.7852, 17.2372, "unesco", ["borghi", "enogastronomia"], 1300, ["Trulli di Alberobello", "Rione Monti", "Locorotondo", "Martina Franca", "Cisternino"]),
+  d("agrigento", "Valle dei Templi", "Valley of the Temples", "valley-of-the-temples", "Sicilia", 37.2900, 13.5900, "unesco", ["mare"], 1000, ["Tempio della Concordia", "Tempio di Giunone", "Scala dei Turchi", "Giardino della Kolymbethra", "Museo Archeologico Pietro Griffo"]),
+  d("verona", "Verona", "Verona", "verona", "Veneto", 45.4384, 10.9916, "unesco", ["enogastronomia", "lago"], 3200, ["Arena di Verona", "Casa di Giulietta", "Piazza delle Erbe", "Castelvecchio", "Basilica di San Zeno"]),
+  d("sacri-monti", "Sacri Monti", "Sacred Mountains", "sacred-mountains", "Piemonte", 45.8100, 8.4100, "unesco", ["slow", "montagna-parchi"], 350, ["Sacro Monte di Varallo", "Sacro Monte di Orta", "Sacro Monte di Varese", "Lago d'Orta", "Isola San Giulio"]),
+  d("mantova-sabbioneta", "Mantova e Sabbioneta", "Mantua and Sabbioneta", "mantua-sabbioneta", "Lombardia", 45.1564, 10.7914, "unesco", ["enogastronomia", "slow"], 700, ["Palazzo Ducale di Mantova", "Camera degli Sposi", "Palazzo Te", "Teatro all'Antica", "Laghi di Mantova"]),
+  d("tivoli", "Tivoli", "Tivoli", "tivoli", "Lazio", 41.9630, 12.7960, "unesco", ["slow"], 900, ["Villa d'Este", "Villa Adriana", "Villa Gregoriana", "Tempio di Vesta", "Cascate dell'Aniene"]),
+
+  // ------------------------------------------------------------- BORGHI (20)
+  d("civita-bagnoregio", "Civita di Bagnoregio", "Civita di Bagnoregio", "civita-di-bagnoregio", "Lazio", 42.6280, 12.1140, "borghi", ["slow"], 900, ["Ponte pedonale di Civita", "Porta Santa Maria", "Valle dei Calanchi", "Chiesa di San Donato", "Grotta di San Bonaventura"]),
+  d("san-gimignano", "San Gimignano", "San Gimignano", "san-gimignano", "Toscana", 43.4677, 11.0430, "borghi", ["unesco", "enogastronomia"], 1500, ["Torri di San Gimignano", "Piazza della Cisterna", "Collegiata", "Vernaccia di San Gimignano", "Torre Grossa"]),
+  d("castelmezzano", "Castelmezzano e Dolomiti Lucane", "Castelmezzano and the Lucanian Dolomites", "castelmezzano", "Basilicata", 40.5300, 16.0500, "borghi", ["montagna-parchi", "outdoor"], 250, ["Volo dell'Angelo", "Pietrapertosa", "Gradinata Normanna", "Percorso delle Sette Pietre", "Monte Impiso"]),
+  d("ostuni", "Ostuni", "Ostuni", "ostuni", "Puglia", 40.7300, 17.5800, "borghi", ["mare", "enogastronomia"], 1100, ["Città Bianca di Ostuni", "Cattedrale di Ostuni", "Costa Merlata", "Torre Pozzelle", "Parco Dune Costiere"]),
+  d("bosa", "Bosa", "Bosa", "bosa", "Sardegna", 40.2970, 8.4990, "borghi", ["mare", "slow"], 200, ["Castello Malaspina", "Case colorate sul Temo", "Bosa Marina", "Chiesa di San Pietro Extramuros", "Malvasia di Bosa"]),
+  d("spello", "Spello", "Spello", "spello", "Umbria", 42.9910, 12.6710, "borghi", ["slow", "enogastronomia"], 300, ["Infiorate di Spello", "Cappella Baglioni", "Porta Venere", "Villa dei Mosaici", "Monte Subasio"]),
+  d("tropea", "Tropea", "Tropea", "tropea", "Calabria", 38.6770, 15.8980, "borghi", ["mare", "family"], 800, ["Santa Maria dell'Isola", "Spiaggia della Rotonda", "Cipolla Rossa di Tropea", "Capo Vaticano", "Pizzo Calabro"]),
+  d("vipiteno", "Vipiteno", "Sterzing", "sterzing", "Trentino-Alto Adige", 46.8970, 11.4300, "borghi", ["montagna-parchi", "family"], 400, ["Torre delle Dodici", "Via Città Nuova", "Monte Cavallo", "Castel Tasso", "Mercatino di Natale"]),
+  d("orvieto", "Orvieto", "Orvieto", "orvieto", "Umbria", 42.7170, 12.1110, "borghi", ["enogastronomia", "slow"], 900, ["Duomo di Orvieto", "Pozzo di San Patrizio", "Orvieto Underground", "Torre del Moro", "Orvieto Classico"]),
+  d("portovenere", "Portovenere", "Portovenere", "portovenere", "Liguria", 44.0490, 9.8370, "borghi", ["unesco", "mare"], 700, ["Chiesa di San Pietro", "Grotta Byron", "Castello Doria", "Isola Palmaria", "Via Capellini"]),
+  d("scanno", "Scanno", "Scanno", "scanno", "Abruzzo", 41.9040, 13.8790, "borghi", ["montagna-parchi", "slow"], 200, ["Lago di Scanno", "Cuore di Scanno", "Costume scannese", "Gole del Sagittario", "Chiesa di Santa Maria della Valle"]),
+  d("pitigliano", "Pitigliano", "Pitigliano", "pitigliano", "Toscana", 42.6350, 11.6690, "borghi", ["enogastronomia", "slow"], 300, ["Vie Cave", "Piccola Gerusalemme", "Acquedotto Mediceo", "Sovana", "Sorano"]),
+  d("gradara", "Gradara", "Gradara", "gradara", "Marche", 43.9410, 12.7710, "borghi", ["family", "mare"], 300, ["Rocca di Gradara", "Camminamenti di ronda", "Paolo e Francesca", "Bosco di Paolo e Francesca", "Mura medievali"]),
+  d("castelsardo", "Castelsardo", "Castelsardo", "castelsardo", "Sardegna", 40.9150, 8.7100, "borghi", ["mare", "slow"], 350, ["Castello dei Doria", "Roccia dell'Elefante", "Cattedrale di Sant'Antonio Abate", "Cestini in intreccio", "Lu Bagnu"]),
+  d("erice", "Erice", "Erice", "erice", "Sicilia", 38.0370, 12.5860, "borghi", ["mare", "enogastronomia"], 600, ["Castello di Venere", "Chiesa Madre", "Funivia di Erice", "Dolci di Maria Grammatico", "Torretta Pepoli"]),
+  d("dozza", "Dozza", "Dozza", "dozza", "Emilia-Romagna", 44.3600, 11.6300, "borghi", ["enogastronomia", "slow"], 150, ["Muro Dipinto", "Rocca Sforzesca", "Enoteca Regionale dell'Emilia-Romagna", "Biennale del Muro Dipinto", "Toscanella"]),
+  d("varenna", "Varenna e Lago di Como", "Varenna and Lake Como", "varenna", "Lombardia", 46.0100, 9.2850, "borghi", ["lago", "luxury"], 1200, ["Villa Monastero", "Passeggiata degli Innamorati", "Castello di Vezio", "Bellagio", "Villa Cipressi"]),
+  d("apricale", "Apricale", "Apricale", "apricale", "Liguria", 43.8770, 7.6640, "borghi", ["slow", "enogastronomia"], 120, ["Castello della Lucertola", "Piazza Vittorio Emanuele", "Olio taggiasco", "Pigna", "Dolceacqua"]),
+  d("cividale", "Cividale del Friuli", "Cividale del Friuli", "cividale-del-friuli", "Friuli-Venezia Giulia", 46.0940, 13.4330, "borghi", ["unesco", "enogastronomia"], 300, ["Tempietto Longobardo", "Ponte del Diavolo", "Ipogeo Celtico", "Monastero di Santa Maria in Valle", "Colli Orientali del Friuli"]),
+  d("sperlonga", "Sperlonga", "Sperlonga", "sperlonga", "Lazio", 41.2600, 13.4300, "borghi", ["mare", "family"], 500, ["Grotta di Tiberio", "Museo Archeologico di Sperlonga", "Spiaggia dell'Angolo", "Torre Truglia", "Villa di Tiberio"]),
+];

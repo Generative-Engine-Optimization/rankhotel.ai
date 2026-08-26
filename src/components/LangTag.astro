@@ -1,0 +1,28 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import Flag from "./Flag.astro";
+
+// Bandiera più sigla. Nelle tabelle e sui prompt la sigla da sola costringeva
+// a leggere per capire in che lingua fosse posta la domanda; la bandiera lo
+// dice prima che l'occhio arrivi al testo.
+const {
+  locale,
+  lang,
+  size = 15,
+  showCode = true,
+} = Astro.props as {
+  locale: Locale;
+  lang: Locale;
+  size?: number;
+  showCode?: boolean;
+};
+
+const t = messages(locale).observatory;
+const label = lang === "it" ? t.lang.it : t.lang.en;
+---
+
+<span class="inline-flex items-center gap-1.5 align-middle" title={label}>
+  <Flag locale={lang} size={size} />
+  <span class={showCode ? "num text-[0.82rem]" : "sr-only"}>{lang.toUpperCase()}</span>
+</span>

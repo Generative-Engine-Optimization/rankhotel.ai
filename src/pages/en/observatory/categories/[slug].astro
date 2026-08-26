@@ -1,0 +1,12 @@
+---
+import CategoryPage from "../../../../templates/CategoryPage.astro";
+import { findCategory, listCategories } from "../../../../lib/observatory";
+
+export function getStaticPaths() {
+  return listCategories().map((category) => ({ params: { slug: category.slug.en } }));
+}
+
+const category = findCategory("en", Astro.params.slug ?? "")!;
+---
+
+<CategoryPage locale="en" category={category} />

@@ -1,127 +1,281 @@
 ---
-import SiteShell from "../components/SiteShell.astro";
-import PromptList from "../components/PromptList.astro";
-import WipNotice from "../components/WipNotice.astro";
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { methodologyPath, observatoryPath, type Locale } from "../lib/config";
+import CtaBlock from "../components/CtaBlock.astro";
+import EngineLogo from "../components/EngineLogo.astro";
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/PageHero.astro";
+import FunnelTag from "../components/FunnelTag.astro";
+import Panel from "../components/Panel.astro";
+import ScoreBreakdown from "../components/ScoreBreakdown.astro";
+import Section from "../components/Section.astro";
+import StatGrid from "../components/StatGrid.astro";
+import TierBadge from "../components/TierBadge.astro";
+import Toc from "../components/Toc.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  assumptionsPath,
+  glossaryPath,
+  methodologyPath,
+  observatoryPath,
+  otherLocale,
+  type Locale,
+} from "../lib/config";
 import { number } from "../lib/format";
-import { interpolate, messages } from "../lib/i18n";
+import { faqSchema } from "../lib/schema";
+import { messages } from "../lib/i18n";
 import {
   ENGINES,
-  MENTION_WEIGHT,
-  POSITION_WEIGHT,
-  WINDOW_DAYS,
+  FACTOR_KEYS,
+  META,
+  NATIONAL,
+  SCORE_WEIGHTS,
+  engineMeta,
+  funnelStages,
   listPrompts,
 } from "../lib/observatory";
 
 const { locale } = Astro.props as { locale: Locale };
-const alternateLocale = locale === "it" ? "en" : "it";
+const other = otherLocale(locale);
 const t = messages(locale).observatory;
-const prompts = listPrompts();
-const itPrompts = prompts.filter((prompt) => prompt.lang === "it");
-const enPrompts = prompts.filter((prompt) => prompt.lang === "en");
-const hrefs = [
-  { locale: "it" as const, href: methodologyPath("it") },
-  { locale: "en" as const, href: methodologyPath("en") },
+const stages = funnelStages();
+
+// I pesi vengono letti dal codice che li applica: la formula pubblicata e
+// quella calcolata non possono divergere.
+const demoFactors = Object.fromEntries(
+  FACTOR_KEYS.map((key) => [key, SCORE_WEIGHTS[key] * 2.6]),
+) as Record<(typeof FACTOR_KEYS)[number], number>;
+
+const factorIcon = {
+  comparative: "compass",
+  internal: "layers",
+  sources: "quote",
+  technical: "robot",
+} as const;
+
+const blocks = [
+  { title: t.methodology["engines-title"], body: t.methodology["engines-body"], icon: "robot" },
+  { title: t.methodology["runs-title"], body: t.methodology["runs-body"], icon: "calendar" },
+  { title: t.methodology["technical-title"], body: t.methodology["technical-body"], icon: "globe" },
+  { title: t.methodology["levels-title"], body: t.methodology["levels-body"], icon: "layers" },
 ];
 
-const methodCard = "card grid gap-4 [&>h2]:text-[clamp(1.6rem,3vw,2.4rem)]";
-const cards = [
-  {
-    n: "01",
-    title: interpolate(t.methodology.models.title, { count: ENGINES.length }),
-    body: interpolate(t.methodology.models.body, { list: ENGINES.join(", ") }),
-  },
-  {
-    n: "02",
-    title: interpolate(t.methodology.prompts.title, { count: prompts.length }),
-    body: interpolate(t.methodology.prompts.body, { count: prompts.length }),
-  },
-  {
-    n: "03",
-    title: t.methodology.cadence.title,
-    body: interpolate(t.methodology.cadence.body, {
-      prompts: prompts.length,
-      models: ENGINES.length,
-      responses: number(locale, prompts.length * ENGINES.length),
-      days: WINDOW_DAYS,
-    }),
-  },
-  {
-    n: "04",
-    title: t.methodology.score.title,
-    body: interpolate(t.methodology.score.body, {
-      mentionWeight: Math.round(MENTION_WEIGHT * 100),
-      positionWeight: Math.round(POSITION_WEIGHT * 100),
-    }),
-  },
+// I quattro blocchi qui sotto e le spiegazioni dei fattori sono già scritti
+// come domanda e risposta: dichiararli FAQ rende ogni risposta citabile da sola
+// da un motore generativo, senza che debba ricostruirla dal testo intorno.
+const faq = faqSchema(methodologyPath(locale), [
+  ...blocks.map((block) => ({ question: block.title, answer: block.body })),
+  ...FACTOR_KEYS.map((key) => ({
+    question: t.factors[key].name,
+    answer: t.explain[key],
+  })),
+]);
+
+const sections = [
+  { id: "formula", label: t.methodology["formula-title"], icon: "chart" },
+  { id: "engine", label: t.engines.title, icon: "robot" },
+  { id: "fasce", label: t.rank["tiers-title"], icon: "layers" },
+  { id: "funnel", label: t.funnel.title, icon: "route" },
+  { id: "numeri", label: t.stats.responses, icon: "calendar" },
 ];
 ---
 
-<BaseLayout
+<ObsLayout
+  locale={locale}
   title={t.meta["methodology-title"]}
   description={t.meta["methodology-description"]}
-  locale={locale}
-  canonical={methodologyPath(locale)}
-  alternates={hrefs}
-  noindex
+  schema={faq}
+  path={methodologyPath(locale)}
+  altPath={methodologyPath(other)}
 >
-  <SiteShell locale={locale} alternatePath={methodologyPath(alternateLocale)}>
-    <WipNotice locale={locale} />
+  <PageHero
+    locale={locale}
+    eyebrow={t.nav.methodology}
+    icon="chart"
+    title={t.methodology.title}
+    lead={t.methodology.lead}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: t.nav.methodology },
+    ]}
+  >
+    <div class="flex flex-wrap gap-2.5">
+      <a class="btn btn-secondary gap-2" href={glossaryPath(locale)}>
+        <Icon name="info" size={16} />
+        {t.ui.glossary}
+      </a>
+      <a class="btn btn-secondary gap-2" href={assumptionsPath(locale)}>
+        {t.assumptions.title}
+        <Icon name="arrowRight" size={16} />
+      </a>
+    </div>
+  </PageHero>
 
-    <section class="border-b border-line pt-[70px] pb-14">
-      <div class="shell">
-        <a
-          class="font-mono font-bold text-accent-ink"
-          href={observatoryPath(locale)}
-        >
-          {t.city.back}
-        </a>
-        <h1 class="mt-[18px]">{t.methodology.title}</h1>
-        <p class="lead mt-5 max-w-[760px]">{t.methodology.lead}</p>
-      </div>
-    </section>
+  <div class="shell with-toc block-end">
+    <Toc locale={locale} items={sections} />
 
-    <section class="section">
-      <div class="shell grid gap-4 md:grid-cols-2">
-        {
-          cards.map((card) => (
-            <article class={methodCard}>
-              <p class="eyebrow">{card.n}</p>
-              <h2>{card.title}</h2>
-              <p class="text-muted">{card.body}</p>
-            </article>
-          ))
-        }
-      </div>
-    </section>
-
-    <section class="section bg-surface-muted">
-      <div class="shell grid gap-4 md:grid-cols-2">
-        <div>
-          <h2 class="mb-[22px]">{t.methodology.prompts["it-title"]}</h2>
-          <PromptList
-            prompts={itPrompts}
-            placeholder={t.methodology.prompts["city-placeholder"]}
-          />
+    <div class="grid gap-0">
+      <Section
+        locale={locale}
+        id="formula"
+        title={t.methodology["formula-title"]}
+        lead={t.explain.score}
+        bare
+      >
+        <div class="grid items-start gap-[34px] lg:grid-cols-[5fr_7fr]">
+          <Panel locale={locale}>
+            <p class="font-mono text-[0.86rem] leading-relaxed text-muted">
+              {FACTOR_KEYS.map((key) => `${SCORE_WEIGHTS[key]}% ${t.factors[key].name}`).join(" + ")}
+            </p>
+            <ScoreBreakdown locale={locale} factors={demoFactors} compact />
+            <p class="text-[0.8rem] text-faint">{t.methodology["formula-example"]}</p>
+          </Panel>
+          <div class="grid gap-3.5">
+            {
+              FACTOR_KEYS.map((key) => (
+                <Panel locale={locale} icon={factorIcon[key]} title={t.factors[key].name}>
+                  <p class="text-muted">{t.explain[key]}</p>
+                  <p class="num text-[0.82rem] text-faint">
+                    {t.factors.weight.replace("{n}", String(SCORE_WEIGHTS[key]))}
+                  </p>
+                </Panel>
+              ))
+            }
+          </div>
         </div>
-        <div>
-          <h2 class="mb-[22px]">{t.methodology.prompts["en-title"]}</h2>
-          <PromptList
-            prompts={enPrompts}
-            placeholder={t.methodology.prompts["city-placeholder"]}
-          />
-        </div>
-      </div>
-    </section>
+      </Section>
 
-    <section class="section">
-      <div class="shell grid max-w-[860px] gap-[22px]">
-        <h2>{t.methodology.fairness.title}</h2>
-        <ul class="grid list-disc gap-3 pl-[22px] text-muted">
-          {t.methodology.fairness.items.map((item) => <li>{item}</li>)}
-        </ul>
-      </div>
-    </section>
-  </SiteShell>
-</BaseLayout>
+      <Section locale={locale} id="engine" title={t.engines.title} lead={t.explain.engines}>
+        <div class="grid gap-3.5 sm:grid-cols-3">
+          {
+            ENGINES.map((engine) => {
+              const meta = engineMeta(engine)!;
+              return (
+                <Panel locale={locale}>
+                  <strong><EngineLogo engine={engine} size={22} /></strong>
+                  <span class="pill">{meta.vendor}</span>
+                  <ul class="grid gap-1">
+                    {meta.crawlers.map((crawler) => (
+                      <li class="num text-[0.84rem] text-muted">{crawler}</li>
+                    ))}
+                  </ul>
+                </Panel>
+              );
+            })
+          }
+        </div>
+        <div class="grid gap-3.5 lg:grid-cols-2">
+          {
+            blocks.map((block) => (
+              <Panel locale={locale} title={block.title} icon={block.icon}>
+                <p class="text-muted">{block.body}</p>
+              </Panel>
+            ))
+          }
+        </div>
+      </Section>
+
+      <Section
+        locale={locale}
+        id="fasce"
+        title={t.rank["tiers-title"]}
+        lead={t.rank["tiers-lead"]}
+      >
+        <div class="grid gap-2.5">
+          {
+            META.tiers.map((tier, index) => {
+              const next = META.tiers[index - 1];
+              return (
+                <div class="card flex flex-wrap items-center justify-between gap-3.5">
+                  <TierBadge locale={locale} tier={tier.key} />
+                  <span class="num text-[0.9rem] text-muted">
+                    {next ? `${tier.min}–${next.min}` : `${tier.min}+`}
+                  </span>
+                </div>
+              );
+            })
+          }
+        </div>
+        <Panel locale={locale} title={t.demand.title} lead={t.explain.demand} icon="search">
+          <ul class="grid gap-1.5">
+            {
+              META.demandTiers.map((tier, index) => {
+                const next = META.demandTiers[index - 1];
+                return (
+                  <li class="flex items-baseline justify-between gap-3 border-b border-line pb-1.5 last:border-0">
+                    <span>{tier.name[locale]}</span>
+                    <span class="num text-[0.88rem] text-muted">
+                      {next
+                        ? `${number(locale, tier.min)}–${number(locale, next.min)}`
+                        : `${number(locale, tier.min)}+`}
+                    </span>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </Panel>
+      </Section>
+
+      <Section locale={locale} id="funnel" title={t.funnel.title} lead={t.explain.funnel}>
+        <div class="grid gap-3.5 md:grid-cols-3">
+          {
+            stages.map((stage) => (
+              <div data-funnel={stage.key}>
+                <Panel
+                  locale={locale}
+                  tone={stage.inScope ? "default" : "muted"}
+                  class={stage.inScope ? "funnel-panel h-full" : "h-full"}
+                >
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <FunnelTag
+                      locale={locale}
+                      funnel={stage.key}
+                      size={18}
+                      class="text-[1.02rem] font-bold"
+                    />
+                    {!stage.inScope && <span class="pill">{t.funnel["out-of-scope"]}</span>}
+                  </div>
+                  <p class="text-[0.9rem] text-muted">{stage.lead[locale]}</p>
+                </Panel>
+              </div>
+            ))
+          }
+        </div>
+      </Section>
+
+      <Section locale={locale} id="numeri" title={t.stats.responses} lead={t.explain.runs}>
+        <StatGrid
+          locale={locale}
+          columns={4}
+          items={[
+            { label: t.stats.prompts, value: number(locale, listPrompts().length) },
+            { label: t.stats.runs, value: number(locale, META.runsPerMonth) },
+            { label: t.stats.engines, value: number(locale, ENGINES.length) },
+            {
+              label: t.stats.responses,
+              value: number(locale, NATIONAL.responsesAnalyzed),
+              hint: t.ui["measured-since"],
+            },
+          ]}
+        />
+        <Panel locale={locale} tone="warn" title={t.methodology["data-title"]} icon="info">
+          <p class="text-muted">{t.methodology["data-body"]}</p>
+          <a class="inline-flex items-center gap-1.5 text-accent-ink" href={assumptionsPath(locale)}>
+            {t.assumptions.title}
+            <Icon name="arrowRight" size={15} />
+          </a>
+        </Panel>
+      </Section>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="shell">
+      <CtaBlock
+        title={t.cta.title}
+        body={t.cta.body}
+        primary={{ label: t.cta.button, href: observatoryPath(locale) }}
+        secondary={[{ label: t.destination.back, href: observatoryPath(locale) }]}
+      />
+    </div>
+  </section>
+</ObsLayout>

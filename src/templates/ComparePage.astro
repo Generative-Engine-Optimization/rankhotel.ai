@@ -1,0 +1,117 @@
+---
+import RegionMark from "../components/RegionMark.astro";
+import CompareBoard from "../components/CompareBoard.astro";
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/PageHero.astro";
+import Section from "../components/Section.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  comparePath,
+  destinationPath,
+  methodologyPath,
+  observatoryPath,
+  otherLocale,
+  type Locale,
+} from "../lib/config";
+import { decimal } from "../lib/format";
+import { messages } from "../lib/i18n";
+import { comparePairs, destinationIcon, listDestinations } from "../lib/observatory";
+
+const { locale } = Astro.props as { locale: Locale };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+const destinations = listDestinations();
+
+// Tre confronti pronti, calcolati dai dati in `comparePairs()`: la stessa
+// coppia che l'osservatorio propone dalla classifica arriva qui già scelta.
+const presets = comparePairs().map(({ kind, pair }) => ({
+  label: t.compare[`preset-${kind}` as "preset-top"],
+  keys: pair.map((row) => row.key),
+  names: pair.map((row) => row.name[locale]),
+}));
+
+// L'elenco completo resta in pagina: è il modo in cui un crawler (e chi non ha
+// JavaScript) raggiunge tutte e cento le schede da qui.
+const byRegion = destinations.reduce<Record<string, typeof destinations>>((acc, row) => {
+  (acc[row.region] ??= []).push(row);
+  return acc;
+}, {});
+const regions = Object.keys(byRegion).sort((a, b) => a.localeCompare(b, locale));
+---
+
+<ObsLayout
+  locale={locale}
+  title={t.meta["compare-title"]}
+  description={t.meta["compare-description"]}
+  path={comparePath(locale)}
+  altPath={comparePath(other)}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={t.nav.compare}
+    icon="layers"
+    title={t.compare.title}
+    lead={t.compare.lead}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: t.nav.compare },
+    ]}
+    compact
+  >
+    <p class="text-[0.9rem] text-muted">
+      {t.rank.help}{" "}
+      <a class="text-accent-ink underline underline-offset-2" href={methodologyPath(locale)}>
+        {t.methodology.title}
+      </a>
+    </p>
+  </PageHero>
+
+  <section class="section" id="confronto" data-section="confronto">
+    <div class="shell">
+      <CompareBoard locale={locale} presets={presets} />
+    </div>
+  </section>
+
+  <Section
+    locale={locale}
+    id="tutte"
+    title={t.map["list-title"]}
+  >
+    <div class="grid gap-x-8 gap-y-6 sm:grid-cols-2 xl:grid-cols-3">
+      {
+        regions.map((region) => (
+          <div class="grid content-start gap-1.5">
+            <p class="flex items-center gap-2 text-[0.76rem] font-bold tracking-widest text-faint uppercase">
+              <RegionMark region={region} size={17} />
+              {region}
+            </p>
+            <ul class="grid gap-0.5">
+              {byRegion[region].map((destination) => (
+                <li>
+                  <a
+                    class="flex items-center gap-2 rounded-(--radius-brand) px-1.5 py-1 text-[0.9rem] text-muted transition-colors hover:bg-surface-muted hover:text-ink"
+                    href={destinationPath(locale, destination.slug[locale])}
+                  >
+                    <span class="text-faint">
+                      <Icon name={destinationIcon(destination)} size={14} />
+                    </span>
+                    <span class="grow truncate">{destination.name[locale]}</span>
+                    <span class="num shrink-0 text-[0.8rem] text-faint">
+                      {decimal(locale, destination.score.mean, 0)}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <section class="section">
+    <div class="shell">
+      <a class="btn btn-secondary" href={observatoryPath(locale)}>{t.destination.back}</a>
+    </div>
+  </section>
+</ObsLayout>

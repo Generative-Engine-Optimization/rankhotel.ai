@@ -1,0 +1,108 @@
+---
+import type { Locale } from "../lib/config";
+import { interpolate, messages } from "../lib/i18n";
+import { META } from "../lib/observatory";
+import DemoMark from "./DemoMark.astro";
+import Favicon from "./Favicon.astro";
+import Icon from "./Icon.astro";
+
+// Un dominio, con tutto quello che serve per giudicarlo: da chi è gestito, se
+// è stato verificato e quando, se è di catena, e se all'ultima verifica
+// rispondeva. Il link si apre in una nuova scheda perché è una fonte, non un
+// passaggio del percorso: portare via il lettore dal report sarebbe un errore.
+const {
+  locale,
+  domain,
+  label,
+  verified = false,
+  holder,
+  scope,
+  status,
+  note,
+  chainDomain = false,
+  size = 16,
+  showLabel = false,
+} = Astro.props as {
+  locale: Locale;
+  domain: string;
+  label?: string;
+  verified?: boolean;
+  holder?: string | null;
+  scope?: string;
+  status?: string;
+  note?: string | null;
+  chainDomain?: boolean;
+  size?: number;
+  showLabel?: boolean;
+};
+
+const t = messages(locale).observatory;
+const d = t.data;
+
+const flags: { key: string; text: string; tone: string; icon: string }[] = [];
+if (verified) {
+  flags.push({
+    key: "verified",
+    text: interpolate(d["site-verified"], { date: META.sitesVerifiedOn }),
+    tone: "text-success-ink",
+    icon: "check",
+  });
+}
+if (scope === "regional") {
+  flags.push({ key: "regional", text: d["site-regional"], tone: "text-muted", icon: "globe" });
+}
+if (chainDomain) {
+  flags.push({ key: "chain", text: d["chain-domain"], tone: "text-gold-ink", icon: "layers" });
+}
+if (status === "unreachable") {
+  flags.push({ key: "status", text: d["site-unreachable"], tone: "text-danger-ink", icon: "cross" });
+}
+if (status === "redirect") {
+  flags.push({ key: "status", text: d["site-redirect"], tone: "text-gold-ink", icon: "arrowRight" });
+}
+if (status === "waf") {
+  flags.push({ key: "status", text: d["site-waf"], tone: "text-muted", icon: "robot" });
+}
+
+const title = [
+  holder ? `${d.holder}: ${holder}` : null,
+  ...flags.map((flag) => flag.text),
+  note,
+]
+  .filter(Boolean)
+  .join(" · ");
+---
+
+<span class="inline-flex items-center gap-1.5 align-middle">
+  <Favicon domain={domain} verified={verified} size={size} />
+  {
+    verified ? (
+      <a
+        class="inline-flex items-center gap-1 hover:text-accent-ink"
+        href={`https://${domain}`}
+        target="_blank"
+        rel="noopener noreferrer external"
+        title={title || interpolate(d["open-site"], { domain })}
+      >
+        <span class="num text-[0.88rem]">{showLabel && label ? label : domain}</span>
+        <Icon name="share" size={11} class="rotate-90 text-faint" />
+        <span class="sr-only">{d["new-tab"]}</span>
+      </a>
+    ) : (
+      <span class="num text-[0.88rem] text-muted" title={d["site-generated"]}>
+        {showLabel && label ? label : domain}
+      </span>
+    )
+  }
+  {!verified && <DemoMark locale={locale} />}
+  {
+    flags
+      .filter((flag) => flag.key !== "verified")
+      .map((flag) => (
+        <span class={flag.tone} title={flag.text}>
+          <Icon name={flag.icon} size={12} />
+          <span class="sr-only">{flag.text}</span>
+        </span>
+      ))
+  }
+</span>

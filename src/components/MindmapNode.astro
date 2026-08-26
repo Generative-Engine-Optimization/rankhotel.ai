@@ -1,0 +1,60 @@
+---
+import EngineLogo from "./EngineLogo.astro";
+import Icon from "./Icon.astro";
+
+// Un ramo della mappa mentale. Sta in un componente perché i rami sono gli
+// stessi a sinistra e a destra del centro: scriverli due volte nel template
+// avrebbe significato mantenerli due volte.
+const { branch, side } = Astro.props as {
+  branch: {
+    label: string;
+    note: string;
+    icon: string;
+    count: number;
+    leaves: { label: string; href: string; note?: string; icon?: string; engine?: string }[];
+    more?: { label: string; href: string };
+  };
+  side: "left" | "right";
+};
+---
+
+<article class="mindmap-node" data-side={side}>
+  <header class="flex items-center gap-2.5">
+    <span class="text-accent-ink"><Icon name={branch.icon} size={19} /></span>
+    <h2 class="text-[1.02rem]">{branch.label}</h2>
+    <span class="pill num ml-auto shrink-0">{branch.count}</span>
+  </header>
+  <p class="text-[0.86rem] text-muted">{branch.note}</p>
+  <ul class="grid gap-0.5">
+    {
+      branch.leaves.map((leaf) => (
+        <li>
+          <a class="mindmap-leaf" href={leaf.href}>
+            {leaf.engine ? (
+              <EngineLogo engine={leaf.engine} size={15} />
+            ) : (
+              <>
+                <span class="text-faint">
+                  <Icon name={leaf.icon ?? "chevronRight"} size={14} />
+                </span>
+                <span>{leaf.label}</span>
+              </>
+            )}
+            {leaf.note && <span class="num ml-auto text-[0.76rem] text-faint">{leaf.note}</span>}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  {
+    branch.more && (
+      <a
+        class="inline-flex items-center gap-1.5 text-[0.86rem] text-accent-ink"
+        href={branch.more.href}
+      >
+        {branch.more.label}
+        <Icon name="arrowRight" size={14} />
+      </a>
+    )
+  }
+</article>

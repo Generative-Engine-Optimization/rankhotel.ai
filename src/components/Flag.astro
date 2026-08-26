@@ -1,0 +1,63 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+
+// Bandiere disegnate inline, come i marchi degli assistenti: nessuna richiesta
+// di rete, nessuna emoji (che su Windows si vede a metà) e il colore lo porta
+// il disegno, non un font.
+//
+// NOTA: una bandiera nazionale per una lingua è una convenzione imprecisa
+// (l'inglese non è solo britannico) ma è quella che tutti leggono al volo, ed è
+// il motivo per cui la bandiera è qui. L'etichetta testuale resta sempre
+// accanto o come testo accessibile.
+const {
+  locale: flag,
+  size = 16,
+  class: className = "",
+} = Astro.props as { locale: Locale; size?: number; class?: string };
+
+// Il clip della Union Jack ha bisogno di un id unico nel documento: un
+// contatore di modulo lo garantisce anche con dieci bandiere in pagina.
+const uid = `flag-${(globalThis as any).__flagId = ((globalThis as any).__flagId ?? 0) + 1}`;
+const height = Math.round((size * 2) / 3);
+---
+
+{
+  flag === "it" ? (
+    <svg
+      viewBox="0 0 60 40"
+      width={size}
+      height={height}
+      class={`shrink-0 rounded-[2px] ${className}`}
+      style={`width:${size}px;height:${height}px`}
+      aria-hidden="true"
+    >
+      <rect width="20" height="40" fill="#008C45" />
+      <rect x="20" width="20" height="40" fill="#F4F5F0" />
+      <rect x="40" width="20" height="40" fill="#CD212A" />
+    </svg>
+  ) : (
+    <svg
+      viewBox="0 0 60 30"
+      width={size}
+      height={height}
+      class={`shrink-0 rounded-[2px] ${className}`}
+      style={`width:${size}px;height:${height}px`}
+      aria-hidden="true"
+    >
+      <clipPath id={uid}>
+        <path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z" />
+      </clipPath>
+      <rect width="60" height="30" fill="#012169" />
+      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#FFF" stroke-width="6" />
+      <path
+        d="M0,0 L60,30 M60,0 L0,30"
+        stroke="#C8102E"
+        stroke-width="4"
+        clip-path={`url(#${uid})`}
+      />
+      <path d="M30,0 V30 M0,15 H60" stroke="#FFF" stroke-width="10" />
+      <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6" />
+    </svg>
+  )
+}

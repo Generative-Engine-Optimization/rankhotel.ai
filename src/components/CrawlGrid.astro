@@ -1,0 +1,91 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import CrawlerMark from "./CrawlerMark.astro";
+import Icon from "./Icon.astro";
+import { META, crawlerGroups, engineMeta, type SiteRow } from "../lib/observatory";
+import SiteLink from "./SiteLink.astro";
+
+const { locale, sites, showKind = true } = Astro.props as {
+  locale: Locale;
+  sites: (SiteRow & { name?: string })[];
+  showKind?: boolean;
+};
+
+const t = messages(locale).observatory;
+const crawlers = META.crawlers;
+const groups = crawlerGroups();
+const kindLabel = Object.fromEntries(
+  META.siteKinds.map((kind) => [kind.key, kind.short[locale]]),
+);
+const symbol = { allow: "✓", block: "✗", partial: "~" };
+---
+
+<div class="table-wrap table-dense">
+  <table>
+    <thead>
+      {/* Due righe di testata: sopra l'assistente, sotto i suoi bot. GPTBot,
+          OAI-SearchBot e ChatGPT-User in fila non dicono di essere la stessa
+          cosa; sotto una fascia che si chiama ChatGPT sì. */}
+      <tr class="crawl-groups">
+        <th scope="col" rowspan="2">
+          <span class="th-label"><Icon name="domain" size={13} />{t.sites.domain}</span>
+        </th>
+        {showKind && <th scope="col" rowspan="2">{t.sites.kind}</th>}
+        {
+          groups.map((group) => (
+            <th scope="col" colspan={group.crawlers.length} class="text-center">
+              <span class="inline-flex items-center gap-1.5">
+                <CrawlerMark engine={group.engine} size={14} />
+                {group.label}
+              </span>
+            </th>
+          ))
+        }
+        <th scope="col" rowspan="2" class="text-right">{t.sites.audit}</th>
+      </tr>
+      <tr>
+        {
+          crawlers.map((crawler) => (
+            <th scope="col" class="crawl-bot text-center">
+              <span title={crawler.purpose[locale]}>{crawler.key}</span>
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody>
+      {
+        sites.map((site) => (
+          <tr>
+            <td>
+              <SiteLink
+                locale={locale}
+                domain={site.domain}
+                verified={site.verified}
+                holder={site.holder}
+                scope={site.scope}
+                status={site.status}
+                note={site.note}
+                chainDomain={site.chainDomain}
+              />
+            </td>
+            {showKind && <td class="text-muted text-[0.88rem]">{kindLabel[site.kind]}</td>}
+            {crawlers.map((crawler) => {
+              const state = site.crawlers[crawler.key] ?? "allow";
+              return (
+                <td class="text-center">
+                  <span class={`crawl crawl-${state}`}>
+                    <span aria-hidden="true">{symbol[state]}</span>
+                    <span class="sr-only">{t.sites.state[state]}</span>
+                  </span>
+                </td>
+              );
+            })}
+            <td class="num text-right">{site.audit.score}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

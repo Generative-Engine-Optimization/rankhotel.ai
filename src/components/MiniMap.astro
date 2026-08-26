@@ -1,0 +1,67 @@
+---
+import RegionMark from "./RegionMark.astro";
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import { ITALY_PATHS, VIEW, project } from "../lib/italy";
+
+// Dove cade il territorio, in un colpo d'occhio. Nessun tile, nessun JavaScript,
+// nessuna richiesta: una sagoma e un punto. Su una scheda che parla di un posto,
+// "dov'è" è la prima domanda di chi non ci è mai stato.
+const {
+  locale,
+  lat,
+  lng,
+  name,
+  region,
+  height = 160,
+} = Astro.props as {
+  locale: Locale;
+  lat: number;
+  lng: number;
+  name: string;
+  region: string;
+  height?: number;
+};
+
+const t = messages(locale).observatory;
+const [x, y] = project(lng, lat);
+---
+
+<figure
+  class="grid gap-2 rounded-(--radius-brand) border border-line bg-surface-muted p-3.5"
+  style={`--mini-h:${height}px`}
+>
+  <svg
+    viewBox={`0 0 ${VIEW.width} ${VIEW.height}`}
+    class="mx-auto block h-[var(--mini-h)] w-auto max-w-full"
+    role="img"
+    aria-label={`${name}, ${region}`}
+  >
+    {/* La sagoma resta neutra. Ci avevo provato con le bande del tricolore:
+        il risultato era che il colore sembrava codificare qualcosa e il punto
+        si perdeva. Il compito di questa figura è dire dov'è il territorio, e
+        una bandiera addosso glielo toglie. */}
+    {
+      ITALY_PATHS.map((d) => (
+        <path
+          d={d}
+          fill="var(--color-surface-raised)"
+          stroke="var(--color-line-strong)"
+          stroke-width="0.6"
+          stroke-linejoin="round"
+        />
+      ))
+    }
+    <line x1={x} y1="0" x2={x} y2={VIEW.height} stroke="var(--color-accent)" stroke-width="0.35" opacity="0.35" stroke-dasharray="2 2" />
+    <line x1="0" y1={y} x2={VIEW.width} y2={y} stroke="var(--color-accent)" stroke-width="0.35" opacity="0.35" stroke-dasharray="2 2" />
+    <circle cx={x} cy={y} r="4.2" fill="var(--color-accent)" opacity="0.22" />
+    <circle cx={x} cy={y} r="2" fill="var(--color-accent-strong)" stroke="var(--color-surface)" stroke-width="0.8" />
+  </svg>
+  <figcaption class="flex items-baseline justify-between gap-2 text-[0.8rem]">
+    <span class="flex items-center gap-1.5 text-muted">
+      <RegionMark region={region} size={15} class="text-faint" />
+      {region}
+    </span>
+    <span class="num text-faint">{lat.toFixed(2)}, {lng.toFixed(2)}</span>
+  </figcaption>
+</figure>

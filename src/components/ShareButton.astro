@@ -1,0 +1,74 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import Icon from "./Icon.astro";
+
+// Copia il link diretto alla sezione. Il pezzo di report che interessa a
+// qualcuno raramente è la pagina intera: quasi sempre è un blocco, e senza
+// un'ancora condivisibile chi lo riceve deve cercarselo.
+const { locale, target, label } = Astro.props as {
+  locale: Locale;
+  target: string;
+  label?: string;
+};
+const t = messages(locale).observatory;
+---
+
+<button
+  class="chip shrink-0 gap-1.5"
+  type="button"
+  data-share={target}
+  data-copied={t.ui.copied}
+  aria-label={label ?? t.ui["share-section"]}
+  title={label ?? t.ui["share-section"]}
+>
+  <Icon name="link" size={14} />
+  <span class="max-sm:sr-only">{t.ui.share}</span>
+</button>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-share]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      // I filtri della pagina vivono nella query string: un link che li perde
+      // porta chi lo riceve su una vista diversa da quella condivisa.
+      const url = `${location.origin}${location.pathname}${location.search}#${button.dataset.share}`;
+      const done = () => {
+        const span = button.querySelector("span");
+        if (!span) return;
+        const previous = span.textContent;
+        span.textContent = button.dataset.copied ?? "";
+        span.classList.remove("max-sm:sr-only");
+        button.setAttribute("data-active", "true");
+        setTimeout(() => {
+          span.textContent = previous;
+          span.classList.add("max-sm:sr-only");
+          button.removeAttribute("data-active");
+        }, 1800);
+      };
+      try {
+        // La condivisione nativa vince dove esiste: su mobile è quello che
+        // l'utente si aspetta, e porta il link dove vuole lui.
+        if (navigator.share && matchMedia("(max-width: 760px)").matches) {
+          await navigator.share({ url, title: document.title });
+          return;
+        }
+        await navigator.clipboard.writeText(url);
+        done();
+      } catch {
+        // La Clipboard API richiede un contesto sicuro e il permesso. Dove non
+        // c'è, il vecchio metodo funziona ancora e l'utente ottiene comunque
+        // il link invece di un pulsante che non fa niente.
+        const field = document.createElement("textarea");
+        field.value = url;
+        field.setAttribute("readonly", "");
+        field.style.cssText = "position:fixed;top:-1000px;opacity:0";
+        document.body.appendChild(field);
+        field.select();
+        const ok = document.execCommand("copy");
+        field.remove();
+        if (ok) done();
+        else location.hash = button.dataset.share ?? "";
+      }
+    });
+  });
+</script>

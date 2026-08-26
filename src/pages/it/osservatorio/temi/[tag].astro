@@ -1,0 +1,10 @@
+---
+import TagPage from "../../../../templates/TagPage.astro";
+import { listTags } from "../../../../lib/observatory";
+
+export function getStaticPaths() {
+  return listTags().map((tag) => ({ params: { tag: tag.slug.it } }));
+}
+---
+
+<TagPage locale="it" slug={Astro.params.tag!} />
