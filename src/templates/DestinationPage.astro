@@ -1,0 +1,536 @@
+---
+import AnswerBoard from "../components/AnswerBoard.astro";
+import Cover from "../components/Cover.astro";
+import CrawlGrid from "../components/CrawlGrid.astro";
+import CtaBlock from "../components/CtaBlock.astro";
+import DestinationCard from "../components/DestinationCard.astro";
+import EngineCards from "../components/EngineCards.astro";
+import FunnelTag from "../components/FunnelTag.astro";
+import EntityCoverage from "../components/EntityCoverage.astro";
+import HotelTable from "../components/HotelTable.astro";
+import Icon from "../components/Icon.astro";
+import LangSplit from "../components/LangSplit.astro";
+import LangTag from "../components/LangTag.astro";
+import MiniMap from "../components/MiniMap.astro";
+import PageHero from "../components/PageHero.astro";
+import PageNav from "../components/PageNav.astro";
+import Panel from "../components/Panel.astro";
+import PromptGrid from "../components/PromptGrid.astro";
+import RankRange from "../components/RankRange.astro";
+import Runs from "../components/Runs.astro";
+import ScoreBreakdown from "../components/ScoreBreakdown.astro";
+import SiteLink from "../components/SiteLink.astro";
+import ScoreDial from "../components/ScoreDial.astro";
+import Section from "../components/Section.astro";
+import SourceMix from "../components/SourceMix.astro";
+import StabilityTag from "../components/StabilityTag.astro";
+import StatGrid from "../components/StatGrid.astro";
+import TagList from "../components/TagList.astro";
+import TierBadge from "../components/TierBadge.astro";
+import Toc from "../components/Toc.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  categoryPath,
+  comparePath,
+  destinationPath,
+  methodologyPath,
+  observatoryPath,
+  otherLocale,
+  queriesPath,
+  type Locale,
+} from "../lib/config";
+import { compact, dateLabel, decimal, euro, number, percent, signed } from "../lib/format";
+import { interpolate, messages } from "../lib/i18n";
+import {
+  META,
+  categoryByKey,
+  destinationIcon,
+  inScopeFunnel,
+  loadDestination,
+  neighbours,
+  relatedDestinations,
+  type Destination,
+} from "../lib/observatory";
+import { destinationSchema } from "../lib/schema";
+
+const { locale, destination } = Astro.props as {
+  locale: Locale;
+  destination: Destination;
+};
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+
+const detail = await loadDestination(destination.key);
+const category = categoryByKey(destination.category)!;
+const stages = inScopeFunnel();
+const { prev, next } = neighbours(destination);
+const related = relatedDestinations(destination, 4);
+
+const title = interpolate(t.meta["destination-title"], {
+  destination: destination.name[locale],
+});
+const description = interpolate(t.meta["destination-description"], {
+  destination: destination.name[locale],
+});
+// Il dettaglio, non il riepilogo: è lì che stanno i luoghi per cui il
+// territorio è conosciuto, e sono quelli a fare da entità nel grafo.
+const schema = destinationSchema(
+  locale,
+  detail,
+  destinationPath(locale, destination.slug[locale]),
+  description,
+);
+
+const topQueries = detail.queries.filter((q) => q.scope === "destination").slice(0, 8);
+const hotelSites = detail.hotels.slice(0, 6).map((hotel) => ({
+  domain: hotel.domain,
+  kind: "hotel" as const,
+  label: hotel.name,
+  synthetic: hotel.synthetic,
+  verified: !hotel.synthetic,
+  holder: null,
+  scope: "destination",
+  status: hotel.status,
+  note: hotel.note,
+  chainDomain: hotel.chainDomain,
+  crawlers: hotel.crawlers,
+  audit: { score: hotel.auditScore, checks: {} },
+}));
+
+// Un solo elenco governa indice, ordine e ancore: aggiungere una sezione qui
+// la fa comparire nell'indice senza toccare altro.
+const sections = [
+  { id: "engine", label: t.engines.title, icon: "robot" },
+  { id: "entita", label: t.entities.title, icon: "pin" },
+  { id: "funnel", label: t.funnel.title, icon: "route" },
+  { id: "comparativo", label: t.prompts["comparative-title"], icon: "compass" },
+  { id: "interno", label: t.prompts["internal-title"], icon: "layers" },
+  { id: "risposte", label: t.answers.title, icon: "reply" },
+  { id: "fonti", label: t.sources.title, icon: "quote" },
+  { id: "siti", label: t.sites.title, icon: "globe" },
+  { id: "hotel", label: t.hotels.title, icon: "hotel" },
+  { id: "query", label: t.queries["local-title"], icon: "search" },
+  { id: "rilevazioni", label: t.ui["runs-title"], icon: "calendar" },
+];
+
+const demandLabel = META.demandTiers.find(
+  (tier) => tier.key === destination.demandTier,
+)?.name[locale];
+---
+
+<ObsLayout
+  locale={locale}
+  title={title}
+  description={description}
+  path={destinationPath(locale, destination.slug[locale])}
+  altPath={destinationPath(other, destination.slug[other])}
+  schema={schema}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={destination.region}
+    icon={destinationIcon(destination)}
+    cat={destination.category}
+    title={destination.name[locale]}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: category.short[locale], href: categoryPath(locale, category.slug[locale]) },
+      { label: destination.name[locale] },
+    ]}
+  >
+    <TagList locale={locale} category={destination.category} tags={destination.tags} />
+    <StatGrid
+      locale={locale}
+      columns={4}
+      size="sm"
+      items={[
+        {
+          label: t.data.visitors,
+          value: compact(locale, destination.visitors * 1000),
+          info: t.data["visitors-help"],
+        },
+        {
+          label: t.demand.title,
+          value: number(locale, destination.demand),
+          hint: demandLabel,
+          info: `${t.explain.demand} ${t.data["demand-simulated"]}`,
+        },
+        {
+          label: t.table.category,
+          value: interpolate(t.rank.position, {
+            n: destination.categoryRank,
+            total: destination.categorySize,
+          }),
+          hint: interpolate(t.rank.range, {
+            from: destination.categoryRankRange[0],
+            to: destination.categoryRankRange[1],
+          }),
+          info: t.explain.tier,
+        },
+        {
+          label: t.destination["top-hotel"],
+          value: detail.hotels[0].name,
+        },
+      ]}
+    />
+  </PageHero>
+
+  <div class="shell grid gap-3.5 pb-[clamp(24px,3vw,38px)] lg:grid-cols-[7fr_3fr]">
+    <Cover destinationKey={destination.key} category={destination.category} height={200} />
+    <MiniMap
+      locale={locale}
+      lat={destination.lat}
+      lng={destination.lng}
+      name={destination.name[locale]}
+      region={destination.region}
+      height={150}
+    />
+  </div>
+
+  <div class="shell block-end">
+    <Panel locale={locale} class="lg:grid-cols-[1fr_auto] lg:items-center">
+      <div class="grid gap-3.5">
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-2.5">
+          <div class="grid gap-1">
+            <span class="flex items-center gap-1.5 text-[0.85rem] text-muted">
+              {t.score.label}
+            </span>
+            <ScoreDial locale={locale} stat={detail.scoreDetail.overall.score} size="lg" />
+          </div>
+          <div class="grid gap-2">
+            <TierBadge locale={locale} tier={destination.tier} />
+            <StabilityTag locale={locale} stat={detail.scoreDetail.overall.score} />
+          </div>
+          <div class="grid gap-1">
+            <span class="text-[0.85rem] text-muted">{t.nav.observatory}</span>
+            <RankRange
+              locale={locale}
+              rank={destination.nationalRank}
+              range={destination.rankRange}
+              total={100}
+            />
+          </div>
+          <div class="grid gap-1">
+            <span class="text-[0.85rem] text-muted">{t.table.trend}</span>
+            <span
+              class={`num inline-flex items-center gap-1 font-bold ${destination.trend > 0 ? "text-success-ink" : destination.trend < 0 ? "text-danger-ink" : "text-faint"}`}
+            >
+              <Icon
+                name={destination.trend > 0 ? "arrowUp" : destination.trend < 0 ? "arrowDown" : "minus"}
+                size={14}
+              />
+              {signed(destination.trend, 1)}
+            </span>
+            <span class="text-[0.78rem] text-faint">{t.ui["measured-since"]}</span>
+          </div>
+        </div>
+        <p class="max-w-[720px] text-[0.92rem] text-muted">{t.explain.score}</p>
+      </div>
+    </Panel>
+
+    {
+      destination.demandTier === "marginal" && (
+        <Panel tone="warn" class="mt-3.5" icon="info">
+          <p class="text-[0.9rem] text-gold-ink">
+            {interpolate(t.demand["marginal-note"], { n: number(locale, destination.demand) })}
+          </p>
+        </Panel>
+      )
+    }
+  </div>
+
+  <div class="shell with-toc block-end">
+    <Toc locale={locale} items={sections} />
+
+    <div class="grid gap-0">
+      <Section
+        locale={locale}
+        id="fattori"
+        title={t.factors.title}
+        lead={t.factors.lead}
+        bare
+      >
+        <ScoreBreakdown locale={locale} factors={destination.factors} />
+      </Section>
+
+      <Section
+        locale={locale}
+        id="engine"
+        title={t.engines.title}
+        lead={t.engines.lead}
+      >
+        <EngineCards
+          locale={locale}
+          byEngine={destination.byEngine}
+          overall={destination.score.mean}
+          detail={detail.scoreDetail.byEngine}
+        />
+      </Section>
+
+      <Section
+        locale={locale}
+        id="entita"
+        title={t.entities.title}
+        lead={t.entities.lead}
+      >
+        <div class="grid items-start gap-[34px] lg:grid-cols-[5fr_7fr]">
+          <Panel locale={locale} title={t.destination["known-for"]} icon="pin">
+            <ul class="grid gap-2">
+              {
+                detail.knownFor.map((entity) => (
+                  <li class="flex items-center gap-2 border-b border-line pb-2 text-muted last:border-0 last:pb-0">
+                    <Icon name="check" size={14} class="text-success-ink" />
+                    {entity}
+                  </li>
+                ))
+              }
+            </ul>
+          </Panel>
+          <EntityCoverage locale={locale} entities={detail.entities} />
+        </div>
+      </Section>
+
+      <Section locale={locale} id="funnel" title={t.funnel.title} lead={t.funnel.lead}>
+        <div class="grid items-start gap-[34px] lg:grid-cols-[7fr_5fr]">
+          <div class="grid gap-2.5">
+            {
+              stages.map((stage) => {
+                const row = detail.summary.byFunnel[stage.key];
+                return (
+                  <div data-funnel={stage.key}>
+                    <Panel locale={locale} class="funnel-panel">
+                      <div class="grid gap-2">
+                        <div class="flex items-baseline justify-between gap-3">
+                          <FunnelTag
+                            locale={locale}
+                            funnel={stage.key}
+                            size={18}
+                            class="text-[1.02rem] font-bold"
+                          />
+                          <span class="num funnel-ink font-bold">
+                            {percent(locale, row.mentionRate)}
+                          </span>
+                        </div>
+                        <span class="bar bar-funnel">
+                          <span style={`width:${Math.max(2, row.mentionRate * 100)}%`} />
+                        </span>
+                        <p class="text-[0.88rem] text-muted">{stage.lead[locale]}</p>
+                      </div>
+                    </Panel>
+                  </div>
+                );
+              })
+            }
+          </div>
+          <div class="grid gap-3.5">
+            <Panel locale={locale} title={t.lang.title} lead={t.lang.lead} icon="globe">
+              <LangSplit
+                locale={locale}
+                it={detail.summary.byLang.it.mentionRate}
+                en={detail.summary.byLang.en.mentionRate}
+              />
+            </Panel>
+          </div>
+        </div>
+      </Section>
+
+      <Section
+        locale={locale}
+        id="comparativo"
+        title={t.prompts["comparative-title"]}
+        lead={t.prompts["comparative-lead"]}
+      >
+        <PromptGrid
+          locale={locale}
+          prompts={detail.prompts.comparative}
+          id={`cmp-${destination.key}`}
+        />
+      </Section>
+
+      <Section
+        locale={locale}
+        id="interno"
+        title={t.prompts["internal-title"]}
+        lead={t.prompts["internal-lead"]}
+      >
+        <PromptGrid
+          locale={locale}
+          prompts={detail.prompts.internal}
+          id={`int-${destination.key}`}
+        />
+      </Section>
+
+      <Section
+        locale={locale}
+        id="risposte"
+        title={t.answers.title}
+        lead={t.answers.lead}
+      >
+        <AnswerBoard
+          locale={locale}
+          answers={detail.answers.destination}
+          id={`ans-${destination.key}`}
+        />
+      </Section>
+
+      <Section locale={locale} id="fonti" title={t.sources.title} lead={t.sources.lead}>
+        <div class="grid items-start gap-[34px] lg:grid-cols-[5fr_7fr]">
+          <Panel locale={locale}>
+            <SourceMix locale={locale} byKind={detail.sources.byKind} />
+          </Panel>
+          <div class="table-wrap table-dense">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <span class="th-label"><Icon name="domain" size={13} />{t.sites.domain}</span>
+                  </th>
+                  <th scope="col">{t.sites.kind}</th>
+                  <th scope="col" class="text-right">{t.sources.share}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  detail.sources.top.slice(0, 8).map((row) => (
+                    <tr>
+                      <td>
+                        <SiteLink
+                          locale={locale}
+                          domain={row.domain}
+                          verified={!row.synthetic}
+                          holder={row.holder}
+                          scope={row.scope}
+                        />
+                      </td>
+                      <td class="text-[0.86rem] text-muted">
+                        {META.siteKinds.find((kind) => kind.key === row.kind)?.short[locale]}
+                      </td>
+                      <td class="num text-right">{percent(locale, row.share, 1)}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Section>
+
+      <Section locale={locale} id="siti" title={t.sites.title} lead={t.sites.lead}>
+        <CrawlGrid locale={locale} sites={[...detail.sites, ...hotelSites]} />
+      </Section>
+
+      <Section locale={locale} id="hotel" title={t.hotels.title} lead={t.hotels.lead}>
+        <div class="grid gap-[34px]">
+          <HotelTable locale={locale} hotels={detail.hotels} />
+
+          {/* La tabella dice quali strutture l'AI cita e quanto. Questa è la
+              risposta da cui quei numeri escono: sotto la classifica, perché
+              è la prova di ciò che la classifica afferma. */}
+          <div class="grid gap-3.5 border-t border-line pt-[34px]">
+            <div class="grid max-w-[820px] gap-2">
+              <h3 class="flex items-center gap-2 text-[1.15rem]">
+                <span class="text-accent-ink"><Icon name="reply" size={19} /></span>
+                <span>{t.answers["hotels-title"]}</span>
+              </h3>
+              <p class="text-muted">{t.answers["hotels-lead"]}</p>
+            </div>
+            <AnswerBoard
+              locale={locale}
+              answers={detail.answers.hotels}
+              id={`ans-hotels-${destination.key}`}
+            />
+          </div>
+        </div>
+      </Section>
+
+      <Section
+        locale={locale}
+        id="query"
+        title={t.queries["local-title"]}
+        lead={t.queries["local-lead"]}
+      >
+        <div class="table-wrap table-dense">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">{t.table.query}</th>
+                <th scope="col">{t.table.lang}</th>
+                <th scope="col">{t.table.funnel}</th>
+                <th scope="col" class="text-right">{t.table.volume}</th>
+                <th scope="col" class="text-right">{t.table.cpc}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                topQueries.map((query) => (
+                  <tr>
+                    <td class="font-mono text-[0.88rem]">{query.text}</td>
+                    <td><LangTag locale={locale} lang={query.lang} /></td>
+                    <td class="text-[0.86rem] text-muted">
+                      <FunnelTag locale={locale} funnel={query.funnel} size={14} />
+                    </td>
+                    <td class="num text-right">{number(locale, query.volume)}</td>
+                    <td class="num text-right">{euro(locale, query.cpc)}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <a
+          class="btn btn-secondary justify-self-start gap-2"
+          href={`${queriesPath(locale)}?destination=${destination.key}`}
+        >
+          {t.queries.explore}
+          <Icon name="arrowRight" size={16} />
+        </a>
+      </Section>
+
+      <Section
+        locale={locale}
+        id="rilevazioni"
+        title={t.ui["runs-title"]}
+        lead={t.ui["runs-lead"]}
+      >
+        <Runs locale={locale} history={detail.history} />
+        <p class="text-[0.85rem] text-faint">
+          {interpolate(t.destination.updated, { date: dateLabel(locale, detail.updatedAt) })}
+        </p>
+      </Section>
+    </div>
+  </div>
+
+  <Section locale={locale} id="vicini" title={t.ui.related} lead={t.ui["related-lead"]}>
+    <div class="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
+      {related.map((row) => <DestinationCard locale={locale} destination={row} />)}
+    </div>
+    <PageNav
+      locale={locale}
+      prev={prev && {
+        label: prev.name[locale],
+        href: destinationPath(locale, prev.slug[locale]),
+        score: decimal(locale, prev.score.mean, 0),
+      }}
+      next={next && {
+        label: next.name[locale],
+        href: destinationPath(locale, next.slug[locale]),
+        score: decimal(locale, next.score.mean, 0),
+      }}
+    />
+  </Section>
+
+  <section class="section">
+    <div class="shell">
+      <CtaBlock
+        title={t.destination["cta-title"]}
+        body={t.destination["cta-body"]}
+        primary={{ label: t.compare.add, href: `${comparePath(locale)}?d=${destination.key}` }}
+        secondary={[
+          { label: t.queries.explore, href: `${queriesPath(locale)}?destination=${destination.key}` },
+          { label: t.methodology.title, href: methodologyPath(locale) },
+          { label: t.destination.back, href: observatoryPath(locale) },
+        ]}
+      />
+    </div>
+  </section>
+</ObsLayout>

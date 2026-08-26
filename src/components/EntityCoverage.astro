@@ -1,0 +1,55 @@
+---
+import EngineLogo from "./EngineLogo.astro";
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import { ENGINES, engineMeta } from "../lib/observatory";
+
+const { locale, entities } = Astro.props as {
+  locale: Locale;
+  entities: { name: string; byEngine: Record<string, number> }[];
+};
+
+const t = messages(locale).observatory;
+---
+
+<div class="table-wrap table-dense">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">{t.entities.entity}</th>
+        {
+          ENGINES.map((engine) => (
+            <th scope="col" class="text-right">
+              <EngineLogo engine={engine} size={15} showName={false} class="justify-end" />
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody>
+      {
+        entities.map((entity) => (
+          <tr>
+            <td class="font-bold">{entity.name}</td>
+            {ENGINES.map((engine) => {
+              const value = entity.byEngine[engine];
+              const tone = value >= 0.66 ? "text-success-ink" : value >= 0.35 ? "text-gold-ink" : "text-danger-ink";
+              return (
+                <td class="text-right">
+                  <span class="inline-flex items-center gap-2">
+                    <span class="bar w-16">
+                      <span
+                        style={`width:${Math.max(2, value * 100)}%;background:${value >= 0.66 ? "var(--color-success-ink)" : value >= 0.35 ? "var(--color-gold-ink)" : "var(--color-danger-ink)"}`}
+                      />
+                    </span>
+                    <span class={`num text-[0.85rem] ${tone}`}>{Math.round(value * 100)}%</span>
+                  </span>
+                </td>
+              );
+            })}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,119 @@
+---
+import type { Locale } from "../lib/config";
+import { decimal } from "../lib/format";
+import { messages } from "../lib/i18n";
+import type { Stat } from "../lib/observatory";
+
+// Il punteggio è il numero che regge tutto il sito: merita di essere letto
+// prima del testo che lo circonda.
+//
+// Tre scelte, tutte funzionali:
+// 1. Colore continuo invece di tre fasce secche. Un 64 e un 66 non devono
+//    cambiare colore di colpo solo perché cade una soglia arbitraria.
+// 2. Anello di progressione: dice quanto manca a cento senza aggiungere parole.
+//    La sua parte chiara è la banda di oscillazione, disegnata sull'anello.
+// 3. Cifre a larghezza fissa. Senza, in una colonna di punteggi il "1" fa
+//    ballare l'incolonnamento e la tabella diventa illeggibile.
+const {
+  locale,
+  stat,
+  size = "md",
+  showBand = true,
+  ring = true,
+  label,
+} = Astro.props as {
+  locale: Locale;
+  stat: Stat;
+  size?: "sm" | "md" | "lg";
+  showBand?: boolean;
+  ring?: boolean;
+  label?: string;
+};
+
+const t = messages(locale).observatory;
+const value = Math.max(0, Math.min(100, stat.mean));
+
+// Dal rosso al verde passando per l'oro, in oklch: la scala è percettivamente
+// uniforme, quindi due punti di differenza si vedono uguali in tutto l'arco.
+// Chroma più bassa agli estremi bassi, perché un rosso acceso su un borgo che
+// non ha colpa di essere piccolo sarebbe un giudizio, non una misura.
+const hue = 18 + (value / 100) * 128;
+const chroma = 0.09 + (Math.abs(value - 50) / 50) * 0.05;
+const tone = `oklch(0.5 ${chroma.toFixed(3)} ${hue.toFixed(0)})`;
+const soft = `oklch(0.86 ${(chroma * 0.55).toFixed(3)} ${hue.toFixed(0)})`;
+
+const sizes = {
+  sm: { box: 34, font: "1rem", stroke: 3, band: "0.66rem" },
+  md: { box: 58, font: "1.6rem", stroke: 4.5, band: "0.72rem" },
+  lg: { box: 92, font: "2.6rem", stroke: 6, band: "0.8rem" },
+}[size];
+
+const R = 45;
+const CIRC = 2 * Math.PI * R;
+const dash = (value / 100) * CIRC;
+// La banda si disegna sull'anello: dove il punteggio potrebbe essere finito.
+const bandStart = Math.max(0, value - stat.stdDev) / 100;
+const bandLength = Math.min(1, (2 * stat.stdDev) / 100);
+
+const title = `${t.score.runs.replace("{n}", String(stat.runs))} · ${stat.min}–${stat.max}`;
+---
+
+<span class="inline-flex items-center gap-2 align-middle" title={title}>
+  {
+    ring ? (
+      <span class="relative inline-grid place-items-center" style={`width:${sizes.box}px;height:${sizes.box}px`}>
+        <svg viewBox="0 0 100 100" class="absolute inset-0 -rotate-90" aria-hidden="true">
+          <circle cx="50" cy="50" r={R} fill="none" stroke="var(--color-surface-raised)" stroke-width={sizes.stroke} />
+          {showBand && stat.stdDev > 0 && (
+            <circle
+              cx="50"
+              cy="50"
+              r={R}
+              fill="none"
+              stroke={soft}
+              stroke-width={sizes.stroke + 3}
+              stroke-linecap="butt"
+              stroke-dasharray={`${(bandLength * CIRC).toFixed(1)} ${CIRC}`}
+              stroke-dashoffset={`${(-bandStart * CIRC).toFixed(1)}`}
+            />
+          )}
+          <circle
+            cx="50"
+            cy="50"
+            r={R}
+            fill="none"
+            stroke={tone}
+            stroke-width={sizes.stroke}
+            stroke-linecap="round"
+            stroke-dasharray={`${dash.toFixed(1)} ${CIRC}`}
+          />
+        </svg>
+        <span
+          class="font-display font-bold tabular-nums"
+          style={`font-size:${sizes.font};color:${tone};letter-spacing:-0.04em;line-height:1`}
+        >
+          {decimal(locale, stat.mean, 0)}
+        </span>
+      </span>
+    ) : (
+      <span
+        class="font-display font-bold tabular-nums"
+        style={`font-size:${sizes.font};color:${tone};letter-spacing:-0.04em;line-height:1`}
+      >
+        {decimal(locale, stat.mean, 0)}
+      </span>
+    )
+  }
+  {
+    (showBand || label) && (
+      <span class="grid gap-0.5 self-center leading-tight">
+        {showBand && (
+          <span class="num text-faint" style={`font-size:${sizes.band}`}>
+            ±{decimal(locale, stat.stdDev, stat.stdDev < 1 ? 1 : 0)}
+          </span>
+        )}
+        {label && <span class="text-[0.78rem] text-muted">{label}</span>}
+      </span>
+    )
+  }
+</span>

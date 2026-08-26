@@ -1,34 +1,69 @@
 ---
+import Flag from "../components/Flag.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { BRAND } from "../lib/config";
+import { BRAND, BRAND_MARK } from "../lib/config";
+import { graph, organizationSchema, webSiteSchema } from "../lib/schema";
+import { messages } from "../lib/i18n";
+import { NATIONAL } from "../lib/observatory";
+
+// La radice non è una pagina: è uno smistamento fra le due lingue. Chi arriva
+// qui deve capire in tre secondi cos'è il sito e scegliere.
+const it = messages("it").common;
+const en = messages("en").common;
+
+// La radice è la pagina di scelta lingua: è lei l'x-default del cluster, e
+// dichiara le due entità del sito una volta sola per tutti.
+const schema = graph([organizationSchema("it"), webSiteSchema("it")]);
 ---
 
 <BaseLayout
-  title={`${BRAND} — AI visibility for hotels`}
-  description="RankHotel.ai helps hotels earn direct bookings from Google and AI search."
+  title={BRAND}
+  description="Osservatorio pubblico della visibilità AI del turismo italiano — public observatory of AI visibility in Italian tourism. Scegli la lingua: italiano o English."
   locale="it"
   canonical="/"
   alternates={[
     { locale: "it", href: "/it" },
     { locale: "en", href: "/en" },
   ]}
+  xDefault="/"
+  schema={schema}
 >
-  <main
-    class="grid min-h-screen justify-items-center gap-[18px] p-6 text-center content-center"
-  >
-    <img
-      src="/assets/logo.svg"
-      alt={BRAND}
-      width="232"
-      height="52"
-      class="h-auto w-[min(232px,70vw)]"
-    />
-    <h1 class="text-[clamp(1.5rem,3.4vw,2rem)] font-medium text-muted">
-      AI visibility for hotels.
-    </h1>
-    <div class="flex gap-3">
-      <a class="btn" href="/it">Italiano</a>
-      <a class="btn btn-secondary" href="/en">English</a>
+  <main class="grid min-h-screen content-center justify-items-center gap-[26px] p-6 text-center">
+    <span class="tricolore w-[120px] rounded-full" aria-hidden="true"></span>
+    <div class="grid justify-items-center gap-3 text-accent-ink">
+      <img src={BRAND_MARK} alt="" width="64" height="64" />
+      <h1 class="font-display text-[2rem] font-bold text-ink normal-case">{BRAND}</h1>
+    </div>
+
+    <p class="max-w-[540px] text-[clamp(1.02rem,2.4vw,1.2rem)] text-muted">
+      {it["brand-line"]}
+      <span class="mt-1 block text-faint">{en["brand-line"]}</span>
+    </p>
+
+    <dl class="flex flex-wrap justify-center gap-x-8 gap-y-3">
+      {
+        [
+          { label: "destinazioni · destinations", value: NATIONAL.destinations },
+          { label: "hotel · hotels", value: NATIONAL.hotelsTracked },
+          { label: "assistenti · assistants", value: 3 },
+        ].map((row) => (
+          <div class="grid gap-0.5">
+            <dt class="text-[0.76rem] text-faint">{row.label}</dt>
+            <dd class="num text-[1.15rem] font-bold">{row.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="flex flex-wrap justify-center gap-3">
+      <a class="btn gap-2" href="/it" hreflang="it">
+        <Flag locale="it" size={18} />
+        Italiano
+      </a>
+      <a class="btn btn-secondary gap-2" href="/en" hreflang="en">
+        <Flag locale="en" size={18} />
+        English
+      </a>
     </div>
   </main>
 </BaseLayout>

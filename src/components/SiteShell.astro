@@ -1,13 +1,27 @@
 ---
 import {
   BRAND,
+  BRAND_MARK,
   LINKS,
+  assumptionsPath,
+  comparePath,
+  glossaryPath,
+  hotelsIndexPath,
+  mapPath,
   methodologyPath,
   observatoryPath,
   pathFor,
+  queriesPath,
+  sitemapPath,
+  tagsPath,
   type Locale,
 } from "../lib/config";
-import { messages } from "../lib/i18n";
+import { dateLabel, number } from "../lib/format";
+import { interpolate, messages } from "../lib/i18n";
+import { META, NATIONAL } from "../lib/observatory";
+import Icon from "./Icon.astro";
+import LangSwitch from "./LangSwitch.astro";
+import RankwitLink from "./RankwitLink.astro";
 
 const { locale, alternatePath } = Astro.props as {
   locale: Locale;
@@ -15,78 +29,250 @@ const { locale, alternatePath } = Astro.props as {
 };
 
 const m = messages(locale);
+const t = m.observatory;
 
-const navLink = "text-[0.92rem] text-muted hover:text-ink whitespace-nowrap";
-const brandLink = "inline-flex items-center gap-2.5 font-extrabold";
+const navLink =
+  "inline-flex items-center gap-2 text-[0.92rem] tracking-[0.05em] text-muted uppercase hover:text-ink whitespace-nowrap";
+
+// Le voci del menu con la loro icona. Le icone non sono decorazione: sono le
+// stesse che ogni sezione porta al proprio interno — il pin della mappa, il
+// tag dei temi, la lente delle query — quindi il menu e la pagina in cui si
+// arriva parlano lo stesso linguaggio di segni. La mappatura è quella già in
+// uso nella mappa del sito, non una nuova.
+const navItems = [
+  { label: m.common.nav.observatory, href: observatoryPath(locale), icon: "compass" },
+  { label: m.common.nav.map, href: mapPath(locale), icon: "pin" },
+  { label: m.common.nav.hotels, href: hotelsIndexPath(locale), icon: "hotel" },
+  { label: m.common.nav.tags, href: tagsPath(locale), icon: "tag" },
+  { label: m.common.nav.queries, href: queriesPath(locale), icon: "search" },
+  { label: m.common.nav.methodology, href: methodologyPath(locale), icon: "chart" },
+];
+const footLink = "text-[0.9rem] text-muted hover:text-accent-ink";
+const year = new Date().getFullYear();
+
+// Il footer non è una fila di link che va a capo male: è l'indice del sito,
+// diviso come è diviso il sito, più lo stato dei dati, che deve stare in fondo
+// a ogni pagina e non solo in cima all'osservatorio.
+const columns = [
+  {
+    id: "foot-observatory",
+    title: m.common.nav.observatory,
+    links: [
+      { label: t.national.leaderboard, href: `${observatoryPath(locale)}#classifica` },
+      { label: t.map.title, href: mapPath(locale) },
+      { label: t.hotelsPage.title, href: hotelsIndexPath(locale) },
+      { label: t.tags["index-title"], href: tagsPath(locale) },
+      { label: t.queries.title, href: queriesPath(locale) },
+      { label: t.compare.title, href: comparePath(locale) },
+    ],
+  },
+  {
+    id: "foot-method",
+    title: m.common.footer.methodology,
+    links: [
+      { label: t.methodology.title, href: methodologyPath(locale) },
+      { label: t.assumptions.title, href: assumptionsPath(locale) },
+      { label: t.ui.glossary, href: glossaryPath(locale) },
+      { label: t.sitemap.title, href: sitemapPath(locale) },
+    ],
+  },
+  {
+    id: "foot-data",
+    mono: true,
+    title: t.sitemap["branch-data"],
+    links: [
+      { label: "/api/destinations.json", href: "/api/destinations.json" },
+      { label: "/api/categories.json", href: "/api/categories.json" },
+      { label: "/api/queries.json", href: "/api/queries.json" },
+      { label: "/llms.txt", href: "/llms.txt" },
+    ],
+  },
+];
 ---
 
-<header
-  class="sticky top-0 z-10 border-b border-line bg-paper/90 backdrop-blur-md"
+<a
+  class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-(--radius-brand) focus:bg-accent-ink focus:px-4 focus:py-2 focus:text-white"
+  href="#contenuto"
 >
+  {m.common.skip}
+</a>
+
+<span class="tricolore tricolore-top" aria-hidden="true"></span>
+
+<header class="sticky top-[3px] z-10 border-b border-line bg-paper/90 backdrop-blur-md">
   <div
     class="shell flex flex-wrap items-center justify-between gap-x-3 gap-y-2.5 py-3 max-md:pb-2 md:min-h-[72px] md:flex-nowrap md:gap-x-6 md:py-0"
   >
-    <a class={`${brandLink} mr-auto`} href={pathFor(locale)} aria-label={BRAND}>
-      <img src="/assets/logo-mark.svg" alt="" width="28" height="28" />
-      <span>{BRAND}</span>
-    </a>
-    <nav
-      aria-label="Primary"
-      class="order-3 flex w-full items-center gap-4 overflow-x-auto [scrollbar-width:none] md:order-none md:w-auto md:gap-[18px] md:overflow-visible [&::-webkit-scrollbar]:hidden"
+    <a
+      class="mr-auto inline-flex items-center gap-2 text-accent-ink"
+      href={pathFor(locale)}
+      aria-label={`${BRAND}, ${m.common["brand-line"]}`}
     >
-      <a class={navLink} href={pathFor(locale)}>{m.common.nav.home}</a>
-      <a class={navLink} href={`${pathFor(locale)}#how-it-works`}>
-        {m.common.nav["how-it-works"]}
-      </a>
-      <a class={navLink} href={observatoryPath(locale)}>
-        {m.common.nav.observatory}
-      </a>
-      <a class={navLink} href={methodologyPath(locale)}>
-        {m.common.nav.methodology}
-      </a>
-      <a class={navLink} href={`${pathFor(locale)}#faq`}>{m.common.nav.faq}</a>
-    </nav>
-    <div class="flex items-center gap-3 md:gap-[18px]">
-      <a
-        class={`${navLink} font-mono font-bold`}
-        href={alternatePath}
-        aria-label={m.common.locale.label}
+      <img src={BRAND_MARK} alt="" width="26" height="26" />
+      <span class="grid leading-none text-ink">
+        <span class="font-display text-[0.95rem] font-bold">{BRAND}</span>
+        <span class="mt-1 hidden text-[0.7rem] text-faint lg:block">
+          {m.common["brand-line"]}
+        </span>
+      </span>
+    </a>
+    {/* Su telefono il selettore lingua finiva su una riga tutta sua, e
+        l'intestazione arrivava a tre righe. Qui divide la riga con il menu:
+        il menu scorre di lato, il selettore resta ancorato a destra. Da md in
+        su questo contenitore sparisce con `contents` e i due tornano figli
+        diretti della riga, come prima. */}
+    <div
+      class="order-3 flex w-full min-w-0 items-center gap-3 md:order-none md:w-auto md:contents"
+    >
+      <nav
+        aria-label="Primary"
+        class="nav-primary flex min-w-0 grow items-center overflow-x-auto [scrollbar-width:none] md:w-auto md:grow-0 md:overflow-visible [&::-webkit-scrollbar]:hidden"
       >
-        {locale === "it" ? "EN" : "IT"}
-      </a>
-      <a
-        class="btn max-md:min-h-9 max-md:px-3 max-md:text-[0.86rem]"
-        href={LINKS.bookCall}
-      >
-        {m.common.cta["book-call"]}
-      </a>
+        {
+          navItems.map((item) => (
+            <a class={navLink} href={item.href}>
+              <Icon name={item.icon} size={14} />
+              <span>{item.label}</span>
+            </a>
+          ))
+        }
+      </nav>
+      <LangSwitch locale={locale} alternatePath={alternatePath} />
     </div>
   </div>
 </header>
 
-<main>
+<script>
+  // Le pagine tema e categoria appoggiano una seconda barra appiccicata sotto
+  // questa. L'intestazione su mobile va a capo e cambia altezza, quindi la
+  // misura viaggia in una variabile invece di essere scritta a mano.
+  const header = document.querySelector("header");
+  if (header) {
+    const sync = () =>
+      document.documentElement.style.setProperty("--header-h", `${header.offsetHeight}px`);
+    sync();
+    new ResizeObserver(sync).observe(header);
+  }
+</script>
+
+<main id="contenuto" tabindex="-1">
   <slot />
 </main>
 
-<footer class="border-t border-line py-[34px]">
-  <div
-    class="shell flex flex-col items-start justify-between gap-6 md:flex-row md:items-center"
-  >
-    <div>
-      <a class={brandLink} href={pathFor(locale)}>
-        <img src="/assets/logo-mark.svg" alt="" width="28" height="28" />
-        <span>{BRAND}</span>
-      </a>
-      <p class="mt-2.5 max-w-[440px] text-muted">{m.common.footer.tagline}</p>
+<footer class="border-t border-line bg-surface-muted pt-[46px] pb-[30px]">
+  <div class="shell grid gap-[34px]">
+    <div class="grid gap-[34px] lg:grid-cols-[5fr_7fr]">
+      <div class="grid content-start gap-3.5">
+        <a class="inline-flex w-fit items-center gap-2.5 text-accent-ink" href={pathFor(locale)}>
+          <img src={BRAND_MARK} alt="" width="32" height="32" />
+          <span class="font-display text-[1.15rem] font-bold text-ink">{BRAND}</span>
+        </a>
+        <p class="max-w-[400px] text-muted">{m.common["brand-line"]}</p>
+
+        <dl class="mt-1 grid grid-cols-3 gap-x-5 gap-y-2 border-t border-line pt-3.5">
+          {
+            [
+              { label: t.stats.destinations, value: number(locale, NATIONAL.destinations) },
+              { label: t.stats.hotels, value: number(locale, NATIONAL.hotelsTracked) },
+              { label: t.stats.engines, value: String(META.engines.length) },
+            ].map((row) => (
+              <div class="grid gap-0.5">
+                <dt class="label text-faint">{row.label}</dt>
+                <dd class="num text-[0.95rem] font-bold">{row.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        {/* I numeri sopra valgono quanto è fresco il dataset da cui vengono:
+            la data e la cadenza stanno accanto a loro, non tre schermate più su. */}
+        <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.82rem] text-faint">
+          <time datetime={NATIONAL.updatedAt}>
+            {interpolate(t.destination.updated, { date: dateLabel(locale, NATIONAL.updatedAt) })}
+          </time>
+          <span aria-hidden="true">·</span>
+          <span class="num">
+            {number(locale, NATIONAL.runsPerMonth)} {t.stats.runs}
+          </span>
+        </p>
+      </div>
+
+      <div class="grid gap-x-6 gap-y-[22px] sm:grid-cols-3">
+        {
+          columns.map((column) => (
+            <nav class="grid content-start gap-2" aria-labelledby={column.id}>
+              <p class="label text-faint" id={column.id}>
+                {column.title}
+              </p>
+              {/* Una lista vera, non link sciolti: chi naviga a voce sente
+                  quante voci ha davanti prima di attraversarle. */}
+              <ul class="grid gap-2">
+                {column.links.map((link) => (
+                  <li>
+                    <a class={column.mono ? `${footLink} font-mono` : footLink} href={link.href}>
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))
+        }
+      </div>
     </div>
+
+    {/* Due avvisi della stessa taglia: cosa non fidarsi ancora dei numeri,
+        e come farceli correggere. Il secondo era nascosto in un title. */}
+    <div class="grid gap-3 md:grid-cols-2">
+      <div
+        class="grid content-start gap-1.5 rounded-(--radius-brand) border border-gold/35 bg-gold/8 px-4 py-3.5"
+      >
+        <strong class="flex items-center gap-2 text-[0.9rem] text-gold-ink">
+          <Icon name="info" size={16} />
+          {t.wip.title}
+        </strong>
+        <p class="text-[0.88rem] text-muted">
+          {t.wip.body}{" "}
+          <a class="text-gold-ink underline underline-offset-2" href={assumptionsPath(locale)}>
+            {t.assumptions.title}
+          </a>
+        </p>
+      </div>
+
+      <div
+        class="grid content-start gap-1.5 rounded-(--radius-brand) border border-line bg-surface px-4 py-3.5"
+      >
+        <strong class="flex items-center gap-2 text-[0.9rem] text-ink">
+          <Icon name="mail" size={16} />
+          {m.common.corrections}
+        </strong>
+        <p class="text-[0.88rem] text-muted">
+          {m.common["corrections-note"]}{" "}
+          <a
+            class="font-mono text-accent-ink underline underline-offset-2"
+            href={`mailto:${LINKS.email}`}
+          >
+            {LINKS.email}
+          </a>
+        </p>
+      </div>
+    </div>
+
     <div
-      class="flex flex-col items-start gap-2.5 md:flex-row md:items-center md:gap-[18px]"
+      class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-line pt-5"
     >
-      <a class={navLink} href={observatoryPath(locale)}>
-        {m.common.footer.observatory}
-      </a>
-      <a class={navLink} href={`mailto:${LINKS.email}`}>{LINKS.email}</a>
-      <a class={navLink} href={LINKS.rankwit}>{m.common.footer.by}</a>
+      <p class="max-w-[620px] text-[0.86rem] text-faint">
+        <span class="whitespace-nowrap">© {year} {BRAND}.</span>{" "}
+        {m.common["brand-note"]}{" "}
+        <RankwitLink locale={locale} label="RankWit AI" subtle />
+      </p>
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <a class="chip gap-1.5" href="#contenuto">
+          <Icon name="arrowUp" size={13} />
+          {t.ui["back-to-top"]}
+        </a>
+        <LangSwitch locale={locale} alternatePath={alternatePath} size="sm" />
+      </div>
     </div>
   </div>
 </footer>

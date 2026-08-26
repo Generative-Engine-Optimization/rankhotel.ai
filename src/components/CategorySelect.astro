@@ -1,0 +1,80 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import { listCategories } from "../lib/observatory";
+import Icon from "./Icon.astro";
+
+// Un <option> non può contenere un'icona: nessun browser la disegna. Il segno
+// della categoria sta quindi dentro il controllo, a sinistra, e cambia con la
+// selezione. Il select resta quello nativo, così su telefono si apre ancora il
+// picker di sistema e la tastiera continua a funzionare come si aspetta chi la
+// usa.
+const {
+  locale,
+  value = "",
+  class: className = "",
+  ...rest
+} = Astro.props as {
+  locale: Locale;
+  value?: string;
+  class?: string;
+  [key: string]: unknown;
+};
+
+const t = messages(locale).observatory;
+const categories = listCategories();
+---
+
+<span class="icon-field" data-icon-field>
+  <span class="icon-field-slot" aria-hidden="true">
+    <span class="text-faint" data-for="" data-active={value === "" ? "true" : undefined}>
+      <Icon name="layers" size={17} />
+    </span>
+    {
+      categories.map((category) => (
+        <span
+          class="cat-ink"
+          data-cat={category.key}
+          data-for={category.key}
+          data-active={value === category.key ? "true" : undefined}
+        >
+          <Icon name={category.icon} size={17} />
+        </span>
+      ))
+    }
+  </span>
+  <select class={`field ${className}`} {...rest}>
+    <option value="">{t.filters.all}</option>
+    {
+      categories.map((category) => (
+        <option value={category.key} selected={value === category.key}>
+          {category.short[locale]}
+        </option>
+      ))
+    }
+  </select>
+</span>
+
+<script>
+  function sync(select: HTMLSelectElement) {
+    const field = select.closest<HTMLElement>("[data-icon-field]");
+    if (!field) return;
+    field.querySelectorAll<HTMLElement>("[data-for]").forEach((slot) => {
+      if (slot.dataset.for === select.value) slot.setAttribute("data-active", "true");
+      else slot.removeAttribute("data-active");
+    });
+  }
+
+  // Delegato sul documento perché il valore cambia anche via codice: "Azzera"
+  // e i chip di filtro attivo non passano da un click sul select, e un
+  // assegnamento a `.value` non emette niente da solo. Le pagine che lo fanno
+  // annunciano il cambio con `field-sync`.
+  for (const type of ["change", "field-sync"]) {
+    document.addEventListener(type, (event) => {
+      const target = event.target;
+      if (target instanceof HTMLSelectElement) sync(target);
+    });
+  }
+
+  document.querySelectorAll<HTMLSelectElement>("[data-icon-field] select").forEach(sync);
+</script>

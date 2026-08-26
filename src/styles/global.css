@@ -5,6 +5,9 @@
 @import "@fontsource/unbounded/latin-400.css";
 @import "@fontsource/unbounded/latin-600.css";
 @import "@fontsource/unbounded/latin-700.css";
+/* Titoli: un serif tecnico, da documentazione. Il display del brand resta a
+   marchio e numeri, dove il carattere è identità e non lettura lunga. */
+@import "@fontsource/source-serif-4/latin-700.css";
 @import "@fontsource/plus-jakarta-sans/latin-400.css";
 @import "@fontsource/plus-jakarta-sans/latin-500.css";
 @import "@fontsource/plus-jakarta-sans/latin-700.css";
@@ -47,15 +50,57 @@
 
   /* "Il display font domina. Il body respira. Il mono misura." */
   --font-display: Unbounded, ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Source Serif 4", ui-serif, Georgia, serif;
   --font-sans:
     "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono:
     "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
+  /* Colori di categoria. Non sono decorazione: sono l'identità dei cinque
+     insiemi in cui è diviso l'osservatorio, e reggono i pin della mappa.
+     Set validato con il metodo data-viz sul test all-pairs (due pin qualsiasi
+     possono finire accanto): separazione CVD ΔE 9.7, visione normale ΔE 17.0,
+     contrasto ≥ 3:1 sul fondo chiaro. Nessuno cade vicino all'accent, che
+     resta il segnale di "interattivo". Ritoccarli a mano rompe i gate:
+     rivalidare prima di cambiarli. */
+  /* Colori dei momenti del viaggio. Stessa logica di quelli di categoria: i
+     tre stadi in scope compaiono uno accanto all'altro in ogni pannello e in
+     ogni filtro, quindi devono distinguersi fra loro prima che da qualunque
+     altra cosa. Le tinte sono a ~130° l'una dall'altra sulla ruota e stanno
+     tutte sopra 4.5:1 sul fondo chiaro, perché fanno da colore del testo e
+     non solo di sfondo. Gli stadi fuori scope non hanno colore: restano
+     grigi, ed è parte di quello che la pagina dice di loro. */
+  --color-funnel-dreaming: #2b6ca3;
+  --color-funnel-planning: #a8551f;
+  --color-funnel-booking: #1f7a4d;
+
+  /* Il tricolore. Sta fra i token perché è un colore con un significato
+     preciso, come quelli funzionali: dice "il soggetto qui è l'Italia".
+     Le tinte sono quelle della bandiera, non un verde e un rosso qualsiasi. */
+  --color-it-green: #008c45;
+  --color-it-white: #f4f5f0;
+  --color-it-red: #cd212a;
+
+  --color-cat-mare: #3292b3;
+  --color-cat-montagna-parchi: #226929;
+  --color-cat-enogastronomia: #883170;
+  --color-cat-unesco: #a28218;
+  --color-cat-borghi: #c95d7b;
+
   --radius-brand: 6px;
 
   --container-shell: 1180px;
+
+  /* Ritmo verticale della pagina.
+     Prima erano numeri fissi con un salto secco a 760px: sotto la soglia tutto
+     stretto, sopra tutto uguale da tablet a schermo largo. Con clamp lo spazio
+     cresce insieme alla finestra, che è dove serve — i titoli sono in maiuscolo
+     e pesano, e senza aria attorno due sezioni si leggono come una sola. */
+  --space-section: clamp(58px, 7.4vw, 104px);
+  --space-hero-top: clamp(30px, 3.4vw, 46px);
+  --space-hero-bottom: clamp(64px, 7.6vw, 116px);
+  --space-block: clamp(34px, 4.2vw, 58px);
 }
 
 @layer base {
@@ -77,10 +122,13 @@
 
   h1,
   h2 {
-    font-family: var(--font-display);
+    font-family: var(--font-heading);
     font-weight: 700;
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    /* In maiuscolo le lettere hanno bisogno di aria: senza tracking positivo
+       il serif si impasta sulle aste. */
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
   }
 
   h1 {
@@ -117,13 +165,25 @@
 
   .section {
     border-top: 1px solid var(--color-line);
-    padding-block: 72px;
+    padding-block: var(--space-section);
   }
 
-  @media (max-width: 760px) {
-    .section {
-      padding-block: 52px;
-    }
+  /* La banda d'intestazione: più aria sotto che sopra, così il titolo non
+     sembra scivolare verso la sezione che segue. */
+  .hero-shell {
+    padding-top: var(--space-hero-top);
+    padding-bottom: var(--space-hero-bottom);
+  }
+
+  .hero-shell.is-compact {
+    padding-top: calc(var(--space-hero-top) * 0.86);
+    padding-bottom: calc(var(--space-hero-bottom) * 0.66);
+  }
+
+  /* Blocco che chiude senza essere una sezione a sé (mappa, indice, tabella
+     sotto l'intestazione): stessa aria in basso, nessun filetto sopra. */
+  .block-end {
+    padding-bottom: var(--space-block);
   }
 
   .btn {
@@ -163,6 +223,17 @@
     text-transform: uppercase;
   }
 
+  /* L'etichetta di un dato: una parola sopra un numero, o il titolo di una
+     colonna d'indice. Stessa ricetta dell'eyebrow, in taglia micro. */
+  .label {
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
   .lead {
     color: var(--color-muted);
     font-size: clamp(1.06rem, 2vw, 1.28rem);
@@ -183,14 +254,92 @@
     border-radius: 999px;
     padding: 4px 9px;
     color: var(--color-muted);
-    font-size: 0.82rem;
+    /* Maiuscolo: pesa otticamente di più del minuscolo, quindi scende di un
+       filo come corpo e si apre come tracking per non impastarsi. */
+    font-size: 0.79rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .table-wrap {
+    /* Dentro una griglia il min-width automatico di un figlio è il suo
+       contenuto: la tabella da 760px allargava la pagina invece di scorrere
+       dentro il suo contenitore, e su telefono tutto il sito scorreva in
+       orizzontale. Lo scroll deve restare qui dentro. */
+    min-width: 0;
     overflow-x: auto;
     border: 1px solid var(--color-line);
     border-radius: var(--radius-brand);
     background: var(--color-surface);
+  }
+
+  /* Che una tabella scorra di lato non si vede: la barra su trackpad e su
+     telefono è invisibile finché non la si tocca, e chi legge crede che le
+     colonne finiscano dove finisce lo schermo. Le due ombre ai bordi
+     compaiono solo dal lato in cui c'è ancora roba, perché le due sfumature
+     che le coprono sono ancorate al contenuto (`local`) e scorrono con lui. */
+  .table-wrap,
+  .scroll-x {
+    background-repeat: no-repeat;
+    background-size:
+      34px 100%,
+      34px 100%,
+      16px 100%,
+      16px 100%;
+    background-position:
+      left center,
+      right center,
+      left center,
+      right center;
+    background-attachment: local, local, scroll, scroll;
+    background-image:
+      linear-gradient(to right, var(--scroll-bg, var(--color-surface)), transparent),
+      linear-gradient(to left, var(--scroll-bg, var(--color-surface)), transparent),
+      radial-gradient(farthest-side at 0 50%, rgb(9 4 29 / 0.13), transparent),
+      radial-gradient(farthest-side at 100% 50%, rgb(9 4 29 / 0.13), transparent);
+  }
+
+  .scroll-x {
+    /* Il fondo da cui parte la sfumatura: chi usa `.scroll-x` fuori da una
+       card lo cambia, altrimenti l'ombra si stacca dallo sfondo. */
+    --scroll-bg: var(--color-paper);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .scroll-x::-webkit-scrollbar { display: none; }
+
+  /* La barra di navigazione su telefono scorre di lato con la sua barra
+     nascosta: gli ultimi due link finivano tagliati di netto sul bordo, che si
+     legge come "la fila finisce qui". Su una striscia alta venti pixel
+     un'ombra non si vede: serve che l'ultimo link sfumi davvero. */
+  /* Sei voci, ognuna con la sua icona: senza un segno che le divida diventano
+     una fila indistinta, e l'icona di una si legge attaccata al testo della
+     precedente. Il filo che separa è la stessa linea di tutto il resto, e nasce
+     dal padding del link invece che da un elemento in più — così la superficie
+     cliccabile cresce insieme allo spazio. */
+  .nav-primary { gap: 0; }
+
+  .nav-primary > a {
+    padding-block: 5px;
+    padding-inline: 13px;
+  }
+
+  .nav-primary > a + a {
+    border-inline-start: 1px solid var(--color-line);
+  }
+
+  .nav-primary > a:first-child { padding-inline-start: 0; }
+  .nav-primary > a:last-child { padding-inline-end: 0; }
+
+  @media (max-width: 767px) {
+    .nav-primary > a {
+      padding-inline: 11px;
+    }
+
+    .nav-primary {
+      mask-image: linear-gradient(to right, #000 calc(100% - 38px), transparent);
+    }
   }
 
   .table-wrap table {
@@ -216,5 +365,1314 @@
 
   .table-wrap tr:last-child td {
     border-bottom: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Osservatorio destinazioni — utility aggiunte per le viste dati.
+   Stessa regola del resto del sistema: l'accent solo dove si interagisce,
+   i colori funzionali solo per significato, il mono per i numeri.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Lo score con la sua banda: la forma in cui compare ovunque. */
+  .dial {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .dial-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .dial-band {
+    color: var(--color-faint);
+    font-size: 0.72em;
+  }
+
+  .bar {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-surface-raised);
+  }
+
+  .bar > span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--color-accent);
+  }
+
+  .bar-high > span { background: var(--color-success-ink); }
+  .bar-mid > span { background: var(--color-gold-ink); }
+  .bar-low > span { background: var(--color-danger-ink); }
+
+  /* Testata a due piani della griglia bot: la fascia dell'assistente sopra,
+     i suoi bot sotto. Le linee verticali fanno il gruppo — senza, le due righe
+     sono solo due righe. */
+  .crawl-groups th[colspan] {
+    border-left: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 6px;
+    color: var(--color-ink);
+    text-transform: none;
+  }
+
+  .crawl-groups th[colspan]:last-of-type {
+    border-right: 1px solid var(--color-line);
+  }
+
+  .crawl-bot {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* Stato di un bot su un dominio. Mai solo colore: sempre anche un segno. */
+  .crawl {
+    display: inline-flex;
+    min-width: 2.1rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 500;
+  }
+
+  .crawl-allow {
+    background: color-mix(in srgb, var(--color-success) 18%, transparent);
+    color: var(--color-success-ink);
+  }
+
+  .crawl-block {
+    background: color-mix(in srgb, var(--color-danger) 15%, transparent);
+    color: var(--color-danger-ink);
+  }
+
+  .crawl-partial {
+    background: color-mix(in srgb, var(--color-gold) 20%, transparent);
+    color: var(--color-gold-ink);
+  }
+
+  /* Marcatore dei dati dimostrativi: compare accanto a ogni dominio generato. */
+  .demo-mark {
+    border-bottom: 1px dotted var(--color-gold-ink);
+    color: var(--color-gold-ink);
+    cursor: help;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 32px;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 0 12px;
+    background: var(--color-surface);
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .chip:hover { border-color: var(--color-line-strong); color: var(--color-ink); }
+
+  .chip[aria-pressed="true"],
+  .chip[data-active="true"] {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent-ink);
+    font-weight: 700;
+  }
+
+  .skeleton {
+    border-radius: var(--radius-brand);
+    background: linear-gradient(
+      90deg,
+      var(--color-surface-muted) 25%,
+      var(--color-surface-raised) 50%,
+      var(--color-surface-muted) 75%
+    );
+    background-size: 400% 100%;
+    animation: skeleton 1.4s ease-in-out infinite;
+  }
+
+  @keyframes skeleton {
+    from { background-position: 100% 0; }
+    to { background-position: 0 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton { animation: none; }
+  }
+
+  .sortable {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: inherit;
+    font: inherit;
+    /* Il default UA dei button è `none`: senza questa riga le colonne
+       ordinabili restano in minuscolo mentre le altre sono maiuscole. */
+    text-transform: inherit;
+    cursor: pointer;
+  }
+
+  /* Il verso dell'ordinamento non può essere affidato al solo colore. */
+  /* Solo le colonne ordinabili: `.sortable` è usata anche dal bottone che apre
+     il dettaglio riga, e lì un cursore d'ordinamento non vuol dire niente. */
+  .sortable[aria-sort]::after {
+    content: "↕";
+    opacity: 0.45;
+    font-size: 0.9em;
+  }
+
+  .sortable[aria-sort="ascending"]::after { content: "↑"; opacity: 1; }
+  .sortable[aria-sort="descending"]::after { content: "↓"; opacity: 1; }
+  .sortable[aria-sort]:not([aria-sort="none"]) { color: var(--color-accent-ink); }
+
+  /* Prima colonna ancorata: su una tabella larga, scorrendo verso i mesi di
+     destra il nome della categoria usciva di scena e restavano numeri senza
+     etichetta. */
+  .table-stickycol :is(th, td):first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--color-surface);
+  }
+
+  .table-stickycol thead :is(th, td):first-child { background: var(--color-surface-muted); }
+
+  .table-stickycol :is(th, td):first-child::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-line);
+  }
+
+  /* A otto colonne questa tabella chiede 900px per non spezzare le domande a
+     metà parola: sotto quella soglia non è una tabella, sono tre colonne
+     visibili e cinque da indovinare scorrendo. Ogni riga diventa allora una
+     scheda, e ogni cella si porta dietro il nome della sua colonna. */
+  @media (max-width: 899px) {
+    .table-cards {
+      overflow-x: visible;
+      background-image: none;
+    }
+
+    .table-cards table { min-width: 0; }
+
+    .table-cards thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .table-cards :is(tbody, tr, td) { display: block; }
+
+    .table-cards tr {
+      border-bottom: 1px solid var(--color-line);
+      padding: 14px 16px;
+    }
+
+    .table-cards tr:last-child { border-bottom: 0; }
+
+    .table-cards td {
+      border-bottom: 0;
+      padding: 0;
+    }
+
+    .table-cards td[data-label] {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      padding-block: 5px;
+      text-align: right;
+    }
+
+    .table-cards td[data-label]::before {
+      content: attr(data-label);
+      flex: none;
+      color: var(--color-muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    .table-cards td[data-cell="head"] { padding-bottom: 10px; }
+
+    /* La posizione in classifica, che in tabella è la prima colonna, in scheda
+       diventa la riga sopra il nome. */
+    .table-cards td[data-cell="rank"] {
+      color: var(--color-faint);
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+    }
+
+    .table-cards td[data-cell="rank"]::before { content: "#"; }
+
+    .table-cards td[data-cell="action"] {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--color-line);
+      text-align: left;
+    }
+
+    .table-cards td[data-cell="action"] .chip { width: 100%; justify-content: center; min-height: 40px; }
+  }
+
+  /* Su tablet una scheda a tutta larghezza è mezzo schermo di vuoto in mezzo
+     fra l'etichetta e il numero: due per riga usano lo spazio che c'è. */
+  @media (min-width: 600px) and (max-width: 899px) {
+    .table-cards {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .table-cards tbody {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .table-cards tr,
+    .table-cards tr:last-child {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-brand);
+      background: var(--color-surface);
+    }
+  }
+
+  /* Tabelle dati: più righe, meno respiro verticale del default. */
+  .table-dense :is(th, td) { padding: 10px 14px; }
+  .table-dense td { vertical-align: middle; }
+
+  /* Tabelle lunghe: l'intestazione resta leggibile mentre si scorre, e le
+     righe alterne danno un appiglio all'occhio su centinaia di voci.
+     Lo striping lo assegna il JS, perché con i filtri attivi l'ordinale CSS
+     conterebbe anche le righe nascoste. */
+  .table-sticky thead th {
+    position: sticky;
+    top: 88px;
+    z-index: 2;
+    background: var(--color-surface-muted);
+    box-shadow: inset 0 -1px 0 var(--color-line);
+  }
+
+  /* overflow-x:auto renderebbe il contenitore uno scroller anche in verticale,
+     e lo sticky si aggancerebbe a lui invece che alla pagina. Su desktop la
+     tabella ci sta: lasciamo scorrere la pagina. */
+  @media (min-width: 1024px) {
+    .table-sticky { overflow: visible; }
+  }
+
+  .row-alt { background: color-mix(in oklab, var(--color-surface-muted) 55%, transparent); }
+
+  .table-wrap tbody tr:hover:not([hidden]) { background: var(--color-surface-raised); }
+
+  .row-open { background: var(--color-surface-muted); }
+
+  /* Campi dei filtri: erano scritti a mano, classe per classe, su ogni
+     template. Qui hanno un solo stato di fuoco e una sola altezza. */
+  .field {
+    min-height: 44px;
+    width: 100%;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-brand);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    padding-inline: 12px;
+  }
+
+  .field:hover { border-color: var(--color-line-strong); }
+
+  select.field {
+    appearance: none;
+    padding-right: 34px;
+    background-image: linear-gradient(45deg, transparent 50%, var(--color-muted) 50%),
+      linear-gradient(135deg, var(--color-muted) 50%, transparent 50%);
+    background-position: calc(100% - 18px) calc(50% + 1px), calc(100% - 13px) calc(50% + 1px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  /* Campo con un segno a sinistra che cambia con la selezione: le opzioni di
+     un <select> non possono contenere un'icona, il controllo sì. Le icone
+     stanno tutte impilate nella stessa cella di griglia, così la larghezza non
+     balla quando cambia il disegno. */
+  .icon-field { position: relative; display: flex; align-items: center; }
+  .icon-field .field { padding-left: 38px; }
+
+  .icon-field-slot {
+    position: absolute;
+    left: 12px;
+    display: grid;
+    pointer-events: none;
+  }
+
+  .icon-field-slot > * {
+    grid-area: 1 / 1;
+    display: grid;
+    place-items: center;
+    visibility: hidden;
+  }
+
+  .icon-field-slot > [data-active] { visibility: visible; }
+
+  /* Il campo di ricerca porta la lente a sinistra e la croce a destra: la
+     croce compare solo quando c'è qualcosa da cancellare. */
+  .search-field { position: relative; display: flex; align-items: center; }
+  .search-field .field { padding-left: 38px; padding-right: 38px; }
+  .search-field [data-search-icon] { position: absolute; left: 13px; color: var(--color-faint); pointer-events: none; }
+  .search-field [data-search-clear] {
+    position: absolute;
+    right: 8px;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    color: var(--color-muted);
+  }
+  .search-field [data-search-clear]:hover { background: var(--color-surface-raised); color: var(--color-ink); }
+
+  /* Chip di filtro attivo: dice cosa sta filtrando e si toglie da lì, senza
+     tornare alla tendina per rimetterla su "Tutte". */
+  .chip-filter {
+    padding-right: 6px;
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent-ink);
+  }
+
+  .chip-filter b { font-weight: 700; }
+
+  .chip-filter [data-remove] {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    color: inherit;
+  }
+
+  .chip-filter [data-remove]:hover { background: color-mix(in srgb, var(--color-accent) 22%, transparent); }
+
+  /* Il velo di caricamento sta sopra la tabella: le righe restano dov'erano e
+     non si perde la posizione di lettura a ogni filtro. */
+  .veil {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-brand);
+    background: color-mix(in srgb, var(--color-surface) 68%, transparent);
+  }
+
+  .spinner {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--color-line-strong);
+    border-top-color: var(--color-accent-strong);
+    border-radius: 999px;
+    animation: spin 720ms linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation-duration: 2.4s; }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Componenti aggiunti nella passata su leggibilità e navigazione.
+   --------------------------------------------------------------------------- */
+@layer components {
+  /* Spiegazione contestuale: il pannello si apre in posizione assoluta, così
+     non sposta il testo intorno quando compare. */
+  .info-tip {
+    position: relative;
+  }
+
+  .info-tip > summary {
+    list-style: none;
+  }
+
+  .info-tip > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .info-tip[open] > summary {
+    color: var(--color-accent-ink);
+  }
+
+  /* Indice di pagina: appiccicato sotto l'header su schermi larghi. */
+  .toc {
+    position: sticky;
+    top: 92px;
+    align-self: start;
+  }
+
+  .toc a[data-current="true"] {
+    background: var(--color-surface-raised);
+    color: var(--color-accent-ink);
+    font-weight: 700;
+  }
+
+  @media (max-width: 1023px) {
+    .toc {
+      position: static;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-brand);
+      padding: 14px;
+      background: var(--color-surface);
+    }
+  }
+
+  /* L'ancora di sezione non deve finire sotto l'header appiccicato. */
+  [data-section] {
+    scroll-margin-top: 88px;
+  }
+
+  /* Griglia con indice a sinistra e contenuto a destra. */
+  .with-toc {
+    display: grid;
+    gap: 38px;
+  }
+
+  @media (min-width: 1024px) {
+    .with-toc {
+      grid-template-columns: 210px minmax(0, 1fr);
+      gap: 46px;
+    }
+  }
+
+  /* Le card che sono link hanno bisogno di uno stato al passaggio, altrimenti
+     non si capisce che siano cliccabili. */
+  a.card,
+  a.chip {
+    transition:
+      border-color 140ms ease,
+      background-color 140ms ease,
+      transform 140ms ease;
+  }
+
+  a.card:hover {
+    border-color: var(--color-line-strong);
+    background: var(--color-surface-muted);
+  }
+
+  .lift:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Mappa mentale del sito. Su schermi larghi i rami si dispongono attorno a un
+   centro, con le linee di collegamento disegnate in CSS; sotto i 1024px
+   diventa una colonna sola, perché un albero a due lati su 375px non è una
+   mappa, è un rompicapo.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .mindmap-grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  .mindmap-side {
+    display: grid;
+    gap: 14px;
+    align-content: start;
+  }
+
+  .mindmap-node {
+    display: grid;
+    gap: 10px;
+    position: relative;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-brand);
+    padding: 16px;
+    background: var(--color-surface);
+    transition: border-color 140ms ease;
+  }
+
+  .mindmap-node:hover {
+    border-color: var(--color-line-strong);
+  }
+
+  .mindmap-leaf {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: var(--radius-brand);
+    padding: 5px 8px;
+    color: var(--color-muted);
+    font-size: 0.88rem;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .mindmap-leaf:hover {
+    background: var(--color-surface-muted);
+    color: var(--color-ink);
+  }
+
+  .mindmap-centre {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 12px;
+  }
+
+  .mindmap-hub {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-brand);
+    padding: 22px 26px;
+    background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
+    color: var(--color-accent-ink);
+    text-align: center;
+  }
+
+  @media (min-width: 1024px) {
+    .mindmap-grid {
+      grid-template-columns: minmax(0, 1fr) 190px minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .mindmap-side {
+      gap: 16px;
+    }
+
+    /* Le linee verso il centro: un tratto orizzontale dal bordo del ramo,
+       disegnato con uno pseudo-elemento invece che con un SVG, così si
+       ridimensiona da solo e non va tenuto allineato a mano. */
+    .mindmap-node::after {
+      content: "";
+      position: absolute;
+      top: 28px;
+      width: 34px;
+      height: 1px;
+      background: var(--color-line-strong);
+    }
+
+    .mindmap-node[data-side="left"]::after {
+      right: -34px;
+    }
+
+    .mindmap-node[data-side="right"]::after {
+      left: -34px;
+    }
+
+    .mindmap-node[data-side="left"] {
+      margin-right: 34px;
+    }
+
+    .mindmap-node[data-side="right"] {
+      margin-left: 34px;
+    }
+
+    /* Il tronco verticale che tiene insieme i rami di un lato. */
+    .mindmap-centre::before,
+    .mindmap-centre::after {
+      content: "";
+      position: absolute;
+      width: 1px;
+      background: var(--color-line-strong);
+    }
+
+    .mindmap-centre {
+      position: relative;
+    }
+
+    .mindmap-centre::before {
+      top: 28px;
+      bottom: 28px;
+      left: 0;
+    }
+
+    .mindmap-centre::after {
+      top: 28px;
+      bottom: 28px;
+      right: 0;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Confronto fra territori. Questa pagina è uno strumento, non un articolo:
+   la colonna delle etichette resta ferma mentre le destinazioni scorrono, e
+   il valore migliore di ogni riga si vede prima di leggerlo.
+   --------------------------------------------------------------------------- */
+@layer components {
+  /* Cento territori dentro un <select> sono un elenco da scorrere fino in
+     fondo. Qui bastano tre lettere. */
+  .combo {
+    position: relative;
+  }
+
+  .combo-list {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 6px);
+    right: 0;
+    left: 0;
+    max-height: min(336px, 50vh);
+    overflow-y: auto;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-brand);
+    background: var(--color-surface);
+    box-shadow: 0 18px 40px -20px rgba(9, 4, 29, 0.45);
+  }
+
+  .combo-group {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-surface-muted);
+    padding: 5px 12px;
+    color: var(--color-faint);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .combo-option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 12px;
+    color: var(--color-ink);
+    font-size: 0.92rem;
+    cursor: pointer;
+  }
+
+  .combo-option[aria-selected="true"] {
+    background: color-mix(in srgb, var(--color-accent) 13%, transparent);
+    color: var(--color-accent-ink);
+  }
+
+  .combo-option[data-picked="true"] {
+    color: var(--color-faint);
+    cursor: default;
+  }
+
+  .combo-empty {
+    padding: 12px;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+
+  /* I quattro posti del confronto. Quanti ne restano si vede dalla forma,
+     senza doverlo scrivere da nessuna parte. */
+  .compare-slots {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 768px) {
+    .compare-slots {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  /* Posto libero oltre il primo: si vede che ce n'è ancora spazio, senza
+     ripetere quattro volte lo stesso invito. */
+  .slot-ghost {
+    border: 1px dashed var(--color-line);
+    border-radius: var(--radius-brand);
+    min-height: 92px;
+    opacity: 0.55;
+  }
+
+  .slot {
+    display: grid;
+    align-content: start;
+    gap: 3px;
+    position: relative;
+    min-height: 92px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-brand);
+    padding: 12px 36px 12px 14px;
+    background: var(--color-surface);
+  }
+
+  .slot-name {
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .slot-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--color-muted);
+    font-size: 0.8rem;
+  }
+
+  .slot-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    color: var(--color-faint);
+    cursor: pointer;
+    transition:
+      background-color 140ms ease,
+      color 140ms ease;
+  }
+
+  .slot-remove:hover {
+    background: var(--color-surface-raised);
+    color: var(--color-danger-ink);
+  }
+
+  .slot-empty {
+    align-content: center;
+    justify-items: center;
+    gap: 7px;
+    border-style: dashed;
+    border-color: var(--color-line-strong);
+    padding: 12px;
+    background: transparent;
+    color: var(--color-muted);
+    font-size: 0.88rem;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      border-color 140ms ease,
+      background-color 140ms ease,
+      color 140ms ease;
+  }
+
+  .slot-empty:hover {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+    color: var(--color-accent-ink);
+  }
+
+  /* La tabella. Colonna delle etichette appiccicata a sinistra: con quattro
+     territori su un telefono, senza, si perde subito di che riga si tratta. */
+  .compare-wrap {
+    position: relative;
+    overflow-x: auto;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-brand);
+    background: var(--color-surface);
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .compare-table :is(th, td) {
+    border-bottom: 1px solid var(--color-line);
+    padding: 11px 14px;
+    text-align: right;
+    vertical-align: middle;
+  }
+
+  .compare-table tbody tr:last-child :is(th, td) {
+    border-bottom: 0;
+  }
+
+  .compare-table th[scope="row"] {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    min-width: 172px;
+    background: var(--color-surface);
+    box-shadow: 1px 0 0 var(--color-line);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-align: left;
+    text-transform: none;
+  }
+
+  .compare-wrap[data-scrolled="true"] .compare-table th[scope="row"] {
+    box-shadow:
+      1px 0 0 var(--color-line),
+      12px 0 18px -14px rgba(9, 4, 29, 0.9);
+  }
+
+  .compare-table thead th[scope="col"] {
+    min-width: 152px;
+    border-bottom: 1px solid var(--color-line-strong);
+    background: var(--color-surface);
+    vertical-align: bottom;
+  }
+
+  /* L'angolo in alto a sinistra si ferma insieme alla colonna delle etichette:
+     senza, i nomi delle destinazioni scorrono sotto e si sovrappongono. */
+  .compare-table thead th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    min-width: 172px;
+    background: var(--color-surface);
+    box-shadow: 1px 0 0 var(--color-line);
+  }
+
+  .compare-wrap[data-scrolled="true"] .compare-table thead th:first-child {
+    box-shadow:
+      1px 0 0 var(--color-line),
+      12px 0 18px -14px rgba(9, 4, 29, 0.9);
+  }
+
+  @media (max-width: 640px) {
+    .compare-table thead th:first-child {
+      min-width: 138px;
+    }
+  }
+
+  /* Riga di gruppo: l'etichetta resta a sinistra anche mentre si scorre,
+     perché la banda colorata da sola non dice di cosa si sta parlando. */
+  .compare-table tr[data-group] :is(th, td) {
+    background: var(--color-surface-muted);
+    border-bottom: 1px solid var(--color-line);
+    padding: 0;
+    text-align: left;
+  }
+
+  .compare-group-label {
+    position: sticky;
+    left: 0;
+    display: inline-block;
+    padding: 9px 14px;
+    color: var(--color-accent-ink);
+    font-family: var(--font-mono);
+    font-size: 0.71rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .compare-table td[data-best="true"] {
+    background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+  }
+
+  .compare-cell {
+    display: grid;
+    justify-items: end;
+    gap: 5px;
+  }
+
+  .compare-value {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.98rem;
+    font-weight: 500;
+  }
+
+  .compare-note {
+    color: var(--color-faint);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+
+  .compare-table .bar {
+    width: 100%;
+    max-width: 104px;
+    height: 6px;
+  }
+
+  .compare-head {
+    display: grid;
+    justify-items: end;
+    gap: 5px;
+    text-align: right;
+  }
+
+  /* La lettura in una riga: chi guida, e se il vantaggio è misurabile. */
+  .verdict {
+    display: grid;
+    gap: 5px;
+    border-left: 3px solid var(--color-accent);
+    border-radius: var(--radius-brand);
+    background: var(--color-surface-muted);
+    padding: 13px 16px;
+  }
+
+  @media (max-width: 640px) {
+    .compare-table th[scope="row"] {
+      min-width: 138px;
+      font-size: 0.84rem;
+    }
+
+    .compare-table thead th[scope="col"] {
+      min-width: 132px;
+    }
+
+    .compare-table :is(th, td) {
+      padding: 10px 12px;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Pin della mappa. Il colore è la categoria, il diametro il numero di
+   visitatori: le due codifiche dichiarate nel testo della pagina. Il resto è
+   affordance — anello bianco per staccare i pin sovrapposti, stato hover
+   leggibile, area cliccabile che comprende l'anello.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .map-pin {
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+  }
+
+  .map-pin-dot {
+    display: block;
+    width: var(--pin-size);
+    height: var(--pin-size);
+    border: 2px solid var(--color-surface);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--cat) 86%, transparent);
+    box-shadow:
+      0 1px 3px rgb(9 4 29 / 0.3),
+      0 0 0 1px rgb(9 4 29 / 0.07);
+    transition:
+      transform 140ms ease,
+      box-shadow 140ms ease;
+  }
+
+  .map-pin:hover .map-pin-dot {
+    transform: scale(1.22);
+    background: var(--cat);
+    box-shadow:
+      0 3px 10px rgb(9 4 29 / 0.32),
+      0 0 0 4px color-mix(in srgb, var(--cat) 26%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .map-pin-dot {
+      transition: none;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Identità di categoria. Ogni elemento che rappresenta una categoria porta
+   data-cat: da lì scende --cat, e chip, icone, pallini e pin lo leggono senza
+   sapere nulla della palette.
+   --------------------------------------------------------------------------- */
+@layer components {
+  [data-cat] { --cat: var(--color-accent-ink); }
+  [data-cat="mare"] { --cat: var(--color-cat-mare); }
+  [data-cat="montagna-parchi"] { --cat: var(--color-cat-montagna-parchi); }
+  [data-cat="enogastronomia"] { --cat: var(--color-cat-enogastronomia); }
+  [data-cat="unesco"] { --cat: var(--color-cat-unesco); }
+  [data-cat="borghi"] { --cat: var(--color-cat-borghi); }
+
+  .cat-ink { color: var(--cat); }
+
+  /* Il colore non viaggia mai da solo: accanto c'è sempre l'icona o
+     l'etichetta della categoria. */
+  .cat-dot {
+    display: inline-block;
+    width: 0.58em;
+    height: 0.58em;
+    border-radius: 50%;
+    background: var(--cat);
+  }
+
+  .chip-cat > :first-child { color: var(--cat); }
+
+  .chip-cat[data-active="true"],
+  .chip-cat[aria-pressed="true"] {
+    border-color: var(--cat);
+    background: color-mix(in srgb, var(--cat) 12%, transparent);
+    color: var(--cat);
+  }
+}
+
+@layer components {
+  /* Le risposte ricostruite.
+     Il blocco deve leggersi come una risposta di chat, non come una card di
+     dati: testo continuo, riga comoda, nessun numero in evidenza. Tutto il
+     resto dell'osservatorio è fatto di misure; qui si legge e basta. */
+  .answer {
+    display: grid;
+    gap: 11px;
+    font-size: 0.93rem;
+    line-height: 1.62;
+  }
+
+  .answer p { margin: 0; }
+
+  .answer ol,
+  .answer ul {
+    display: grid;
+    gap: 7px;
+    margin: 0;
+    padding-left: 1.2em;
+  }
+
+  .answer ol { list-style: decimal; }
+  .answer ul { list-style: disc; }
+  .answer li::marker { color: var(--color-faint); }
+
+  /* L'unica cosa che chi apre una risposta sta davvero cercando: il proprio
+     nome dentro al testo. Se non si trova a colpo d'occhio, la sezione non
+     serve a niente. */
+  .answer mark {
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+    padding: 0 3px;
+    color: var(--color-accent-ink);
+    font-weight: 700;
+  }
+
+  .answer sup {
+    margin-left: 1px;
+    color: var(--color-accent-ink);
+    font-family: var(--font-mono);
+    font-size: 0.68em;
+  }
+
+  /* Il cartiglio che dichiara il testo come ricostruito. Volutamente più
+     invadente della marcatura demo usata altrove: un numero inventato passa,
+     un paragrafo di ChatGPT inventato e spacciato per vero no. */
+  .answer-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border: 1px solid var(--color-gold);
+    border-left-width: 4px;
+    border-radius: var(--radius-brand);
+    background: color-mix(in srgb, var(--color-gold) 12%, transparent);
+    padding: 13px 15px;
+    color: var(--color-gold-ink);
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+
+  /* Presente o assente nella risposta. Il caso "assente" è il più utile della
+     pagina e deve pesare visivamente quanto l'altro. */
+  .pill[data-state="in"] {
+    border-color: color-mix(in srgb, var(--color-success-ink) 40%, transparent);
+    background: color-mix(in srgb, var(--color-success) 14%, transparent);
+    color: var(--color-success-ink);
+    font-weight: 700;
+  }
+
+  .pill[data-state="out"] {
+    border-color: color-mix(in srgb, var(--color-danger-ink) 40%, transparent);
+    background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+    color: var(--color-danger-ink);
+    font-weight: 700;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Il percorso del dato in home. Quattro card che sono una sequenza, non quattro
+   fatti sciolti: a quattro colonne fra una e l'altra compare il verso in cui si
+   legge, e la riga sotto l'icona allinea le intestazioni fra le card.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .steps {
+    --steps-gap: 14px;
+    gap: var(--steps-gap);
+  }
+
+  @media (min-width: 1280px) {
+    .steps {
+      --steps-gap: 22px;
+    }
+
+    .steps > li {
+      position: relative;
+    }
+
+    /* Solo a quattro colonne: sotto, le card vanno a capo e una freccia a fine
+       riga indicherebbe il posto sbagliato. */
+    .steps > li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 29px;
+      left: 100%;
+      width: 7px;
+      height: 7px;
+      border-top: 1.6px solid var(--color-line-strong);
+      border-right: 1.6px solid var(--color-line-strong);
+      transform: translate(calc(var(--steps-gap) / 2 - 50%), -50%) rotate(45deg);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Intestazione di pagina. Il fondo non è più carta bianca: due velature di
+   colore aprono la pagina e le danno un'identità visibile prima di leggere il
+   titolo. Le guidelines vietano l'accent *come* sfondo — qui infatti non
+   riempie: vela, in sfumatura, e al massimo del suo carico resta al 28%. Il
+   testo resta sui suoi inchiostri, e nel punto più denso del velo nessuno di
+   loro scende sotto 4.5:1 — sulle cinque categorie e sull'accent.
+   Dove la pagina ha una categoria, la velatura prende il suo colore: mare e
+   borghi non si aprono più uguali.
+
+   La banda non finisce: si dissolve. Il velo sta su uno strato che scende
+   sotto il bordo dell'intestazione e si spegne dentro la sezione seguente, così
+   fra le due non c'è una linea di taglio ma un passaggio. È anche il motivo per
+   cui il primo blocco dopo la banda perde il suo filetto: un filetto in mezzo
+   a una dissolvenza si legge come un errore di rendering.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .hero {
+    /* Sul velo il faint cadrebbe a 3.1:1 — su carta bianca era 3.99, già sotto
+       AA. Dentro la banda vale la sua versione scurita: 4.5:1 sul punto più
+       denso del velo, meglio di prima anche dove il velo non arriva. Scritto
+       per esteso perché una custom property non può riferirsi a sé stessa. */
+    --color-faint: #615b90;
+    /* Quanto il velo sconfina nella sezione sotto prima di spegnersi. */
+    --hero-bleed: 132px;
+    /* Ancora lo strato del velo. Niente z-index, niente isolation, niente
+       overflow: lo strato deve poter stare *dietro* al contenuto della banda
+       (z-index -1), sconfinare sotto il bordo, e lasciare uscire i tooltip
+       degli StatGrid. Un contesto di impilamento qui rompe tutte e tre. */
+    position: relative;
+    background: none;
+  }
+
+  /* Lo strato del velo. Sta dietro a tutto — al testo della banda e al
+     contenuto della sezione seguente, su cui sconfina — e non intercetta il
+     mouse: per chi legge è fondo, non superficie. */
+  .hero::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 calc(var(--hero-bleed) * -1);
+    pointer-events: none;
+    background: linear-gradient(180deg, var(--color-surface), var(--color-paper) 62%);
+    /* La maschera è ciò che rende il passaggio un passaggio. È misurata dal
+       basso, non in percentuale: la dissolvenza dura sempre lo stesso tratto,
+       che l'intestazione sia alta trecento pixel o mille. Comincia un po'
+       prima del bordo e finisce in fondo allo sconfinamento — se cominciasse
+       esattamente sul bordo, lo scalino della pendenza si vedrebbe come una
+       riga chiara. */
+    --hero-fade: calc(var(--hero-bleed) + 96px);
+    -webkit-mask-image: linear-gradient(to top, transparent 0, #000 var(--hero-fade));
+    mask-image: linear-gradient(to top, transparent 0, #000 var(--hero-fade));
+  }
+
+  /* Nessun filetto sotto la banda: là sotto c'è la dissolvenza. */
+  .hero + .section {
+    border-top: 0;
+  }
+
+  .hero .eyebrow {
+    justify-self: start;
+    width: fit-content;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    padding: 5px 12px;
+    background: var(--color-surface);
+  }
+
+  /* Tutto ciò che dipende dalla tinta sta dietro questo cancello. Senza
+     color-mix il compilatore ripiega sulla tinta piena, e la tinta piena qui
+     vuol dire un blocco di verde scuro dietro al testo e una targhetta
+     illeggibile: meglio la carta di prima. */
+  @supports (color: color-mix(in oklab, red 50%, transparent)) {
+    .hero {
+      --hero-tint: var(--color-accent);
+      /* La velatura è già dentro la variabile: nel gradiente entra così com'è,
+         perché un color-mix annidato in uno stop non ha un ripiego onesto. */
+      --hero-wash: color-mix(in oklab, var(--hero-tint) 13%, transparent);
+    }
+
+    /* Le due velature stanno qui, sullo strato che si dissolve, e non sul fondo
+       della banda: se stessero sul fondo verrebbero tagliate di netto sul
+       bordo, ed è esattamente il taglio che questo strato esiste per togliere.
+       I centri sono alti, perché sotto la maschera li sta già spegnendo. */
+    .hero::before {
+      background:
+        radial-gradient(58% 96% at 84% 6%, var(--hero-wash), transparent 74%),
+        radial-gradient(
+          46% 78% at 0% 70%,
+          color-mix(in oklab, var(--color-accent) 24%, transparent),
+          transparent 74%
+        ),
+        linear-gradient(
+          180deg,
+          var(--color-surface),
+          color-mix(in oklab, var(--color-accent) 5%, var(--color-paper)) 62%
+        );
+    }
+
+    .hero[data-cat] {
+      --hero-tint: var(--cat);
+    }
+
+    /* I cinque colori di categoria sono tarati per reggere il testo e i pin,
+       non per velare: montagna ed enogastronomia sono scuri e diluiti
+       sbiadiscono in grigio, mentre mare e borghi restano vivi. Portandoli
+       tutti alla stessa luminosità la velatura ha la stessa forza sulle cinque
+       categorie, e nessuna sembra meno importante delle altre. Il colore da cui
+       si parte non cambia: cambia solo la sua versione da fondo. Dove
+       `oklch(from ...)` non c'è resta la riga sopra: più pallida sui due scuri,
+       ma con gli stessi rapporti di contrasto. */
+    @supports (color: oklch(from red l c h)) {
+      .hero {
+        --hero-wash: oklch(from var(--hero-tint) 0.72 calc(c * 1.4) h / 0.28);
+      }
+    }
+
+    /* L'occhiello dentro la banda diventa una targhetta: il colore di categoria
+       regge il bordo e il fondo, il testo resta su accent-ink perché i cinque
+       colori sono validati per i segni grafici, non per il corpo piccolo. */
+    .hero .eyebrow {
+      border-color: color-mix(in oklab, var(--hero-tint) 32%, transparent);
+      background: color-mix(in oklab, var(--hero-tint) 9%, var(--color-surface));
+    }
   }
 }

@@ -1,0 +1,68 @@
+---
+import type { Locale } from "../lib/config";
+import Icon from "./Icon.astro";
+
+// "Dove sono?" su una pagina lunga. L'eroe con il nome del tema sparisce dopo
+// due schermate, e da lì in giù una classifica di borghi e una di località di
+// mare sono indistinguibili. Questa barra si ferma sotto l'intestazione proprio
+// quando l'eroe esce di scena, e porta con sé anche la via laterale: i temi
+// vicini, con quello corrente marcato.
+const {
+  label,
+  icon,
+  count,
+  switchLabel,
+  items,
+} = Astro.props as {
+  locale?: Locale;
+  label: string;
+  icon: string;
+  count?: string;
+  switchLabel: string;
+  items: { label: string; href: string; icon: string; count?: number; current?: boolean }[];
+};
+---
+
+<div class="context-bar" data-context-bar>
+  <div class="shell flex items-center gap-x-5 gap-y-2 py-2 max-md:flex-wrap">
+    <p class="flex shrink-0 items-center gap-2.5">
+      <span class="context-mark"><Icon name={icon} size={16} /></span>
+      <span class="font-bold">{label}</span>
+      {count && <span class="num text-[0.82rem] text-faint">{count}</span>}
+    </p>
+    <nav
+      class="flex min-w-0 grow items-center gap-2 overflow-x-auto [scrollbar-width:none] max-md:w-full md:justify-end [&::-webkit-scrollbar]:hidden"
+      aria-label={switchLabel}
+      data-context-scroller
+    >
+      <span class="shrink-0 text-[0.8rem] text-faint max-lg:hidden">{switchLabel}</span>
+      {
+        items.map((item) => (
+          <a
+            class="chip shrink-0 gap-1.5"
+            href={item.href}
+            data-active={item.current ? "true" : undefined}
+            data-context-current={item.current ? "true" : undefined}
+            aria-current={item.current ? "page" : undefined}
+          >
+            <Icon name={item.icon} size={13} />
+            {item.label}
+            {item.count !== undefined && <span class="num text-faint">{item.count}</span>}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</div>
+
+<script>
+  // Con quindici temi in fila, quello corrente può nascere fuori schermo: la
+  // barra direbbe "sei qui" mostrando tutti gli altri. Si porta in vista senza
+  // toccare lo scorrimento della pagina.
+  document.querySelectorAll<HTMLElement>("[data-context-scroller]").forEach((scroller) => {
+    const current = scroller.querySelector<HTMLElement>("[data-context-current]");
+    if (!current) return;
+    const target = current.offsetLeft - (scroller.clientWidth - current.offsetWidth) / 2;
+    scroller.scrollLeft = Math.max(0, target);
+  });
+</script>

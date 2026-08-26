@@ -1,0 +1,57 @@
+---
+import { tagPath, type Locale } from "../lib/config";
+import { META, categoryByKey } from "../lib/observatory";
+import Icon from "./Icon.astro";
+
+// I temi sono l'unico modo di attraversare le categorie. La categoria primaria
+// resta in evidenza perché è quella in cui il territorio è in classifica; gli
+// altri temi la seguono, ciascuno con la sua icona.
+const {
+  locale,
+  category,
+  tags,
+  size = "md",
+  limit,
+} = Astro.props as {
+  locale: Locale;
+  category?: string;
+  tags: string[];
+  size?: "sm" | "md";
+  limit?: number;
+};
+
+const categoryRow = category ? categoryByKey(category) : undefined;
+const byKey = new Map(META.tags.map((tag) => [tag.key, tag]));
+const secondary = tags
+  .filter((tag) => tag !== category)
+  .map((tag) => byKey.get(tag))
+  .filter((tag): tag is NonNullable<typeof tag> => Boolean(tag));
+const shown = limit ? secondary.slice(0, limit) : secondary;
+const hidden = secondary.length - shown.length;
+const chip = size === "sm" ? "min-h-7 px-2.5 text-[0.78rem]" : "";
+---
+
+<div class="flex flex-wrap items-center gap-1.5">
+  {
+    categoryRow && (
+      <a
+        class={`chip chip-cat gap-1.5 font-bold ${chip}`}
+        data-cat={categoryRow.key}
+        data-active="true"
+        href={tagPath(locale, categoryRow.slug[locale])}
+      >
+        <Icon name={categoryRow.icon} size={14} />
+        {categoryRow.short[locale]}
+      </a>
+    )
+  }
+  {
+    shown.map((tag) => (
+      <a class={`chip gap-1.5 ${chip}`} href={tagPath(locale, tag.slug[locale])} title={tag.lead[locale]}>
+        <Icon name={tag.icon} size={13} />
+        {tag.name[locale]}
+      </a>
+    ))
+  }
+  {hidden > 0 && <span class={`chip text-faint ${chip}`}>+{hidden}</span>}
+</div>

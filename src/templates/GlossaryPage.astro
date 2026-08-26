@@ -1,0 +1,95 @@
+---
+import Flag from "../components/Flag.astro";
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/PageHero.astro";
+import Panel from "../components/Panel.astro";
+import Section from "../components/Section.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  glossaryPath,
+  methodologyPath,
+  observatoryPath,
+  otherLocale,
+  type Locale,
+} from "../lib/config";
+import { messages } from "../lib/i18n";
+import { FACTOR_KEYS, META } from "../lib/observatory";
+import { definedTermSetSchema } from "../lib/schema";
+
+const { locale } = Astro.props as { locale: Locale };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+
+// Il glossario non è una pagina in più: è dove finiscono le stesse spiegazioni
+// che compaiono nei tooltip, così chi vuole leggerle tutte insieme può farlo.
+const entries = [
+  { term: t.score.label, body: t.explain.score, icon: "chart" },
+  { term: `± ${t.score.stability.stable.toLowerCase()}`, body: t.explain.band, icon: "calendar" },
+  { term: t.rank.tier, body: t.explain.tier, icon: "layers" },
+  { term: t.demand.title, body: t.explain.demand, icon: "search" },
+  ...FACTOR_KEYS.map((key) => ({
+    term: t.factors[key].name,
+    body: t.explain[key],
+    icon: { comparative: "compass", internal: "layers", sources: "quote", technical: "robot" }[key],
+  })),
+  { term: t.entities.entity, body: t.explain.entities, icon: "pin" },
+  { term: t.funnel.title, body: t.explain.funnel, icon: "route" },
+  { term: t.lang.title, body: t.explain.lang, icon: "globe", flags: true },
+  { term: t.sites.title, body: t.explain.sites, icon: "globe" },
+  { term: t.table.query, body: t.explain.queries, icon: "search" },
+  { term: t.ui["runs-title"], body: t.explain.runs, icon: "calendar" },
+];
+---
+
+<ObsLayout
+  locale={locale}
+  title={t.meta["glossary-title"]}
+  description={t.meta["glossary-description"]}
+  schema={definedTermSetSchema(
+    locale,
+    t.ui.glossary,
+    glossaryPath(locale),
+    entries.map((entry) => ({ term: entry.term, body: entry.body })),
+  )}
+  path={glossaryPath(locale)}
+  altPath={glossaryPath(other)}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={t.ui.glossary}
+    icon="info"
+    title={t.ui["glossary-heading"]}
+    lead={t.ui["glossary-lead"]}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: t.ui.glossary },
+    ]}
+    compact
+  />
+
+  <Section locale={locale} id="termini" share={false}>
+    <dl class="grid gap-3.5 md:grid-cols-2">
+      {
+        entries.map((entry) => (
+          <div class="card grid content-start gap-2">
+            <dt class="flex items-center gap-2 font-bold">
+              <span class="text-accent-ink"><Icon name={entry.icon} size={18} /></span>
+              {entry.term}
+              {entry.flags && (
+                <span class="ml-auto flex gap-1.5">
+                  <Flag locale="it" size={17} />
+                  <Flag locale="en" size={17} />
+                </span>
+              )}
+            </dt>
+            <dd class="text-[0.92rem] text-muted">{entry.body}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <a class="btn btn-secondary justify-self-start gap-2" href={methodologyPath(locale)}>
+      {t.methodology.title}
+      <Icon name="arrowRight" size={16} />
+    </a>
+  </Section>
+</ObsLayout>

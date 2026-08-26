@@ -1,25 +1,41 @@
 {
-  "brand": "RankHotel.ai",
+  "brand": "Italian AI Visibility Report",
   "nav": {
     "home": "Home",
     "how-it-works": "Come funziona",
     "faq": "FAQ",
     "observatory": "Osservatorio",
-    "methodology": "Metodologia"
-  },
-  "cta": {
-    "book-call": "Prenota una call",
-    "how-it-works": "Scopri come funziona"
+    "methodology": "Metodologia",
+    "map": "Mappa",
+    "queries": "Query",
+    "destinations": "Destinazioni",
+    "tags": "Temi",
+    "glossary": "Glossario",
+    "sitemap": "Mappa del sito",
+    "hotels": "Hotel"
   },
   "footer": {
-    "tagline": "Crescita organica e visibilità nella ricerca AI per hotel e resort.",
-    "by": "Un progetto di RankWit AI",
+    "tagline": "Osservatorio della visibilità AI del turismo italiano",
+    "by": "Un progetto RankWit AI",
     "observatory": "Osservatorio",
-    "rights": "Tutti i diritti riservati."
+    "rights": "Tutti i diritti riservati.",
+    "map": "Mappa",
+    "queries": "Query fan-out",
+    "assumptions": "Assunzioni",
+    "tags": "Temi",
+    "glossary": "Glossario",
+    "methodology": "Metodologia",
+    "sitemap": "Mappa del sito",
+    "hotels": "Hotel"
   },
   "locale": {
     "label": "Lingua",
     "it": "Italiano",
     "en": "English"
-  }
+  },
+  "skip": "Vai al contenuto",
+  "brand-line": "Osservatorio della visibilità AI del turismo italiano",
+  "brand-note": "I dati sono liberi: citali indicando la fonte. Un progetto di",
+  "corrections": "Segnala una correzione",
+  "corrections-note": "Se un dato su un territorio che conosci è sbagliato, scrivici: lo correggiamo e lo dichiariamo."
 }

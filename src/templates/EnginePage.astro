@@ -1,0 +1,214 @@
+---
+import RegionMark from "../components/RegionMark.astro";
+import CtaBlock from "../components/CtaBlock.astro";
+import DestinationTable from "../components/DestinationTable.astro";
+import EngineLogo from "../components/EngineLogo.astro";
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/PageHero.astro";
+import Panel from "../components/Panel.astro";
+import ScoreDial from "../components/ScoreDial.astro";
+import Section from "../components/Section.astro";
+import SourceMix from "../components/SourceMix.astro";
+import StatGrid from "../components/StatGrid.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  destinationPath,
+  enginePath,
+  methodologyPath,
+  observatoryPath,
+  otherLocale,
+  type Locale,
+} from "../lib/config";
+import { decimal, percent, signed } from "../lib/format";
+import { interpolate, messages } from "../lib/i18n";
+import { datasetSchema } from "../lib/schema";
+import {
+  ENGINES,
+  META,
+  NATIONAL,
+  engineMeta,
+  engineOutliers,
+  rankDestinationsBy,
+  type EngineKey,
+} from "../lib/observatory";
+
+const { locale, engine } = Astro.props as { locale: Locale; engine: EngineKey };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+const meta = engineMeta(engine)!;
+
+const ranked = rankDestinationsBy(engine);
+const outliers = engineOutliers(engine, 8);
+const crawlers = META.crawlers.filter((crawler) => crawler.engine === engine);
+
+// Il profilo di fonti dei territori che questo engine premia: si ricava dai
+// dati già pubblicati, non da un numero inventato apposta per la pagina.
+const favourites = ranked.slice(0, 20);
+const avg = (pick: (d: (typeof favourites)[number]) => number) =>
+  favourites.reduce((sum, row) => sum + pick(row), 0) / favourites.length;
+const sourceProfile = {
+  dmo: avg((d) => d.sourceMix.dmo),
+  editorial: avg((d) => d.sourceMix.editorial),
+  ota: avg((d) => d.sourceMix.ota),
+  other: avg((d) => d.sourceMix.other),
+};
+
+const score = NATIONAL.byEngine[engine];
+const delta = Math.round((score - NATIONAL.score) * 10) / 10;
+const title = interpolate(t.meta["engine-title"], { engine: meta.label });
+const description = interpolate(t.meta["engine-description"], { engine: meta.label });
+---
+
+<ObsLayout
+  locale={locale}
+  title={title}
+  description={description}
+  schema={datasetSchema(locale, title, description, enginePath(locale, engine))}
+  path={enginePath(locale, engine)}
+  altPath={enginePath(other, engine)}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={meta.vendor}
+    icon="robot"
+    title={title}
+    lead={t.explain.engines}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: meta.label },
+    ]}
+  >
+    <StatGrid
+      locale={locale}
+      columns={3}
+      items={[
+        {
+          label: t.score.national,
+          value: decimal(locale, score, 0),
+          hint: `${signed(delta, 1)} ${t.engines["vs-average"]}`,
+          info: t.explain.score,
+        },
+        {
+          label: t.stats.destinations,
+          value: String(ranked.length),
+        },
+        {
+          label: t.engines["bots-title"],
+          value: crawlers.map((crawler) => crawler.key).join(", "),
+        },
+      ]}
+    />
+    <div class="flex flex-wrap gap-2">
+      {
+        ENGINES.filter((key) => key !== engine).map((key) => (
+          <a class="chip gap-1.5" href={enginePath(locale, key)}>
+            <EngineLogo engine={key} size={16} />
+          </a>
+        ))
+      }
+    </div>
+  </PageHero>
+
+  <Section
+    locale={locale}
+    id="scostamenti"
+    title={t.engines.outliers}
+    lead={interpolate(t.engines["outliers-lead"], { engine: meta.label })}
+  >
+    <div class="grid gap-2.5 md:grid-cols-2">
+      {
+        outliers.map((row) => (
+          <a
+            class="card lift flex items-center justify-between gap-3.5"
+            href={destinationPath(locale, row.destination.slug[locale])}
+          >
+            <span class="grid gap-1">
+              <strong>{row.destination.name[locale]}</strong>
+              <span class="flex items-center gap-1.5 text-[0.82rem] text-muted">
+                <RegionMark region={row.destination.region} size={15} class="text-faint" />
+                {row.destination.region} · {t.engines["delta-consensus"]}
+              </span>
+            </span>
+            <span
+              class={`num inline-flex items-center gap-1 text-[1.05rem] ${row.delta > 0 ? "text-success-ink" : "text-danger-ink"}`}
+            >
+              <Icon name={row.delta > 0 ? "arrowUp" : "arrowDown"} size={15} />
+              {signed(row.delta, 1)}
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    locale={locale}
+    id="bot"
+    title={t.engines["bots-title"]}
+    lead={interpolate(t.engines["bots-lead"], { engine: meta.label })}
+  >
+    <div class="grid items-start gap-[34px] lg:grid-cols-[5fr_7fr]">
+      <div class="grid gap-2.5">
+        {
+          crawlers.map((crawler) => {
+            const row = NATIONAL.crawlers[crawler.key];
+            return (
+              <Panel locale={locale}>
+                <div class="flex items-baseline justify-between gap-3">
+                  <strong class="num">{crawler.key}</strong>
+                  <span class="text-[0.82rem] text-muted">{crawler.purpose[locale]}</span>
+                </div>
+                <div class="flex h-2.5 overflow-hidden rounded-full">
+                  <span style={`width:${row.allow * 100}%;background:var(--color-success-ink)`} />
+                  <span style={`width:${row.partial * 100}%;background:var(--color-gold-ink)`} />
+                  <span style={`width:${row.block * 100}%;background:var(--color-danger-ink)`} />
+                </div>
+                <p class="text-[0.84rem] text-muted">
+                  <span class="text-success-ink">{percent(locale, row.allow)}</span>{" "}
+                  {t.sites.state.allow} ·{" "}
+                  <span class="text-danger-ink">{percent(locale, row.block)}</span>{" "}
+                  {t.sites.state.block}
+                </p>
+              </Panel>
+            );
+          })
+        }
+      </div>
+      <Panel
+        locale={locale}
+        title={t.engines["sources-title"]}
+        lead={t.sources.lead}
+        icon="quote"
+      >
+        <SourceMix locale={locale} byKind={sourceProfile} />
+      </Panel>
+    </div>
+  </Section>
+
+  <Section
+    locale={locale}
+    id="classifica"
+    title={interpolate(t.engines["rank-title"], { engine: meta.label })}
+  >
+    <DestinationTable
+      locale={locale}
+      destinations={ranked}
+      showCategory
+      id={`ranking-${engine}`}
+    />
+  </Section>
+
+  <section class="section">
+    <div class="shell">
+      <CtaBlock
+        title={t.cta.title}
+        body={t.cta.body}
+        primary={{ label: t.cta.button, href: observatoryPath(locale) }}
+        secondary={[
+          { label: t.methodology.title, href: methodologyPath(locale) },
+          { label: t.destination.back, href: observatoryPath(locale) },
+        ]}
+      />
+    </div>
+  </section>
+</ObsLayout>

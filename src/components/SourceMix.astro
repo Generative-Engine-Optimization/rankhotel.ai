@@ -1,0 +1,41 @@
+---
+import type { Locale } from "../lib/config";
+import { percent } from "../lib/format";
+import { messages } from "../lib/i18n";
+
+const { locale, byKind } = Astro.props as {
+  locale: Locale;
+  byKind: Record<"dmo" | "editorial" | "ota" | "other", number>;
+};
+
+const t = messages(locale).observatory;
+// La domanda che questa barra pone: quanta della visibilità del territorio è
+// in mano al territorio, e quanta a terzi?
+const rows = [
+  { key: "dmo", value: byKind.dmo, color: "var(--color-success-ink)" },
+  { key: "editorial", value: byKind.editorial, color: "var(--color-accent)" },
+  { key: "ota", value: byKind.ota, color: "var(--color-danger-ink)" },
+  { key: "other", value: byKind.other, color: "var(--color-faint)" },
+] as const;
+---
+
+<div class="grid gap-2.5">
+  <div class="flex h-3 overflow-hidden rounded-full" role="img" aria-label={t.sources.title}>
+    {
+      rows.map((row) => (
+        <span style={`width:${row.value * 100}%;background:${row.color}`} title={`${t.sources[row.key]}: ${percent(locale, row.value)}`} />
+      ))
+    }
+  </div>
+  <ul class="grid gap-1.5 sm:grid-cols-2">
+    {
+      rows.map((row) => (
+        <li class="flex items-center gap-2 text-[0.88rem]">
+          <span class="h-2.5 w-2.5 shrink-0 rounded-sm" style={`background:${row.color}`} />
+          <span class="text-muted">{t.sources[row.key]}</span>
+          <span class="num ml-auto">{percent(locale, row.value)}</span>
+        </li>
+      ))
+    }
+  </ul>
+</div>

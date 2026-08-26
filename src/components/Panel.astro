@@ -1,0 +1,59 @@
+---
+import type { Locale } from "../lib/config";
+import Icon from "./Icon.astro";
+import InfoTip from "./InfoTip.astro";
+
+// Card con intestazione. Sostituisce le decine di `<div class="card grid gap-*">`
+// con dentro uno <strong> e un paragrafo, tutte scritte leggermente diverse.
+const {
+  locale,
+  title,
+  lead,
+  icon,
+  info,
+  tone = "default",
+  headingLevel = 3,
+  class: className = "",
+} = Astro.props as {
+  locale?: Locale;
+  title?: string;
+  lead?: string;
+  icon?: string;
+  info?: string;
+  tone?: "default" | "muted" | "warn";
+  headingLevel?: 2 | 3 | 4;
+  class?: string;
+};
+
+// Il pannello è quasi sempre di terzo livello, ma in un paio di pagine è il
+// primo blocco dopo l'h1: lì saltare da h1 a h3 rompe la scaletta.
+const Heading = `h${headingLevel}` as "h2" | "h3" | "h4";
+
+const tones = {
+  default: "border-line bg-surface",
+  muted: "border-line bg-surface-muted",
+  warn: "border-gold/40 bg-gold/10",
+};
+---
+
+<div
+  class={`grid content-start gap-3.5 rounded-(--radius-brand) border p-[18px] ${tones[tone]} ${className}`}
+>
+  {
+    (title || icon) && (
+      <div class="flex items-start gap-2.5">
+        {icon && <span class="mt-0.5 text-accent-ink"><Icon name={icon} size={19} /></span>}
+        <div class="grid gap-1.5">
+          {title && (
+            <Heading class="flex flex-wrap items-center gap-2 text-[1.02rem]">
+              <span>{title}</span>
+              {info && locale && <InfoTip locale={locale} text={info} />}
+            </Heading>
+          )}
+          {lead && <p class="text-[0.9rem] text-muted">{lead}</p>}
+        </div>
+      </div>
+    )
+  }
+  <slot />
+</div>

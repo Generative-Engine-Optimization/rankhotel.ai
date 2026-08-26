@@ -1,0 +1,40 @@
+---
+import Icon from "./Icon.astro";
+import type { Locale } from "../lib/config";
+import { funnelStages } from "../lib/observatory";
+
+// Il momento del viaggio, sempre con la stessa faccia.
+//
+// Dreaming, Planning e Booking sono tre cose diverse, e su questo sito la
+// differenza è sostanziale: nel primo la destinazione o entra in un elenco o
+// non esiste, nell'ultimo una citazione vale una camera venduta. Finché erano
+// tre nomi in grassetto identici fra loro, chi scorreva la pagina non aveva
+// modo di tenerli separati. Icona e colore vengono dal dataset e dai token,
+// mai scelti in pagina: così lo stadio ha lo stesso aspetto nel pannello, nel
+// filtro, nella tabella e sopra una risposta.
+const {
+  locale,
+  funnel,
+  size = 15,
+  showName = true,
+  class: className = "",
+} = Astro.props as {
+  locale: Locale;
+  funnel: string;
+  size?: number;
+  showName?: boolean;
+  class?: string;
+};
+
+const stage = funnelStages().find((row) => row.key === funnel);
+const label = stage?.name[locale] ?? funnel;
+---
+
+<span
+  class={`inline-flex items-center gap-1.5 align-middle funnel-ink ${className}`}
+  data-funnel={funnel}
+  title={showName ? undefined : label}
+>
+  <Icon name={stage?.icon ?? "route"} size={size} class="shrink-0" />
+  <span class={showName ? "" : "sr-only"}>{label}</span>
+</span>

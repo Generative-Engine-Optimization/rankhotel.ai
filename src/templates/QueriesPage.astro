@@ -1,0 +1,788 @@
+---
+import CategorySelect from "../components/CategorySelect.astro";
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/PageHero.astro";
+import Section from "../components/Section.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  destinationPath,
+  observatoryPath,
+  otherLocale,
+  queriesPath,
+  type Locale,
+} from "../lib/config";
+import { monthLabel, number } from "../lib/format";
+import { messages } from "../lib/i18n";
+import { datasetSchema } from "../lib/schema";
+import {
+  inScopeFunnel,
+  listCategories,
+  listDestinations,
+} from "../lib/observatory";
+import { queryRowHtml, type QueryRow, type RowLabels } from "../lib/queries-table";
+import queriesJson from "../data/observatory/queries.json";
+
+const { locale } = Astro.props as { locale: Locale };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+
+const categories = listCategories();
+const destinations = listDestinations();
+const stages = inScopeFunnel();
+
+const rows = queriesJson as QueryRow[];
+
+const clusters = [...new Set(rows.map((row) => row.cluster))].sort();
+// Gli slug dei cluster sono chiavi interne: in pagina compaiono tradotti.
+const clusterLabel = (key: string) => t.clusters[key] ?? key.replace(/-/g, " ");
+
+// Quante righe stanno in elenco. Lo stesso numero vale a build time e dopo
+// ogni filtro: il conteggio in pagina non deve mai mentire.
+const PAGE_SIZE = 60;
+
+// Le prime 60 sono renderizzate a build time: la pagina non è mai vuota per
+// un crawler, e i filtri poi ripartono dall'API.
+const initial = [...rows].sort((a, b) => b.volume - a.volume).slice(0, PAGE_SIZE);
+
+// Heatmap di stagionalità: media normalizzata degli ultimi 12 mesi per
+// categoria, calcolata dai dati pubblicati e non da una tabella a parte.
+const months = Array.from({ length: 12 }, (_, index) => index);
+const heat = categories.map((category) => {
+  const list = rows.filter((row) => row.category === category.key && row.lang === "it");
+  const totals = months.map((month) =>
+    list.reduce((sum, row) => sum + (row.spark[month] ?? 0), 0),
+  );
+  const mean = totals.reduce((s, v) => s + v, 0) / 12 || 1;
+  return { category, values: totals.map((value) => value / mean) };
+});
+const lastMonths = queriesJson.length
+  ? Array.from({ length: 12 }, (_, index) => {
+      const base = new Date(Date.UTC(2026, 7, 1));
+      const d = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth() - 11 + index, 1));
+      return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    })
+  : [];
+
+// Le etichette della riga: le stesse a build time e nel browser, così la
+// tabella non cambia aspetto al primo filtro.
+const rowLabels: RowLabels = {
+  destinations: Object.fromEntries(destinations.map((d) => [d.key, d.name[locale]])),
+  hrefs: Object.fromEntries(
+    destinations.map((d) => [d.key, destinationPath(locale, d.slug[locale])]),
+  ),
+  clusters: Object.fromEntries(clusters.map((key) => [key, clusterLabel(key)])),
+  langs: { it: t.lang.it, en: t.lang.en },
+  funnels: Object.fromEntries(stages.map((s) => [s.key, s.name[locale]])),
+  detail: t.queries.detail,
+  detailOf: t.queries["detail-of"],
+  difficulty: t.table.difficulty,
+  columns: {
+    destination: t.table.destination,
+    volume: t.table.volume,
+    cpc: t.table.cpc,
+    yoy: t.table.yoy,
+    difficulty: t.table.difficulty,
+    history: t.table.history,
+  },
+};
+
+const initialHtml = initial.map((row) => queryRowHtml(row, locale, rowLabels)).join("");
+
+// I filtri: una sola descrizione, usata sia per le tendine sia per i chip di
+// filtro attivo, così le due cose non possono divergere.
+const fields = [
+  {
+    name: "category",
+    label: t.table.category,
+    options: categories.map((c) => ({ value: c.key, label: c.short[locale] })),
+  },
+  {
+    name: "funnel",
+    label: t.table.funnel,
+    options: stages.map((s) => ({ value: s.key, label: s.name[locale] })),
+  },
+  {
+    name: "lang",
+    label: t.table.lang,
+    // La sigla basta: l'etichetta sopra la tendina dice già "Lingua", e il nome
+    // per esteso ("Domanda in inglese") sfondava il chip di filtro attivo.
+    options: [
+      { value: "it", label: "IT" },
+      { value: "en", label: "EN" },
+    ],
+  },
+  {
+    name: "level",
+    label: t.table.level,
+    options: [
+      { value: "comparative", label: t.levels.comparative },
+      { value: "internal", label: t.levels.internal },
+    ],
+  },
+  {
+    name: "cluster",
+    label: t.table.cluster,
+    options: clusters.map((c) => ({ value: c, label: clusterLabel(c) })),
+  },
+];
+
+const columns = [
+  { key: "volume", label: t.table.volume },
+  { key: "cpc", label: t.table.cpc },
+  { key: "yoy", label: t.table.yoy },
+  { key: "difficulty", label: t.table.difficulty },
+];
+
+// Lo script client non deve contenere stringhe: le riceve da qui, già
+// localizzate, insieme a tutto ciò che serve per ridisegnare una riga.
+const clientLabels = {
+  results: t.filters.results,
+  showingOf: t.filters["showing-of"],
+  error: t.filters.error,
+  detail: t.queries.detail,
+  loading: t.compare.loading,
+  volumeTitle: t.queries["volume-title"],
+  fanoutTitle: t.queries["fanout-title"],
+  fanoutEmpty: t.queries["fanout-empty"],
+  volume: t.table.volume,
+  cpc: t.table.cpc,
+  clearOne: t.filters["clear-one"],
+  destination: t.table.destination,
+  sortAsc: t.queries["sort-asc"],
+  sortDesc: t.queries["sort-desc"],
+  pageSize: PAGE_SIZE,
+  row: rowLabels,
+  fields: Object.fromEntries(
+    fields.map((field) => [
+      field.name,
+      {
+        label: field.label,
+        options: Object.fromEntries(field.options.map((o) => [o.value, o.label])),
+      },
+    ]),
+  ),
+};
+---
+
+<ObsLayout
+  locale={locale}
+  title={t.meta["queries-title"]}
+  description={t.meta["queries-description"]}
+  schema={datasetSchema(locale, t.meta["queries-title"], t.meta["queries-description"], queriesPath(locale))}
+  path={queriesPath(locale)}
+  altPath={queriesPath(other)}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={t.nav.queries}
+    icon="search"
+    title={t.queries.title}
+    lead={t.queries.lead}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: t.nav.queries },
+    ]}
+  >
+    <dl class="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+      <div class="grid gap-1">
+        <dt class="text-[0.82rem] text-muted">{t.stats.queries}</dt>
+        <dd class="num text-[1.25rem] font-bold">{number(locale, rows.length)}</dd>
+      </div>
+      <div class="grid gap-1">
+        <dt class="text-[0.82rem] text-muted">{t.stats.destinations}</dt>
+        <dd class="num text-[1.25rem] font-bold">{number(locale, destinations.length)}</dd>
+      </div>
+      <div class="grid gap-1">
+        <dt class="text-[0.82rem] text-muted">{t.table.cluster}</dt>
+        <dd class="num text-[1.25rem] font-bold">{number(locale, clusters.length)}</dd>
+      </div>
+    </dl>
+  </PageHero>
+
+  <Section
+    locale={locale}
+    id="stagionalita"
+    title={t.queries["seasonality-title"]}
+    lead={t.queries["seasonality-lead"]}
+  >
+      <div class="table-wrap table-dense table-stickycol">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{t.table.category}</th>
+              {
+                lastMonths.map((month) => (
+                  <th scope="col" class="text-center num">
+                    {monthLabel(locale, month).split(" ")[0]}
+                  </th>
+                ))
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              heat.map((row) => (
+                <tr>
+                  <td class="font-bold">{row.category.short[locale]}</td>
+                  {row.values.map((value) => {
+                    // Opacità proporzionale alla domanda: il colore da solo non
+                    // basta, il numero resta leggibile in ogni cella.
+                    const alpha = Math.min(0.85, Math.max(0.05, (value - 0.35) / 1.4));
+                    return (
+                      <td
+                        class="text-center num text-[0.78rem]"
+                        style={`background:color-mix(in srgb, var(--color-accent) ${Math.round(alpha * 100)}%, transparent)`}
+                        title={`${row.category.short[locale]}: ${Math.round(value * 100)}%`}
+                      >
+                        {Math.round(value * 100)}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+  </Section>
+
+  <Section
+    locale={locale}
+    id="esplora"
+    title={t.queries["explore-title"]}
+    lead={t.queries["explore-lead"]}
+  >
+    <div class="grid gap-[22px]" data-queries data-labels={JSON.stringify(clientLabels)}>
+      <!-- La barra dei filtri sta dentro una card: si legge come un unico
+           strumento invece che come sei controlli sparsi sopra la tabella. -->
+      <div class="card grid gap-3.5">
+        <div class="grid gap-3">
+          <label class="grid gap-1.5">
+            <span class="text-[0.82rem] text-muted">{t.filters.search}</span>
+            <span class="search-field">
+              <span data-search-icon><Icon name="search" size={16} /></span>
+              <input
+                class="field"
+                type="search"
+                name="q"
+                data-filter-input
+                autocomplete="off"
+                placeholder={t.filters["search-hint"]}
+              />
+              <button
+                type="button"
+                data-search-clear
+                hidden
+                aria-label={t.filters["clear-search"]}
+                title={t.filters["clear-search"]}
+              >
+                <Icon name="cross" size={13} />
+              </button>
+            </span>
+          </label>
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            {
+              fields.map((field) => (
+                <label class="grid gap-1.5">
+                  <span class="text-[0.82rem] text-muted">{field.label}</span>
+                  {field.name === "category" ? (
+                    <CategorySelect locale={locale} name={field.name} data-filter-select />
+                  ) : (
+                    <select class="field" name={field.name} data-filter-select>
+                      <option value="">{t.filters.all}</option>
+                      {field.options.map((option) => (
+                        <option value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  )}
+                </label>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Cosa sta filtrando, in chiaro. Ogni chip si toglie da dov'è,
+             senza tornare alla tendina per rimetterla su "Tutte". -->
+        <!-- Sotto i 900px la tabella diventa una pila di schede e
+             l'intestazione sparisce: senza questo l'ordinamento, che vive nei
+             pulsanti di intestazione, sarebbe irraggiungibile. -->
+        <label class="grid gap-1.5 border-t border-line pt-3.5 min-[900px]:hidden">
+          <span class="text-[0.82rem] text-muted">{t.queries["sort-label"]}</span>
+          <span class="flex gap-2.5">
+            <select class="field" data-msort>
+              {
+                columns.map((column) => (
+                  <option value={column.key}>{column.label}</option>
+                ))
+              }
+            </select>
+            <button
+              class="chip shrink-0"
+              type="button"
+              data-msort-dir
+              aria-pressed="false"
+              aria-label={t.queries["sort-desc"]}
+            >
+              <span class="num" data-msort-arrow>↓</span>
+            </button>
+          </span>
+        </label>
+
+        <div class="flex flex-wrap items-center gap-2.5 border-t border-line pt-3.5">
+          <div class="flex flex-wrap items-center gap-2" data-active-filters hidden>
+            <span class="text-[0.82rem] text-muted">{t.filters.active}</span>
+            <span class="flex flex-wrap gap-2" data-active-chips></span>
+            <button class="chip" type="button" data-filter-reset>
+              <Icon name="cross" size={12} />
+              <span>{t.filters.reset}</span>
+            </button>
+          </div>
+          <span
+            class="num ml-auto text-[0.85rem] text-muted"
+            data-queries-count
+            role="status"
+            aria-live="polite"
+          >
+            {
+              t.filters["showing-of"]
+                .replace("{n}", number(locale, initial.length))
+                .replace("{total}", number(locale, rows.length))
+            }
+          </span>
+        </div>
+      </div>
+
+      <div class="relative min-w-0">
+        <div class="table-wrap table-dense table-cards" data-queries-table>
+          <table>
+            <caption class="sr-only">{t.queries["explore-title"]}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{t.table.query}</th>
+                <th scope="col">
+                  <span class="th-label"><Icon name="territory" size={13} />{t.table.destination}</span>
+                </th>
+                {
+                  columns.map((column) => (
+                    <th scope="col" class="text-right">
+                      <button
+                        class="sortable"
+                        type="button"
+                        data-qsort={column.key}
+                        aria-sort={column.key === "volume" ? "descending" : "none"}
+                        title={t.queries["sort-by"].replace("{name}", column.label)}
+                      >
+                        {column.label}
+                      </button>
+                    </th>
+                  ))
+                }
+                <th scope="col" class="text-right">{t.table.history}</th>
+                <th scope="col" class="w-24"><span class="sr-only">{t.queries.detail}</span></th>
+              </tr>
+            </thead>
+            <tbody data-queries-body set:html={initialHtml} />
+          </table>
+        </div>
+        <div class="veil" data-queries-loading hidden>
+          <span class="spinner" role="status" aria-label={t.compare.loading}></span>
+        </div>
+      </div>
+
+      <!-- Vuoto ed errore non sono una riga grigia dentro la tabella: sono uno
+           stato con una via d'uscita a portata di clic. -->
+      <div class="card grid justify-items-center gap-2.5 py-9 text-center" data-queries-empty hidden>
+        <span class="text-faint"><Icon name="search" size={24} /></span>
+        <strong>{t.filters["none-title"]}</strong>
+        <p class="text-[0.9rem] text-muted">{t.filters["none-hint"]}</p>
+        <button class="chip" type="button" data-filter-reset>{t.filters.reset}</button>
+      </div>
+
+      <div class="card grid justify-items-center gap-2.5 py-9 text-center" data-queries-error hidden>
+        <p class="text-[0.9rem] text-danger-ink">{t.filters.error}</p>
+        <button class="chip" type="button" data-queries-retry>{t.filters.retry}</button>
+      </div>
+    </div>
+  </Section>
+
+  <dialog
+    class="w-[min(920px,92vw)] rounded-(--radius-brand) border border-line bg-surface p-0 backdrop:bg-ink/40"
+    data-query-dialog
+    aria-labelledby="query-dialog-title"
+  >
+    <div class="grid gap-[22px] p-[22px]">
+      <div class="flex items-start justify-between gap-3.5">
+        <div class="grid gap-1">
+          <p class="eyebrow" data-dialog-eyebrow></p>
+          <h2 class="text-[1.2rem] normal-case" id="query-dialog-title" data-dialog-title></h2>
+        </div>
+        <button class="chip shrink-0" type="button" data-dialog-close>
+          <Icon name="cross" size={12} />
+          <span>{t.queries.close}</span>
+        </button>
+      </div>
+      <div data-dialog-body></div>
+    </div>
+  </dialog>
+
+  <!-- Sprite delle bandiere: una sola copia per pagina invece di una per riga. -->
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="flag-it" viewBox="0 0 60 40">
+      <rect width="20" height="40" fill="#008C45"></rect>
+      <rect x="20" width="20" height="40" fill="#F4F5F0"></rect>
+      <rect x="40" width="20" height="40" fill="#CD212A"></rect>
+    </symbol>
+    <symbol id="flag-en" viewBox="0 0 60 30">
+      <clipPath id="flag-en-clip">
+        <path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"></path>
+      </clipPath>
+      <rect width="60" height="30" fill="#012169"></rect>
+      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#FFF" stroke-width="6"></path>
+      <path
+        d="M0,0 L60,30 M60,0 L0,30"
+        stroke="#C8102E"
+        stroke-width="4"
+        clip-path="url(#flag-en-clip)"></path>
+      <path d="M30,0 V30 M0,15 H60" stroke="#FFF" stroke-width="10"></path>
+      <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"></path>
+    </symbol>
+  </svg>
+
+  <section class="section">
+    <div class="shell">
+      <a class="btn btn-secondary" href={observatoryPath(locale)}>{t.destination.back}</a>
+    </div>
+  </section>
+</ObsLayout>
+
+<script>
+  import { api } from "../lib/api/client";
+  import { queryRowHtml, escapeHtml, sparkPoints } from "../lib/queries-table";
+
+  const root = document.querySelector<HTMLElement>("[data-queries]");
+  if (root) {
+    const body = root.querySelector<HTMLElement>("[data-queries-body]")!;
+    const wrap = root.querySelector<HTMLElement>("[data-queries-table]")!;
+    const loading = root.querySelector<HTMLElement>("[data-queries-loading]")!;
+    const empty = root.querySelector<HTMLElement>("[data-queries-empty]")!;
+    const errorBox = root.querySelector<HTMLElement>("[data-queries-error]")!;
+    const counter = root.querySelector<HTMLElement>("[data-queries-count]")!;
+    const search = root.querySelector<HTMLInputElement>("[data-filter-input]")!;
+    const searchClear = root.querySelector<HTMLButtonElement>("[data-search-clear]")!;
+    const activeBox = root.querySelector<HTMLElement>("[data-active-filters]")!;
+    const activeChips = root.querySelector<HTMLElement>("[data-active-chips]")!;
+    const selects = Array.from(root.querySelectorAll<HTMLSelectElement>("[data-filter-select]"));
+    const msort = root.querySelector<HTMLSelectElement>("[data-msort]");
+    const msortDir = root.querySelector<HTMLButtonElement>("[data-msort-dir]");
+    const dialog = document.querySelector<HTMLDialogElement>("[data-query-dialog]")!;
+
+    const labels = JSON.parse(root.dataset.labels ?? "{}");
+    const locale = document.documentElement.lang || "it";
+    let sort = "volume";
+    let dir: "asc" | "desc" = "desc";
+    let controller: AbortController | null = null;
+
+    // Lo stato dei filtri vive in un posto solo: da lì escono le tendine, i
+    // chip, la chiamata e l'URL. Prima l'URL era letto una volta sola e non
+    // veniva più aggiornato, così il link condiviso non riportava la vista.
+    const state: Record<string, string> = {
+      q: "",
+      category: "",
+      funnel: "",
+      lang: "",
+      level: "",
+      cluster: "",
+      destination: "",
+    };
+
+    const params = new URLSearchParams(location.search);
+    for (const key of Object.keys(state)) state[key] = params.get(key) ?? "";
+    if (params.get("sort")) sort = params.get("sort")!;
+    if (params.get("dir") === "asc") dir = "asc";
+
+    search.value = state.q;
+    for (const select of selects) setSelect(select, state[select.name] ?? "");
+    syncSortButtons();
+
+    function fmtNumber(value: number) {
+      return new Intl.NumberFormat(locale).format(value);
+    }
+
+    function activeKeys() {
+      return Object.keys(state).filter((key) => state[key] !== "");
+    }
+
+    function labelFor(key: string, value: string) {
+      if (key === "q") return `“${value}”`;
+      if (key === "destination") return labels.row?.destinations?.[value] ?? value;
+      return labels.fields?.[key]?.options?.[value] ?? value;
+    }
+
+    function fieldName(key: string) {
+      if (key === "q") return labels.fields?.q?.label ?? "";
+      if (key === "destination") return labels.destination ?? "";
+      return labels.fields?.[key]?.label ?? key;
+    }
+
+    function renderChips() {
+      const keys = activeKeys();
+      activeBox.hidden = keys.length === 0;
+      activeChips.innerHTML = keys
+        .map((key) => {
+          const value = labelFor(key, state[key]);
+          const name = fieldName(key);
+          const remove = (labels.clearOne ?? "{name}").replace("{name}", name || value);
+          return `<span class="chip chip-filter">${name ? `${escapeHtml(name)}: ` : ""}<b>${escapeHtml(value)}</b><button type="button" data-remove="${escapeHtml(key)}" aria-label="${escapeHtml(remove)}" title="${escapeHtml(remove)}">&times;</button></span>`;
+        })
+        .join("");
+      searchClear.hidden = state.q === "";
+    }
+
+    function pushUrl() {
+      const next = new URLSearchParams();
+      for (const key of activeKeys()) next.set(key, state[key]);
+      if (sort !== "volume" || dir !== "desc") {
+        next.set("sort", sort);
+        next.set("dir", dir);
+      }
+      const query = next.toString();
+      history.replaceState(null, "", `${location.pathname}${query ? `?${query}` : ""}${location.hash}`);
+    }
+
+    // Le intestazioni cliccabili e il controllo per mobile sono due facce
+    // dello stesso stato: si aggiornano insieme o si contraddicono.
+    function syncSortButtons() {
+      root!.querySelectorAll<HTMLButtonElement>("[data-qsort]").forEach((button) => {
+        const active = button.dataset.qsort === sort;
+        button.setAttribute(
+          "aria-sort",
+          active ? (dir === "asc" ? "ascending" : "descending") : "none",
+        );
+      });
+      if (msort) msort.value = sort;
+      if (msortDir) {
+        const ascending = dir === "asc";
+        msortDir.setAttribute("aria-pressed", String(ascending));
+        msortDir.setAttribute("aria-label", ascending ? labels.sortAsc : labels.sortDesc);
+        msortDir.title = ascending ? labels.sortAsc : labels.sortDesc;
+        const arrow = msortDir.querySelector("[data-msort-arrow]");
+        if (arrow) arrow.textContent = ascending ? "↑" : "↓";
+      }
+    }
+
+    async function load() {
+      controller?.abort();
+      controller = new AbortController();
+      errorBox.hidden = true;
+      loading.hidden = false;
+      wrap.setAttribute("aria-busy", "true");
+      renderChips();
+      pushUrl();
+      try {
+        // Chiamata reale: latenza, abort e stati di errore come col backend.
+        const request: Record<string, string | number> = {
+          sort,
+          dir,
+          limit: labels.pageSize ?? 60,
+        };
+        for (const key of activeKeys()) request[key] = state[key];
+        const { rows, total } = await api.searchQueries(request as any, controller.signal);
+        body.innerHTML = rows
+          .map((row: any) => queryRowHtml(row, locale as any, labels.row))
+          .join("");
+        wrap.hidden = rows.length === 0;
+        empty.hidden = rows.length !== 0;
+        counter.textContent =
+          rows.length === total
+            ? (labels.results ?? "{n}").replace("{n}", fmtNumber(total))
+            : (labels.showingOf ?? "{n}/{total}")
+                .replace("{n}", fmtNumber(rows.length))
+                .replace("{total}", fmtNumber(total));
+      } catch (error) {
+        if ((error as Error).name === "AbortError") return;
+        wrap.hidden = true;
+        empty.hidden = true;
+        errorBox.hidden = false;
+      } finally {
+        loading.hidden = true;
+        wrap.removeAttribute("aria-busy");
+      }
+    }
+
+    // Assegnare `.value` non emette niente: il campo con l'icona della
+    // categoria resterebbe sul disegno di prima. `field-sync` glielo dice.
+    function setSelect(select: HTMLSelectElement, value: string) {
+      select.value = value;
+      select.dispatchEvent(new CustomEvent("field-sync", { bubbles: true }));
+    }
+
+    function reset() {
+      for (const key of Object.keys(state)) state[key] = "";
+      search.value = "";
+      selects.forEach((select) => setSelect(select, ""));
+      load();
+    }
+
+    async function openDetail(key: string, destination: string) {
+      const eyebrow = dialog.querySelector<HTMLElement>("[data-dialog-eyebrow]")!;
+      const title = dialog.querySelector<HTMLElement>("[data-dialog-title]")!;
+      const content = dialog.querySelector<HTMLElement>("[data-dialog-body]")!;
+      title.textContent = labels.loading ?? "…";
+      eyebrow.textContent = "";
+      content.innerHTML = `<div class="grid place-items-center py-9"><span class="spinner"></span></div>`;
+      dialog.showModal();
+      try {
+        // Lo storico completo vive nel file della destinazione: si carica solo
+        // quando serve, non su ogni riga della tabella.
+        const detail = await api.destination(destination);
+        const query = detail.queries.find((row: any) => row.key === key);
+        if (!query) throw new Error("missing");
+        const cluster = labels.row?.clusters?.[query.cluster] ?? query.cluster;
+        eyebrow.textContent = `${query.lang.toUpperCase()} · ${cluster} · ${labels.row?.destinations?.[destination] ?? destination}`;
+        title.textContent = query.text;
+        content.innerHTML = detailHtml(query);
+      } catch {
+        const content2 = dialog.querySelector<HTMLElement>("[data-dialog-body]")!;
+        content2.innerHTML = `<p class="text-danger-ink">${labels.error ?? ""}</p>`;
+      }
+    }
+
+    function detailHtml(query: any) {
+      const history = query.history as { month: string; volume: number; cpc: number }[];
+      const w = 680;
+      const h = 160;
+      const volumes = history.map((row) => row.volume);
+      const cpcs = history.map((row) => row.cpc);
+      const vol = sparkPoints(volumes, w, h);
+      const cpc = sparkPoints(cpcs, w, h);
+      const area = `${vol} ${w},${h} 0,${h}`;
+      const fmt = (value: number) => new Intl.NumberFormat(locale).format(value);
+      const money = (value: number) =>
+        new Intl.NumberFormat(locale, {
+          style: "currency",
+          currency: "EUR",
+          minimumFractionDigits: 2,
+        }).format(value);
+      // Un grafico senza scala è un disegno: qui il primo e l'ultimo mese e i
+      // due estremi del volume sono scritti, non lasciati intuire.
+      const first = history[0];
+      const last = history[history.length - 1];
+      const monthName = (key: string) =>
+        new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(
+          new Date(`${key}-01T00:00:00Z`),
+        );
+
+      const fan = (query.fanout ?? [])
+        .map(
+          (child: any) =>
+            `<li class="grid gap-1.5">
+               <span class="flex items-baseline gap-2.5">
+                 <span class="font-mono text-[0.86rem]">${escapeHtml(child.text)}</span>
+                 <span class="num ml-auto text-[0.8rem] text-muted">${Math.round(child.share * 100)}%</span>
+               </span>
+               <span class="bar"><span style="width:${Math.round(child.share * 100)}%"></span></span>
+             </li>`,
+        )
+        .join("");
+
+      return `
+        <div class="grid gap-[22px]">
+          <dl class="grid grid-cols-2 gap-x-6 gap-y-3.5 sm:grid-cols-4">
+            <div class="grid gap-1"><dt class="text-[0.8rem] text-muted">${escapeHtml(labels.volume ?? "")}</dt><dd class="num text-[1.1rem] font-bold">${fmt(query.volume)}</dd></div>
+            <div class="grid gap-1"><dt class="text-[0.8rem] text-muted">${escapeHtml(labels.cpc ?? "")}</dt><dd class="num text-[1.1rem] font-bold">${money(query.cpc)}</dd></div>
+            <div class="grid gap-1"><dt class="text-[0.8rem] text-muted">${escapeHtml(labels.row?.difficulty ?? "")}</dt><dd class="num text-[1.1rem] font-bold">${query.difficulty}</dd></div>
+            <div class="grid gap-1"><dt class="text-[0.8rem] text-muted">${escapeHtml(labels.fields?.category?.label ?? "")}</dt><dd class="text-[1.1rem] font-bold">${escapeHtml(labels.fields?.category?.options?.[query.category] ?? query.category ?? "")}</dd></div>
+          </dl>
+          <div class="grid gap-2.5">
+            <strong>${escapeHtml(labels.volumeTitle ?? "")}</strong>
+            <svg viewBox="0 0 ${w} ${h}" class="w-full" role="img" aria-label="${escapeHtml(labels.volumeTitle ?? "")}">
+              <polygon points="${area}" fill="color-mix(in srgb, var(--color-accent) 16%, transparent)"/>
+              <polyline points="${vol}" fill="none" stroke="var(--color-accent-strong)" stroke-width="2"/>
+              <polyline points="${cpc}" fill="none" stroke="var(--color-gold-ink)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            </svg>
+            <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-[0.8rem] text-muted">
+              <span class="num">${escapeHtml(monthName(first.month))}</span>
+              <span class="num">${escapeHtml(monthName(last.month))}</span>
+            </div>
+            <p class="text-[0.82rem] text-muted">
+              <span class="text-accent-ink">■</span> ${escapeHtml(labels.volume ?? "")} ${fmt(Math.min(...volumes))}–${fmt(Math.max(...volumes))} ·
+              <span class="text-gold-ink">■</span> ${escapeHtml(labels.cpc ?? "")} ${money(Math.min(...cpcs))}–${money(Math.max(...cpcs))}
+            </p>
+          </div>
+          <div class="grid gap-2.5">
+            <strong>${escapeHtml(labels.fanoutTitle ?? "")}</strong>
+            ${fan ? `<ul class="grid gap-3">${fan}</ul>` : `<p class="text-[0.9rem] text-muted">${escapeHtml(labels.fanoutEmpty ?? "")}</p>`}
+          </div>
+        </div>`;
+    }
+
+    let timer: number;
+    search.addEventListener("input", () => {
+      state.q = search.value.trim();
+      searchClear.hidden = state.q === "";
+      clearTimeout(timer);
+      timer = window.setTimeout(load, 260);
+    });
+    searchClear.addEventListener("click", () => {
+      state.q = "";
+      search.value = "";
+      search.focus();
+      load();
+    });
+    selects.forEach((select) =>
+      select.addEventListener("change", () => {
+        state[select.name] = select.value;
+        load();
+      }),
+    );
+    root.querySelectorAll("[data-filter-reset]").forEach((button) =>
+      button.addEventListener("click", reset),
+    );
+    root.querySelector("[data-queries-retry]")?.addEventListener("click", load);
+    activeChips.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-remove]");
+      if (!button) return;
+      const key = button.dataset.remove!;
+      state[key] = "";
+      if (key === "q") search.value = "";
+      const select = selects.find((item) => item.name === key);
+      if (select) setSelect(select, "");
+      load();
+    });
+    root.querySelectorAll<HTMLButtonElement>("[data-qsort]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const next = button.dataset.qsort!;
+        dir = sort === next && dir === "desc" ? "asc" : "desc";
+        sort = next;
+        syncSortButtons();
+        load();
+      });
+    });
+    msort?.addEventListener("change", () => {
+      sort = msort.value;
+      syncSortButtons();
+      load();
+    });
+    msortDir?.addEventListener("click", () => {
+      dir = dir === "desc" ? "asc" : "desc";
+      syncSortButtons();
+      load();
+    });
+
+    // La delega sul corpo tabella: le righe si ridisegnano a ogni filtro e
+    // riagganciare i listener uno per uno lasciava indietro qualche riga.
+    body.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-query-open]");
+      if (!button) return;
+      openDetail(button.dataset.queryOpen!, button.dataset.destination!);
+    });
+
+    dialog.querySelector("[data-dialog-close]")?.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    renderChips();
+    if (activeKeys().length || sort !== "volume" || dir !== "desc") load();
+  }
+</script>

@@ -1,165 +1,574 @@
 {
   "meta": {
-    "landing-title": "Osservatorio della visibilità AI degli hotel",
-    "landing-description": "Quali hotel raccomandano davvero ChatGPT, Gemini, Perplexity e Claude, città per città. Metodologia pubblica, dati gratuiti.",
-    "methodology-title": "Metodologia",
-    "methodology-description": "I prompt, i modelli, la cadenza e il calcolo dell'AI Visibility Score dell'osservatorio RankHotel.ai.",
-    "city-title": "Visibilità AI degli hotel a {city}",
-    "city-description": "La classifica degli hotel di {city} più raccomandati dai modelli AI, le fonti che l'AI cita e la fetta di traffico che finisce sulle OTA."
+    "title": "Osservatorio: quali destinazioni italiane consiglia l'AI",
+    "description": "Cento destinazioni italiane e duemila hotel misurati su ChatGPT, Gemini e Perplexity. Chi viene consigliato, da quali fonti, e chi non viene nominato mai.",
+    "category-title": "{category}: cosa consiglia l'AI",
+    "category-description": "I 20 territori italiani della categoria {category} in classifica di visibilità AI, con punteggio per assistente e fonti citate.",
+    "destination-title": "{destination}: quanto la consiglia l'AI",
+    "destination-description": "Quanto ChatGPT, Gemini e Perplexity consigliano {destination}: punteggio di visibilità AI, fonti citate e 20 hotel tracciati.",
+    "engine-title": "L'Italia turistica vista da {engine}",
+    "engine-description": "Come {engine} racconta le destinazioni italiane: classifica dedicata, scostamenti dal consenso e fonti preferite.",
+    "map-title": "Mappa della visibilità AI delle destinazioni italiane",
+    "map-description": "Le 100 destinazioni dell'osservatorio sulla mappa d'Italia, con punteggio di visibilità AI, filtri per categoria e link a ogni scheda.",
+    "queries-title": "Le domande dei viaggiatori e come l'AI le espande",
+    "queries-description": "Migliaia di query turistiche italiane e inglesi con storico volumi e CPC a 24 mesi, stadio di funnel e sotto-domande generate dagli engine.",
+    "compare-title": "Confronta due destinazioni italiane",
+    "compare-description": "Metti a confronto fino a quattro territori italiani su punteggio, assistenti, fonti citate e accessibilità tecnica ai crawler delle AI.",
+    "methodology-title": "Come calcoliamo il punteggio",
+    "methodology-description": "Quattro cose misurate, tre assistenti, cinque rilevazioni al mese. La formula, i pesi e i limiti sono pubblici e leggibili in pagina.",
+    "assumptions-title": "Le assunzioni dell'osservatorio",
+    "assumptions-description": "Cosa diamo per scontato e cosa non misuriamo: le sette assunzioni dell'osservatorio, dichiarate prima dei risultati e non dopo.",
+    "glossary-title": "Glossario dell'osservatorio",
+    "glossary-description": "Punteggio, fascia, oscillazione, fonti citate, accessibilità ai bot: le parole dell'osservatorio spiegate una per una, senza gergo."
   },
   "wip": {
-    "title": "Dati in costruzione",
-    "body": "Le classifiche qui sotto sono un campione dimostrativo, generato per mostrare come sarà l'osservatorio. Non sono ancora misurate sui modelli: la raccolta giornaliera è in fase di attivazione. Per questo le pagine dell'osservatorio non sono indicizzate."
+    "title": "Dati simulati",
+    "body": "Tutti i numeri di questo osservatorio (score, citazioni, accessibilità ai bot, volumi e CPC) sono generati per mostrare come funzionerà lo strumento. Non sono misurazioni reali, e le pagine dell'osservatorio non sono indicizzate finché non lo saranno."
   },
-  "landing": {
+  "demo": {
+    "mark": "demo",
+    "domain": "Dominio dimostrativo, generato dal nome della destinazione. Non è un sito reale e i dati sulla sua accessibilità ai bot sono simulati.",
+    "hotel": "Struttura dimostrativa: il nome è generato, non corrisponde a un albergo esistente."
+  },
+  "nav": {
+    "observatory": "Osservatorio",
+    "categories": "Categorie",
+    "map": "Mappa",
+    "queries": "Query",
+    "compare": "Confronto",
+    "methodology": "Metodologia",
+    "assumptions": "Assunzioni",
+    "engines": "Per engine"
+  },
+  "hero": {
     "eyebrow": "Osservatorio",
-    "title": "Quali hotel raccomanda davvero l'AI, città per città",
-    "lead": "Un viaggiatore che chiede «migliori hotel a Firenze» riceve una risposta con pochi nomi dentro. Quei nomi valgono prenotazioni. Misuriamo chi ci finisce, quanto spesso e in che posizione, e pubblichiamo tutto senza paywall.",
-    "facts": "{prompts} prompt · {engines} modelli · {hotels} hotel",
-    "methodology-link": "come misuriamo",
-    "cities": {
-      "title": "Le città monitorate",
-      "body": "Si parte dalle grandi città italiane. Apri una città per vedere la classifica, le fonti che l'AI cita e quanto pesano le OTA."
-    },
-    "example": {
-      "title": "Un esempio: {city}",
-      "body": "Così si legge una pagina-città: prima chi viene consigliato, poi da dove l'AI prende le informazioni.",
-      "link": "Apri la pagina di {city}"
-    },
-    "italy": {
-      "title": "Il quadro italiano",
-      "body": "Fra città si confronta quello che è confrontabile: quanto pesano le OTA (media {ota}), quanto i modelli sono d'accordo, quanto la classifica è concentrata sui primi tre.",
-      "leaderboard-title": "I più visibili d'Italia",
-      "leaderboard-body": "Ordinati per posto nella propria città, non per score assoluto: un 90 a Roma e un 90 a Verona non sono la stessa cosa."
+    "title": "L'AI consiglia l'Italia a chi non sa dove andare. Non tutta l'Italia.",
+    "lead": "Un viaggiatore chiede «dove vado al mare in Italia». Riceve cinque nomi, non cinquanta link. Misuriamo chi entra in quei cinque nomi, su cento territori e duemila hotel.",
+    "cta-explore": "Apri la classifica dei 100 territori",
+    "cta-map": "Guarda la mappa"
+  },
+  "stats": {
+    "destinations": "destinazioni",
+    "hotels": "hotel tracciati",
+    "prompts": "prompt per destinazione",
+    "responses": "risposte analizzate",
+    "runs": "run al mese",
+    "engines": "engine",
+    "sites": "siti auditati",
+    "queries": "query monitorate"
+  },
+  "score": {
+    "label": "Indice di visibilità AI",
+    "national": "Media dei 100 territori",
+    "runs": "media di {n} rilevazioni",
+    "stability-help": "Quanto il punteggio si è mosso fra una domanda e l'altra nello stesso mese. Se si muove poco, ci si può contare.",
+    "stability": {
+      "stable": "Stabile",
+      "moderate": "Moderato",
+      "volatile": "Volatile"
     }
   },
-  "cities": {
-    "hotels": "{count} hotel monitorati"
+  "factors": {
+    "title": "Da cosa nasce il punteggio",
+    "weight": "vale {n} punti su 100",
+    "comparative": {
+      "name": "Quanto viene consigliata",
+      "help": "Qualcuno chiede all'AI dove andare in Italia per questo tipo di vacanza. Questo territorio compare nella risposta? E in che posizione?"
+    },
+    "internal": {
+      "name": "Quanto la conoscono",
+      "help": "L'AI sa dire cosa si vede, si fa e si mangia qui, o si ferma ai due nomi che sanno tutti?"
+    },
+    "sources": {
+      "name": "Chi ne parla",
+      "help": "Da dove prende le informazioni l'AI: dal sito ufficiale del territorio, da una guida indipendente, o da un portale di prenotazioni che lo rivende."
+    },
+    "technical": {
+      "name": "Se riescono a leggerla",
+      "help": "I programmi che leggono i siti per conto delle AI trovano la porta aperta o chiusa? Un'AI non consiglia quello che non ha potuto leggere."
+    },
+    "lead": "Quattro fattori, pesi diversi. Il punteggio nasce da qui, e da qui si capisce dove si perde."
   },
-  "ranking": {
-    "position": "#",
+  "engines": {
+    "title": "Tre assistenti, tre risposte diverse",
+    "lead": "ChatGPT, Gemini e Perplexity non leggono le stesse fonti e non premiano le stesse cose. Un voto solo nasconderebbe proprio la differenza che serve sapere.",
+    "switch": "Guarda secondo:",
+    "all": "Tutti e tre",
+    "vs-average": "rispetto alla media",
+    "rank": "{n}º in Italia",
+    "outliers": "Dove la pensa diversamente",
+    "outliers-lead": "I territori su cui {engine} si scosta di più dagli altri due. È qui che un lavoro mirato su un solo assistente cambia il risultato.",
+    "sources-title": "Le fonti che preferisce",
+    "bots-title": "I suoi programmi di lettura",
+    "bots-lead": "Quanti siti turistici italiani lasciano entrare i programmi di {engine}, e quanti gli chiudono la porta.",
+    "rank-title": "I 100 territori secondo {engine}",
+    "delta-consensus": "di scarto dagli altri due"
+  },
+  "table": {
+    "destination": "Destinazione",
+    "category": "Categoria",
+    "score": "Punteggio",
+    "visitors": "Visitatori stimati/anno",
+    "trend": "Da agosto",
+    "history": "Andamento",
     "hotel": "Hotel",
-    "presence": "Presenza",
-    "avg-position": "Posizione",
-    "score": "Score",
-    "trend": "Trend",
-    "direct": "{share} di link al sito",
-    "not-cited": "—"
+    "presence": "Quanto esce",
+    "audit": "Voto tecnico",
+    "detail": "Dettaglio",
+    "domain": "Dominio",
+    "position-short": "posizione",
+    "volume": "Ricerche/mese",
+    "cpc": "CPC",
+    "difficulty": "Concorrenza",
+    "yoy": "Anno su anno",
+    "query": "Domanda",
+    "cluster": "Argomento",
+    "funnel": "Momento del viaggio",
+    "lang": "Lingua",
+    "level": "Tipo di domanda"
   },
-  "citations": {
-    "kind": {
-      "direct": "Sito dell'hotel",
-      "aggregator": "OTA",
-      "review": "Recensioni",
-      "external": "Guide e media"
-    },
-    "top-sources": "Fonti più citate"
+  "card": {
+    "rank": "{n}º su {total}",
+    "visitors": "{n} visitatori/anno"
   },
-  "co-mentions": {
-    "legend": "Numeri in percentuale di risposte: la coppia più frequente esce insieme nel {share} dei casi."
+  "filters": {
+    "all": "Tutte",
+    "both-langs": "IT + EN",
+    "reset": "Azzera",
+    "results": "{n} risultati",
+    "showing": "{n} in elenco",
+    "search": "Cerca fra le query",
+    "none": "Nessun risultato con questi filtri.",
+    "error": "La chiamata non è andata a buon fine. Riprova.",
+    "active": "Filtri attivi",
+    "clear-one": "Togli il filtro {name}",
+    "clear-search": "Cancella la ricerca",
+    "retry": "Riprova",
+    "none-title": "Nessuna domanda con questi filtri",
+    "none-hint": "Prova a togliere un filtro o a cercare parole più generiche.",
+    "showing-of": "{n} in elenco su {total}",
+    "search-hint": "Cerca una parola: hotel, cosa vedere, dove dormire…"
   },
-  "intents": {
-    "col-intent": "Tipo di domanda",
-    "col-prompts": "Prompt",
-    "col-cited": "Citato",
-    "col-position": "Posizione",
-    "col-trend": "Trend",
-    "kind": {
-      "discovery": "Scoperta",
-      "informational": "Informativa",
-      "comparison": "Confronto",
-      "transactional": "Prenotazione"
-    },
-    "example": {
-      "discovery": "«migliori hotel a…», «dove dormire a…»",
-      "informational": "«hotel con spa», «hotel per famiglie»",
-      "comparison": "«meglio centro o fuori»",
-      "transactional": "«dove prenotare al prezzo migliore»"
+  "lang": {
+    "it": "Domanda in italiano",
+    "en": "Domanda in inglese",
+    "gap": "{n} punti di divario a favore di chi chiede in {side}.",
+    "none": "Nessun divario apprezzabile fra le due lingue.",
+    "title": "Chi chiede da dentro, chi chiede da fuori",
+    "lead": "In italiano cerca quasi sempre un turista italiano; in inglese arriva chi viene da fuori. L'AI racconta l'Italia in modo diverso ai due.",
+    "side-it": "italiano",
+    "side-en": "inglese"
+  },
+  "sources": {
+    "title": "Chi racconta questo territorio",
+    "lead": "Ogni volta che l'AI cita qualcun altro invece del territorio, il territorio viene raccontato da chi ci guadagna sopra.",
+    "dmo": "Sito ufficiale",
+    "editorial": "Portali editoriali",
+    "ota": "Aggregatori e OTA",
+    "other": "Altre fonti",
+    "quality": "Qualità delle fonti",
+    "lead-national": "Quando l'AI racconta l'Italia, da dove prende le informazioni. Ogni citazione che finisce a un aggregatore è una citazione che non arriva a chi il territorio lo governa.",
+    "share": "Quota citazioni"
+  },
+  "sites": {
+    "title": "I siti che parlano di qui",
+    "lead": "Quattro tipi di sito, una domanda sola: i programmi delle AI riescono a leggerli?",
+    "domain": "Dominio",
+    "kind": "Tipo",
+    "audit": "Audit",
+    "state": {
+      "allow": "consentito",
+      "block": "bloccato",
+      "partial": "limitato"
     }
   },
-  "movements": {
-    "kind": {
-      "entered": "{hotel} è entrato in classifica: il mese scorso nessun modello lo nominava.",
-      "overtook": "{hotel} ha superato {other} di {positions, plural, one {una posizione} other {# posizioni}}.",
-      "left": "{hotel} è uscito dai primi posti: {positions, plural, one {una posizione persa} other {# posizioni perse}}."
+  "entities": {
+    "title": "Cosa sa davvero l'AI di questo posto",
+    "lead": "I luoghi che ci sono per davvero. Contiamo quanti ne nomina ciascun assistente: è il modo più concreto per capire se conosce il territorio o sta tirando a indovinare.",
+    "entity": "Entità"
+  },
+  "funnel": {
+    "title": "Dove il territorio perde per strada",
+    "lead": "Un viaggio si decide in tre momenti: prima si sogna, poi si organizza, alla fine si prenota. Un territorio può essere fortissimo nel sogno e sparire quando si sceglie dove dormire.",
+    "out-of-scope": "Fuori scope"
+  },
+  "prompts": {
+    "comparative-title": "Le domande in cui si gareggia",
+    "comparative-lead": "Qui il territorio compete con gli altri della sua categoria. Se non entra nella risposta, per chi ha chiesto non esiste.",
+    "internal-title": "Le domande su questo territorio",
+    "internal-lead": "Qui non si gareggia con nessuno. Si vede solo una cosa: se l'AI il posto lo conosce.",
+    "count": "{n} prompt in elenco"
+  },
+  "answers": {
+    "title": "Come suona la risposta",
+    "lead": "Fin qui abbiamo contato le citazioni. Questa è la risposta in cui finiscono: il testo che il turista legge davvero, con dentro il nome del territorio — oppure senza.",
+    "disclaimer": "<strong>Testo ricostruito, non una cattura reale.</strong> È montato sugli stessi numeri pubblicati nelle altre sezioni — chi viene citato, in che ordine, con quali fonti — ma non sono parole realmente uscite da un modello. Nell'osservatorio in abbonamento le risposte sono catture verbatim, con data e run.",
+    "in": "Citata · pos. {position}",
+    "out": "Non citata",
+    "hotels-in": "{n} strutture citate",
+    "hotels-out": "Nessuna struttura seguita",
+    "capture": "Run {run} · {date} · presenza {rate} sulle run del mese",
+    "sources": "Fonti citate nella risposta",
+    "no-sources": "Nessuna fonte citata nella risposta",
+    "hotels-title": "Come suona la risposta sugli hotel",
+    "hotels-lead": "La domanda che vale una prenotazione. Qui si vede se le strutture del territorio entrano nella risposta, o se il turista finisce su un aggregatore.",
+    "national-title": "Una risposta, per intero",
+    "national-lead": "La struttura più visibile d'Italia sta dentro questa risposta. Ecco com'è fatta, chi altro ci compare e da dove arrivano le fonti.",
+    "national-note": "La risposta è quella del territorio in cui si trova la struttura prima in classifica: {destination}."
+  },
+  "history": {
+    "title": "Le tre rilevazioni",
+    "caption": "{months} rilevazioni mensili. Variazione complessiva {delta} punti. La banda intorno alla linea è quanto le risposte hanno oscillato dentro lo stesso mese."
+  },
+  "hotels": {
+    "title": "I venti hotel che seguiamo qui",
+    "lead": "Dentro ogni territorio teniamo d'occhio venti strutture. È il punto in cui una citazione smette di essere un numero e diventa una camera venduta.",
+    "national-title": "I 120 hotel più visibili d'Italia"
+  },
+  "map": {
+    "title": "Le destinazioni sulla mappa",
+    "page-title": "Dove l'AI vede l'Italia, e dove non la vede",
+    "lead": "Cento territori, dimensione del pin per numero di visitatori, colore per categoria.",
+    "loading": "Carico la mappa…",
+    "attribution": "Sfondo cartografico © OpenStreetMap contributors.",
+    "open": "Apri la scheda",
+    "count": "{n} destinazioni sulla mappa",
+    "list-title": "Tutte le destinazioni"
+  },
+  "queries": {
+    "title": "Le domande dei viaggiatori",
+    "lead": "Da qui parte tutto: quante persone le scrivono ogni mese, quanto varrebbe quel clic in pubblicità, e in quali altre domande l'AI le trasforma prima di rispondere.",
+    "fanout-title": "In cosa la espande l'AI",
+    "fanout-lead": "Le sotto-domande che gli engine generano prima di comporre la risposta, con la quota di run in cui compaiono.",
+    "volume-title": "Volume e CPC su 24 mesi",
+    "seasonality-title": "Stagionalità per categoria",
+    "seasonality-lead": "Il turismo italiano non è piatto. Il mese in cui la domanda c'è è il mese in cui serve esserci.",
+    "local-title": "Le query di questa destinazione",
+    "local-lead": "Le più cercate fra quelle che abbiamo monitorato qui.",
+    "explore": "Cerca fra le domande",
+    "detail": "Dettaglio",
+    "close": "Chiudi",
+    "explore-title": "Cerca fra le domande",
+    "explore-lead": "Ogni riga è una domanda che qualcuno digita davvero: quante volte al mese, quanto costerebbe quel clic e quanto è affollata. Apri il dettaglio per lo storico a 24 mesi e per le sotto-domande in cui l’AI la espande.",
+    "detail-of": "Apri il dettaglio di «{q}»",
+    "sort-by": "Ordina per {name}",
+    "fanout-empty": "Per questa domanda non abbiamo ancora registrato sotto-domande.",
+    "sort-label": "Ordina per",
+    "sort-desc": "Dal più alto al più basso",
+    "sort-asc": "Dal più basso al più alto"
+  },
+  "compare": {
+    "title": "Metti due territori uno accanto all'altro",
+    "lead": "Fino a quattro destinazioni a confronto, sugli stessi numeri.",
+    "add": "Aggiungi un territorio",
+    "cta": "Confronta due territori",
+    "search-label": "Cerca un territorio",
+    "search-placeholder": "Scrivi un nome: Salento, Langhe, Val d'Orcia…",
+    "search-hint": "Cento territori. Bastano tre lettere.",
+    "no-match": "Nessun territorio si chiama così.",
+    "count": "{n} di 4 territori",
+    "full": "Quattro è il massimo. Togline uno per farne entrare un altro.",
+    "picked": "già nel confronto",
+    "remove": "Togli",
+    "remove-one": "Togli {name} dal confronto",
+    "reset": "Svuota il confronto",
+    "copy": "Copia il link a questo confronto",
+    "slot-add": "Aggiungi un territorio",
+    "empty-title": "Il confronto è ancora vuoto",
+    "empty": "Scegli almeno due destinazioni per iniziare il confronto.",
+    "empty-body": "Scegline due: da qui in giù compaiono affiancate su punteggio, singoli assistenti, fonti citate e accessibilità tecnica.",
+    "one-more-title": "Ci siamo quasi",
+    "one-more": "Aggiungi un secondo territorio e il confronto si apre.",
+    "presets": "Oppure parti da uno di questi:",
+    "ready": "Pronti da aprire:",
+    "preset-top": "I due più visibili d'Italia",
+    "preset-rivals": "Rivali della stessa categoria",
+    "preset-contrast": "Il più cercato contro il più visibile",
+    "loading": "Sto affiancando i territori…",
+    "error-title": "I dati non sono arrivati",
+    "error-body": "La richiesta non è andata a buon fine. I territori scelti restano dove sono.",
+    "retry": "Riprova",
+    "verdict": "{name} guida il confronto: indice {score}, in testa su {won} dei {total} indicatori.",
+    "verdict-tie": "{a} e {b} chiudono a pari indice: {score}. La differenza, questo mese, la fanno le singole righe.",
+    "verdict-close": "Lo scarto con {name} ({score}) rientra nella banda di oscillazione: su questo mese non è una distanza misurabile.",
+    "best": "Il valore migliore della riga",
+    "scroll-hint": "Scorri in orizzontale per vedere tutti i territori.",
+    "groups": {
+      "summary": "Il quadro",
+      "engines": "Assistente per assistente",
+      "factors": "Da cosa nasce il punteggio",
+      "sources": "Chi racconta il territorio",
+      "territory": "Il territorio"
+    },
+    "rows": {
+      "metric": "Indicatore",
+      "rank": "Posizione in Italia",
+      "tier": "Fascia",
+      "stability": "Quanto si muove",
+      "trend": "Da agosto",
+      "visitors": "Visitatori stimati/anno",
+      "demand": "Ricerche/mese",
+      "quality": "Qualità delle fonti",
+      "top-hotel": "Hotel più visibile",
+      "open": "Scheda completa"
     }
   },
-  "italy": {
-    "cities": {
-      "col-city": "Città",
-      "col-hotels": "Hotel",
-      "col-ota": "Quota OTA",
-      "col-direct": "Link diretti",
-      "col-agreement": "Accordo",
-      "col-concentration": "Top 3"
-    },
-    "leaderboard": {
-      "top": "top {share} della sua città"
-    }
+  "category": {
+    "ranking-title": "La classifica dei 20 territori",
+    "tagged-title": "Altre destinazioni con questo tema",
+    "tagged-lead": "Territori che entrano in classifica in un'altra categoria ma appartengono anche a questa.",
+    "switch": "Cambia categoria"
   },
-  "city": {
-    "title": "Visibilità AI degli hotel a {city}",
-    "lead": "Chi viene raccomandato dai modelli AI a chi cerca un hotel a {city}, da quali fonti, e quanto di quel traffico finisce sulle OTA.",
-    "back": "Tutte le città",
-    "metrics": {
-      "responses": "Risposte analizzate",
-      "responses-hint": "finestra mobile di {days} giorni",
-      "ota": "Quota OTA",
-      "ota-hint": "citazioni che portano a Booking & simili",
-      "agreement": "Accordo tra modelli",
-      "agreement-hint": "quanto le top 5 dei modelli si somigliano",
-      "updated": "Aggiornato al"
-    },
-    "ranking": {
-      "title": "Chi consiglia l'AI",
-      "body": "Lo score combina quanto spesso un hotel viene citato e in che posizione. «Presenza» è la quota di risposte in cui compare."
-    },
-    "citations": {
-      "title": "Da dove l'AI prende le informazioni",
-      "body": "Ogni risposta cita delle fonti. Qui il {ota} finisce alle OTA: quella è la fetta di prenotazioni che passa da un intermediario invece che dal sito dell'hotel."
-    },
-    "co-mentions": {
-      "title": "Chi esce insieme a chi",
-      "body": "Quando l'AI nomina un hotel, quali altri nomina nella stessa risposta. È la mappa reale dei competitor: non quelli che pensi tu, quelli che il modello ti accosta."
-    },
-    "intents": {
-      "title": "Le domande che contano",
-      "body": "Non tutte le domande valgono uguale. Chi cerca dove prenotare è più vicino alla carta di credito di chi cerca idee."
-    },
-    "movements": {
-      "title": "Cosa è cambiato",
-      "body": "I movimenti dell'ultima finestra: chi è entrato, chi ha superato chi, chi è scivolato fuori."
-    }
+  "destination": {
+    "known-for": "Conosciuta per",
+    "in-category": "In categoria {category}",
+    "rank-national": "{n}º su 100 in Italia",
+    "top-hotel": "Hotel più visibile",
+    "updated": "Aggiornato al {date}",
+    "cta-title": "E adesso?",
+    "cta-body": "Questa scheda è un pezzo di un quadro più grande. Confronta questo territorio con un altro, guarda le domande da cui nasce il punteggio, o leggi come lo calcoliamo.",
+    "back": "Torna all'osservatorio"
+  },
+  "national": {
+    "title": "L'Italia in un numero",
+    "lead": "La media dei cento territori che seguiamo, e quanto i tre assistenti la vedono diversamente.",
+    "rising": "In crescita",
+    "falling": "In calo",
+    "leaderboard": "I dieci territori più visibili",
+    "categories-title": "Le cinque categorie di confronto",
+    "categories-lead": "Venti territori per categoria. Confrontare ha senso solo fra cose confrontabili: un borgo da ottocento abitanti non gareggia con Roma.",
+    "crawl-title": "Le porte chiuse",
+    "crawl-lead": "Quanti siti turistici italiani bloccano ciascun programma di lettura. Ogni blocco è una decisione, quasi sempre presa senza sapere che lo fosse."
   },
   "methodology": {
-    "title": "Metodologia",
-    "lead": "La trasparenza è parte del prodotto. Ecco esattamente come produciamo i dati dell'osservatorio.",
-    "models": {
-      "title": "I {count} modelli",
-      "body": "Interroghiamo {list}. Claude è incluso di default: molti strumenti lo trattano come opzione a richiesta, noi no."
+    "title": "Come calcoliamo il punteggio",
+    "lead": "La formula è pubblica, e questa pagina la legge dal codice che la applica. Non possono raccontare due cose diverse.",
+    "formula-title": "Quattro cose misurate, un numero",
+    "weights-title": "I pesi",
+    "engines-title": "Un punteggio generale, uno per assistente",
+    "engines-body": "Il generale è la media semplice dei tre. Nessun peso nascosto fra un assistente e l'altro: se ChatGPT contasse più di Perplexity sarebbe una nostra opinione travestita da misura.",
+    "runs-title": "Perché cinque rilevazioni al mese",
+    "runs-body": "La stessa domanda posta due volte allo stesso modello dà due risposte diverse. Una domanda sola non è un dato, è un aneddoto. Ogni mese ripetiamo tutto cinque volte per assistente e pubblichiamo la media con quanto ha oscillato: quel ± accanto al numero è la differenza fra un osservatorio e uno screenshot.",
+    "technical-title": "Perché conta se il sito si lascia leggere",
+    "technical-body": "Un'AI non consiglia quello che non ha potuto leggere. Ogni assistente manda i suoi programmi a leggere i siti: se un territorio blocca quelli di ChatGPT, il suo punteggio su ChatGPT scende. Non è igiene tecnica, è visibilità.",
+    "levels-title": "Due tipi di domanda",
+    "levels-body": "Nel primo il territorio gareggia con gli altri della sua categoria. Nel secondo si verifica solo se l'AI lo conosce. Sono due cose diverse e vanno misurate separate: ci sono territori famosi che l'AI non sa raccontare, e territori piccoli che racconta benissimo.",
+    "data-title": "Stato dei dati",
+    "data-body": "In questa fase i numeri sono generati. Lo schema, la formula e le pagine sono quelli definitivi: quando le run reali sostituiranno il dataset simulato, non cambierà una riga di questa metodologia.",
+    "formula-example": "Esempio illustrativo: numeri scelti per mostrare come i quattro fattori compongono il voto, non il punteggio di un territorio reale."
+  },
+  "assumptions": {
+    "title": "Cosa diamo per scontato",
+    "lead": "Prima dei risultati, i limiti. Un osservatorio che non dichiara le proprie assunzioni non è un osservatorio.",
+    "items": [
+      {
+        "title": "Il turista ha già deciso di venire in Italia",
+        "body": "Non misuriamo Italia contro Spagna o Grecia. Misuriamo la competizione dentro l'Italia: quando la meta-paese è decisa e resta da scegliere il territorio."
+      },
+      {
+        "title": "Analizziamo solo tre stadi su cinque",
+        "body": "Dreaming, Planning e Booking sono gli stadi in cui una risposta AI può ancora spostare la decisione. Experiencing e Sharing avvengono a prenotazione fatta: contano per la reputazione, non per l'acquisizione, e si misurano meglio altrove."
+      },
+      {
+        "title": "Due lingue, non tutti i mercati",
+        "body": "L'italiano rappresenta la domanda interna, l'inglese quella internazionale. Restano fuori tedesco, francese e spagnolo, che per l'Italia sono mercati inbound rilevanti. È un limite reale e lo dichiariamo qui invece di lasciarlo intuire."
+      },
+      {
+        "title": "Prompt senza personalizzazione",
+        "body": "Interroghiamo i modelli senza cronologia, senza account, senza geolocalizzazione dell'utente. Misuriamo la risposta di partenza, non quella che riceve un utente con due anni di conversazioni alle spalle."
+      },
+      {
+        "title": "Le AI cambiano idea",
+        "body": "Lo stesso prompt dà risposte diverse a distanza di minuti. Per questo ogni valore è la media di cinque run mensili per engine, pubblicata con la sua dispersione."
+      },
+      {
+        "title": "Venti hotel sono un campione",
+        "body": "Per ogni destinazione seguiamo venti strutture scelte per rilevanza e varietà di fascia. Non è l'universo alberghiero del territorio e non pretende di esserlo."
+      },
+      {
+        "title": "I dati di questa fase sono simulati",
+        "body": "Score, citazioni, comportamento dei bot, volumi e CPC sono generati per costruire e mostrare lo strumento. I domini dei siti ufficiali ed editoriali sono generati dal nome della destinazione, non presi da siti reali: pubblicare che un ente esistente blocca un crawler senza averlo verificato sarebbe falso."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Continua a esplorare",
+    "body": "Ogni numero di questo osservatorio si può aprire, scomporre e verificare. Da qui si va dove serve.",
+    "button": "Apri la classifica",
+    "corrections": "Conosci questo territorio e c'è un dato sbagliato?"
+  },
+  "clusters": {
+    "identita-destinazione": "Identità della destinazione",
+    "cosa-vedere": "Cosa vedere",
+    "itinerari": "Itinerari",
+    "enogastronomia": "Cosa si mangia",
+    "come-arrivare": "Come arrivare",
+    "quando-andare": "Quando andare",
+    "fuori-dai-circuiti": "Fuori dai circuiti",
+    "dove-dormire": "Dove dormire",
+    "scelta-della-meta": "Scelta della meta",
+    "vincoli-di-viaggio": "Vincoli di viaggio",
+    "base-del-viaggio": "Base del viaggio",
+    "altro": "Altro"
+  },
+  "rank": {
+    "tier": "Fascia",
+    "position": "{n}º su {total}",
+    "range": "realmente fra la {from}ª e la {to}ª",
+    "exact": "posizione stabile",
+    "help": "La posizione secca prometterebbe una precisione che cinque rilevazioni al mese non danno. Accanto trovi l'intervallo in cui il territorio si trova davvero, e la fascia, che è il dato su cui contare.",
+    "tiers-title": "Le fasce di visibilità",
+    "tiers-lead": "Fra la trentottesima e la quarantunesima posizione non c'è differenza misurabile. Fra una fascia e l'altra sì. Le fasce sono il modo onesto di leggere questa classifica."
+  },
+  "demand": {
+    "title": "Scala della domanda",
+    "searches": "{n} ricerche/mese",
+    "help": "Quante ricerche al mese muovono le domande che seguiamo qui. Serve a capire se una posizione in classifica vale migliaia di persone o poche decine.",
+    "marginal-note": "Attenzione alla scala: questo territorio muove {n} ricerche al mese sulle query che monitoriamo. La classifica dei 20 hotel resta confrontabile con le altre destinazioni, ma qui una posizione vale poche decine di ricerche, non migliaia.",
+    "of-total": "{n}% del totale nazionale monitorato"
+  },
+  "ui": {
+    "share": "Condividi",
+    "share-section": "Copia il link a questa sezione",
+    "copied": "Link copiato",
+    "info": "Cosa vuol dire",
+    "close": "Chiudi",
+    "toc": "In questa pagina",
+    "prev": "Precedente in classifica",
+    "next": "Successiva in classifica",
+    "related": "Territori simili",
+    "related-lead": "Stessa categoria o stessi temi: sono questi i territori con cui gareggia davvero.",
+    "back-to-top": "Torna su",
+    "explore": "Esplora",
+    "glossary": "Glossario",
+    "glossary-heading": "Le parole che usiamo qui",
+    "glossary-lead": "Spiegate come le spiegheremmo a voce, non come le scriverebbe un manuale.",
+    "measured-since": "Prima rilevazione: agosto 2026",
+    "runs-title": "Le tre rilevazioni",
+    "runs-lead": "Misuriamo una volta al mese, ripetendo ogni domanda cinque volte. Ogni punto è una media; la barra dice quanto le risposte si sono mosse dentro quel mese."
+  },
+  "explain": {
+    "score": "È un voto da 0 a 100 su quanto un'intelligenza artificiale nomina questo territorio quando qualcuno le chiede dove andare. Cento vuol dire che esce sempre, e per primo. Zero vuol dire che per l'AI non esiste.",
+    "band": "Il numero dopo il ± dice di quanto la risposta è cambiata fra una domanda e l'altra nello stesso mese. Più è piccolo, più il punteggio è affidabile.",
+    "engines": "Gli assistenti non pescano dalle stesse fonti, quindi non danno le stesse risposte. Se il tuo territorio va bene su uno e male su un altro, il problema è specifico e si risolve in modo specifico.",
+    "comparative": "Immagina qualcuno che chiede all'AI «dove vado al mare in Italia». Questo numero dice quanto spesso questo territorio compare nella risposta, e in che posizione.",
+    "internal": "Se qualcuno chiede «cosa vedo qui», l'AI sa rispondere con luoghi veri o si ferma ai due nomi che sanno tutti? Questo numero misura quanto conosce il posto.",
+    "sources": "Quando l'AI parla di questo territorio, da dove prende le informazioni. Se le prende da Booking invece che dal sito ufficiale, la destinazione viene raccontata da chi ci guadagna sopra.",
+    "technical": "I programmi che leggono i siti per conto delle AI riescono ad entrare, oppure trovano la porta chiusa? Un'AI non può consigliare quello che non ha potuto leggere.",
+    "entities": "Le cose che ci sono davvero qui. Controlliamo quante ne nomina ciascun assistente: è il modo più concreto per capire se conosce il posto o sta improvvisando.",
+    "funnel": "Un viaggio si decide in tre momenti: prima si sogna, poi si organizza, infine si prenota. Una destinazione può essere fortissima nel sogno e sparire quando si tratta di scegliere dove dormire.",
+    "lang": "Chi cerca in italiano è quasi sempre un turista italiano, chi cerca in inglese arriva da fuori. Le AI raccontano l'Italia in modo diverso ai due, e qui si vede quanto.",
+    "sites": "I siti che parlano di questo territorio, e se i programmi delle AI possono leggerli. Un segno di spunta vuol dire porta aperta, una croce porta chiusa.",
+    "hotels": "Le venti strutture che seguiamo qui. Il punteggio dice quanto ciascuna viene nominata quando si chiede dove dormire in questa zona.",
+    "queries": "Le domande che le persone digitano davvero, con quante volte al mese e quanto costerebbe comprare quel clic in pubblicità.",
+    "prompts-comparative": "Le domande in cui questo territorio gareggia con gli altri della sua categoria. Se non compare nella risposta, per chi ha chiesto non esiste.",
+    "prompts-internal": "Le domande su questo territorio e basta. Qui non si gareggia con nessuno: si vede solo se l'AI lo conosce.",
+    "demand": "Quante ricerche al mese muovono le domande che seguiamo qui. Serve a capire se una posizione in classifica vale migliaia di persone o poche decine.",
+    "tier": "Le fasce raggruppano i territori che si equivalgono davvero. Fra la 38ª e la 41ª posizione non c'è differenza misurabile; fra una fascia e l'altra sì.",
+    "runs": "Ogni mese poniamo le stesse domande cinque volte a ciascun assistente. Le risposte cambiano, quindi pubblichiamo la media e quanto hanno oscillato."
+  },
+  "tags": {
+    "title": "Temi",
+    "lead": "Una destinazione entra in classifica in una categoria sola, ma quasi nessuna appartiene a una cosa sola. I temi tengono insieme i territori che si assomigliano davvero.",
+    "meta-title": "{tag}: le destinazioni italiane con questo tema",
+    "meta-description": "I territori italiani che condividono il tema {tag}: punteggio di visibilità AI, fascia e confronto con il resto della classifica.",
+    "count": "{n, plural, one {una destinazione} other {# destinazioni}}",
+    "all": "Tutti i temi",
+    "index-title": "I temi dell'osservatorio",
+    "index-description": "Tutti i temi che attraversano le 100 destinazioni italiane monitorate: tagli trasversali alle cinque categorie di confronto.",
+    "ranking-title": "La classifica del tema",
+    "switch": "Cambia tema"
+  },
+  "data": {
+    "visitors": "Visitatori stimati/anno",
+    "visitors-help": "Stima di ordine di grandezza, non un dato ufficiale. Include gli escursionisti, quindi non è confrontabile con gli arrivi ISTAT. La usiamo solo per dimensionare i pin sulla mappa.",
+    "demand-simulated": "Valore simulato: non viene ancora da uno strumento di keyword research.",
+    "site-verified": "Verificato il {date}: dominio raggiungibile e soggetto identificato.",
+    "site-generated": "Dominio generato dal nome della destinazione. Non è un sito reale.",
+    "site-regional": "Non esiste un ente con mandato solo su questo territorio: il soggetto che lo promuove è la DMO regionale.",
+    "chain-domain": "Dominio di catena: chi può leggere questo sito lo decide il gruppo, non il singolo albergo.",
+    "site-unreachable": "Non raggiungibile all'ultima verifica.",
+    "site-redirect": "Redirige altrove: da ricontrollare.",
+    "site-waf": "Blocca la verifica automatica. Il sito c'è, il controllo no.",
+    "new-tab": "si apre in una nuova scheda",
+    "open-site": "Apri {domain}",
+    "holder": "Gestito da"
+  },
+  "sitemap": {
+    "title": "Mappa del sito",
+    "lead": "Tutte le pagine dell'osservatorio in un colpo d'occhio. Il ramo dice cosa c'è, il numero quante pagine, il link ci porta.",
+    "meta-title": "Mappa del sito: tutte le pagine dell'osservatorio",
+    "meta-description": "Navigazione rapida fra tutte le pagine dell'osservatorio: classifiche, categorie, destinazioni, temi, assistenti, strumenti e metodo.",
+    "center": "Osservatorio",
+    "pages": "{n, plural, one {una pagina} other {# pagine}}",
+    "branch-entry": "Da dove si entra",
+    "branch-entry-note": "Le tre porte principali: la classifica nazionale, la mappa geografica, l'elenco per tema.",
+    "branch-categories": "Le cinque categorie",
+    "branch-categories-note": "Venti territori ciascuna, in classifica fra loro.",
+    "branch-destinations": "Le cento destinazioni",
+    "branch-destinations-note": "Una scheda per territorio, con dodici blocchi ciascuna.",
+    "branch-themes": "I temi",
+    "branch-themes-note": "Tagli trasversali: un territorio entra in classifica in una categoria sola ma porta i temi che vuole.",
+    "branch-engines": "Per assistente",
+    "branch-engines-note": "Lo stesso osservatorio riletto con gli occhi di uno solo dei tre.",
+    "branch-tools": "Strumenti",
+    "branch-tools-note": "Dove si cerca, si confronta e si guarda la geografia.",
+    "branch-method": "Metodo",
+    "branch-method-note": "Come nasce il numero, cosa diamo per scontato, cosa vogliono dire le parole.",
+    "branch-data": "Dati aperti",
+    "branch-data-note": "Gli stessi numeri delle pagine, in JSON, senza registrazione.",
+    "site": "Il sito",
+    "all-destinations": "Vedi tutte e cento",
+    "legend": "I numeri fra parentesi contano le pagine in questa lingua."
+  },
+  "hotelsPage": {
+    "title": "Gli hotel",
+    "lead": "Dentro ogni territorio seguiamo venti strutture. È il punto in cui una citazione smette di essere un numero e diventa una camera venduta.",
+    "meta-title": "Gli hotel italiani più nominati dall'AI",
+    "meta-description": "Duemila strutture seguite in cento territori e misurate su ChatGPT, Gemini e Perplexity: classifica, filtri e accessibilità del sito.",
+    "national": "Classifica nazionale",
+    "national-lead": "Le strutture più nominate quando si chiede dove dormire in Italia. La classifica del territorio conta più di questa: un hotel gareggia con chi gli sta accanto, non con tutti.",
+    "by-destination": "Per territorio",
+    "by-destination-lead": "È il confronto che significa qualcosa. Apri un territorio per vedere le sue venti strutture.",
+    "real": "strutture reali",
+    "real-lead": "Quelle che esistono e che abbiamo verificato: il dominio risponde e la pagina le nomina.",
+    "generated-note": "Le posizioni non ancora coperte da strutture reali portano nomi generati, marcati come dimostrativi.",
+    "confidence": {
+      "verified": "Verificata",
+      "chain": "Dominio di gruppo",
+      "guarded": "Dominio difeso",
+      "listed": "In elenco",
+      "generated": "Nome generato",
+      "registry-web": "Da registro pubblico",
+      "registry": "Da registro pubblico"
     },
-    "prompts": {
-      "title": "I {count} prompt",
-      "body": "Per ogni città poniamo gli stessi {count} prompt, metà in italiano e metà in inglese, ogni giorno. Coprono l'intero ventaglio di scoperta: dalla query generica alle nicchie ad alto intento. Nessun prompt contiene il nome di un hotel — misuriamo cosa il modello sceglie spontaneamente.",
-      "it-title": "Prompt in italiano",
-      "en-title": "Prompt in inglese",
-      "city-placeholder": "[città]"
+    "confidence-help": {
+      "verified": "Il dominio risponde e la pagina nomina questa struttura.",
+      "chain": "Sta sul dominio di una catena: esiste, ma chi può leggere quel sito lo decide il gruppo.",
+      "guarded": "Il dominio esiste e rifiuta i controlli automatici. Il sito c'è, la prova che sia questo hotel no.",
+      "listed": "Presente nell'elenco di partenza, non ricontrollata in questa tornata.",
+      "generated": "Nome generato per mostrare come funziona lo strumento. Non è un albergo esistente.",
+      "registry-web": "Iscritta al registro regionale delle strutture ricettive, con sito dichiarato.",
+      "registry": "Iscritta al registro regionale delle strutture ricettive. Non risulta un sito."
     },
-    "cadence": {
-      "title": "La cadenza",
-      "body": "Ogni prompt viene posto una volta al giorno a ciascun modello: {prompts} × {models} = {responses} risposte al giorno per città. Le metriche pubblicate aggregano una finestra mobile di {days} giorni. Lo storico giornaliero non è ricostruibile a posteriori: è ciò che rende l'osservatorio unico nel tempo."
-    },
-    "score": {
-      "title": "L'AI Visibility Score",
-      "body": "Per ogni hotel combiniamo due segnali: la frequenza di menzione (in quante risposte compare) e la posizione media (quanto in alto viene citato). Lo score è normalizzato 0–100 e pesa la frequenza al {mentionWeight}% e la posizione al {positionWeight}%. Pubblichiamo anche l'accordo tra modelli e la quota di link diretti vs OTA."
-    },
-    "fairness": {
-      "title": "Trasparenza e correttezza",
-      "items": [
-        "Le classifiche riflettono le risposte dei modelli, non un giudizio nostro sugli hotel.",
-        "I dati sono liberamente citabili con attribuzione a RankHotel.ai.",
-        "Un hotel può richiedere correzioni o l'esclusione scrivendo a hello@rankhotel.ai."
-      ]
-    }
+    "filter-destination": "Territorio",
+    "filter-category": "Categoria",
+    "filter-stars": "Stelle",
+    "open-destination": "Apri il territorio",
+    "eyebrow": "Classifica hotel",
+    "page-title": "Gli hotel italiani più nominati dall'AI",
+    "verified": "strutture verificate",
+    "legend-title": "Come si legge questa tabella",
+    "legend-rank": "**Posizione** — dove sta la struttura fra tutte e trecento. Non cambia quando filtri: serve a capire se un hotel è forte in Italia o solo nel suo territorio.",
+    "legend-score": "**Punteggio** — quanto la struttura viene nominata quando si chiede dove dormire, da 0 a 100. Il ± è di quanto la risposta è cambiata dentro lo stesso mese.",
+    "legend-presence": "**Quanto esce** — la quota di risposte in cui la struttura compare almeno una volta. Un punteggio alto con una quota bassa vuol dire: quando esce esce bene, ma esce di rado.",
+    "legend-confidence": "**Il tag accanto al nome** — quanto sappiamo del suo sito. «Verificata» vuol dire che il dominio risponde e la pagina nomina questo hotel; «Nome generato» che la riga è dimostrativa.",
+    "showing-of": "{n} di {total} strutture",
+    "show-more": "Mostra altre {n}",
+    "show-all": "Mostra tutte"
+  },
+  "levels": {
+    "comparative": "Di confronto",
+    "internal": "Sul territorio"
   }
 }

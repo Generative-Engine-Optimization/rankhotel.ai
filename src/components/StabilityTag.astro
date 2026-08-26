@@ -1,0 +1,18 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import type { Stat } from "../lib/observatory";
+
+const { locale, stat } = Astro.props as { locale: Locale; stat: Stat };
+const t = messages(locale).observatory;
+// Un numero solo non dice se ci si può contare sopra: questo sì.
+const tone = {
+  stable: "text-success-ink",
+  moderate: "text-gold-ink",
+  volatile: "text-danger-ink",
+}[stat.stability];
+---
+
+<span class={`pill ${tone}`} title={t.score["stability-help"]}>
+  {t.score.stability[stat.stability]}
+</span>

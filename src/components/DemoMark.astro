@@ -1,0 +1,12 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+
+const { locale, kind = "domain" } = Astro.props as {
+  locale: Locale;
+  kind?: "domain" | "hotel";
+};
+const t = messages(locale).observatory.demo;
+---
+
+<abbr class="demo-mark" title={t[kind]}>{t.mark}</abbr>

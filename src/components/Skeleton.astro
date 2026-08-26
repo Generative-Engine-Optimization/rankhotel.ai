@@ -1,0 +1,14 @@
+---
+const { rows = 4, height = 18 } = Astro.props as { rows?: number; height?: number };
+---
+
+<div class="grid gap-2.5" aria-hidden="true">
+  {
+    Array.from({ length: rows }).map((_, index) => (
+      <div
+        class="skeleton"
+        style={`height:${height}px;width:${100 - (index % 3) * 12}%`}
+      />
+    ))
+  }
+</div>

@@ -1,0 +1,186 @@
+---
+import { destinationPath, type Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import { listCategories, type Destination } from "../lib/observatory";
+import Icon from "./Icon.astro";
+
+const {
+  locale,
+  destinations,
+  height = 560,
+  showFilters = true,
+} = Astro.props as {
+  locale: Locale;
+  destinations: Destination[];
+  height?: number;
+  showFilters?: boolean;
+};
+
+const t = messages(locale).observatory;
+const categories = listCategories();
+
+// I pin viaggiano nel DOM come JSON: il contenuto testuale resta comunque
+// nella lista sotto la mappa, che è ciò che leggono i crawler.
+const pins = destinations.map((destination) => ({
+  key: destination.key,
+  name: destination.name[locale],
+  region: destination.region,
+  lat: destination.lat,
+  lng: destination.lng,
+  category: destination.category,
+  tags: destination.tags,
+  score: destination.score.mean,
+  sd: destination.score.stdDev,
+  visitors: destination.visitors,
+  href: destinationPath(locale, destination.slug[locale]),
+}));
+---
+
+<div class="grid gap-3.5" data-map-island data-open-label={t.map.open}>
+  {
+    showFilters && (
+      <div class="flex flex-wrap items-center gap-2">
+        <button class="chip gap-1.5" type="button" data-map-filter="" data-active="true">
+          <Icon name="globe" size={14} />
+          {t.filters.all}
+        </button>
+        {categories.map((category) => (
+          <button
+            class="chip chip-cat gap-1.5"
+            type="button"
+            data-map-filter={category.key}
+            data-cat={category.key}
+          >
+            <Icon name={category.icon} size={14} />
+            {category.short[locale]}
+          </button>
+        ))}
+        <span
+          class="text-[0.82rem] text-faint"
+          data-map-count
+          data-template={t.map.count}
+          role="status"
+        ></span>
+      </div>
+    )
+  }
+
+  <div
+    class="relative overflow-hidden rounded-(--radius-brand) border border-line bg-surface-muted"
+    style={`height:${height}px`}
+  >
+    <div class="h-full w-full" data-map role="application" aria-label={t.map.title}></div>
+    <div
+      class="pointer-events-none absolute inset-0 grid place-items-center bg-surface-muted p-6 text-center text-muted"
+      data-map-fallback
+    >
+      {t.map.loading}
+    </div>
+  </div>
+
+  <p class="text-[0.82rem] text-faint">{t.map.attribution}</p>
+
+  <script type="application/json" data-map-pins set:html={JSON.stringify(pins)} />
+</div>
+
+<script>
+  import L from "leaflet";
+  import "leaflet/dist/leaflet.css";
+
+  // Leaflet è caricato solo dove c'è una mappa: non entra nel bundle globale.
+  document.querySelectorAll<HTMLElement>("[data-map-island]").forEach((root) => {
+    const host = root.querySelector<HTMLElement>("[data-map]");
+    const fallback = root.querySelector<HTMLElement>("[data-map-fallback]");
+    const raw = root.querySelector<HTMLElement>("[data-map-pins]")?.textContent;
+    if (!host || !raw) return;
+
+    type Pin = {
+      key: string; name: string; region: string; lat: number; lng: number;
+      category: string; tags: string[]; score: number; sd: number;
+      visitors: number; href: string;
+    };
+    const pins: Pin[] = JSON.parse(raw);
+
+    const map = L.map(host, { scrollWheelZoom: false, attributionControl: true });
+    map.fitBounds([[36.6, 6.5], [47.1, 18.6]]);
+
+    let tilesLoaded = false;
+    const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 17,
+      // Attribuzione OSM: è una condizione d'uso, non un dettaglio estetico.
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    });
+    tiles.on("load", () => {
+      tilesLoaded = true;
+      fallback?.remove();
+    });
+    tiles.addTo(map);
+
+    // Se i tile non arrivano la mappa resta usabile: i pin sono comunque lì,
+    // su fondo neutro, e la lista sotto non dipende dalla mappa.
+    setTimeout(() => {
+      if (!tilesLoaded && fallback) fallback.remove();
+    }, 2500);
+
+    // Il diametro resta la codifica dei visitatori, su una scala più contenuta:
+    // pallini piccoli si sovrappongono meno e la penisola resta leggibile.
+    const diameter = (visitors: number) => 8 + Math.min(14, Math.log10(Math.max(10, visitors)) * 3.6);
+
+    const layer = L.layerGroup().addTo(map);
+    const markers = pins.map((pin) => {
+      const dot = Math.round(diameter(pin.visitors));
+      // L'area cliccabile non segue il pallino fin giù: sotto i 26px il bersaglio
+      // diventa scomodo, quindi resta larga anche quando il pin è piccolo.
+      const hit = Math.max(dot + 8, 26);
+      // L'icona è un div, non un cerchio SVG: il colore arriva da data-cat via
+      // CSS, e l'area cliccabile è più larga del pallino.
+      const marker = L.marker([pin.lat, pin.lng], {
+        icon: L.divIcon({
+          className: "map-pin",
+          html: `<span class="map-pin-dot" data-cat="${pin.category}" style="--pin-size:${dot}px"></span>`,
+          iconSize: [hit, hit],
+          iconAnchor: [hit / 2, hit / 2],
+        }),
+        // I pin piccoli finiscono sotto quelli grandi nei grappoli fitti:
+        // invertendo lo z-index restano raggiungibili.
+        zIndexOffset: Math.round((40 - dot) * 25),
+        riseOnHover: true,
+        // Cento pin sarebbero cento tab stop in mezzo alla pagina: la via da
+        // tastiera resta l'elenco sotto la mappa, che ha gli stessi link.
+        keyboard: false,
+        title: `${pin.name} — ${Math.round(pin.score)}`,
+        alt: pin.name,
+      });
+      marker.bindPopup(
+        `<strong>${pin.name}</strong><br><span style="color:#5550a0">${pin.region}</span><br>` +
+          `<span style="font-family:monospace">${Math.round(pin.score)} ±${Math.round(pin.sd)}</span><br>` +
+          `<a href="${pin.href}">${root.dataset.openLabel ?? "→"}</a>`,
+      );
+      return { pin, marker };
+    });
+
+    function render(filter: string) {
+      layer.clearLayers();
+      let count = 0;
+      for (const { pin, marker } of markers) {
+        if (!filter || pin.category === filter || pin.tags.includes(filter)) {
+          layer.addLayer(marker);
+          count += 1;
+        }
+      }
+      const counter = root.querySelector<HTMLElement>("[data-map-count]");
+      if (counter) counter.textContent = (counter.dataset.template ?? "{n}").replace("{n}", String(count));
+    }
+
+    root.querySelectorAll<HTMLButtonElement>("[data-map-filter]").forEach((button) => {
+      button.addEventListener("click", () => {
+        root
+          .querySelectorAll("[data-map-filter]")
+          .forEach((b) => b.setAttribute("data-active", String(b === button)));
+        render(button.dataset.mapFilter ?? "");
+      });
+    });
+
+    render("");
+  });
+</script>

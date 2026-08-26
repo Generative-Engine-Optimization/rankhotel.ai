@@ -1,0 +1,22 @@
+---
+import Icon from "./Icon.astro";
+
+const { items } = Astro.props as { items: { label: string; href?: string }[] };
+---
+
+<nav class="flex flex-wrap items-center gap-1.5 text-[0.86rem] text-muted" aria-label="breadcrumb">
+  {
+    items.map((item, index) => (
+      <>
+        {index > 0 && <span class="text-faint"><Icon name="chevronRight" size={13} /></span>}
+        {item.href ? (
+          <a class="hover:text-accent-ink" href={item.href}>
+            {item.label}
+          </a>
+        ) : (
+          <span class="text-ink" aria-current="page">{item.label}</span>
+        )}
+      </>
+    ))
+  }
+</nav>

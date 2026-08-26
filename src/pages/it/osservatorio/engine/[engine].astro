@@ -1,0 +1,10 @@
+---
+import EnginePage from "../../../../templates/EnginePage.astro";
+import { ENGINES, type EngineKey } from "../../../../lib/observatory";
+
+export function getStaticPaths() {
+  return ENGINES.map((engine) => ({ params: { engine } }));
+}
+---
+
+<EnginePage locale="it" engine={Astro.params.engine as EngineKey} />

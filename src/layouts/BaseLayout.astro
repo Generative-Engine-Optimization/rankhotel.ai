@@ -1,6 +1,13 @@
 ---
 import "../styles/global.css";
-import { absolute, BRAND, type Locale } from "../lib/config";
+// I due font che compongono la prima schermata. Arrivando via @import dentro il
+// CSS, il browser li scopre solo dopo aver scaricato e analizzato 64 KB di
+// foglio di stile: il titolo resta in fallback per tutto quel tempo. Importarli
+// come asset dà l'URL con l'hash della build, che è l'unico modo di
+// preloadarli senza scriverlo a mano e vederlo scadere al build dopo.
+import displayFont from "@fontsource/unbounded/files/unbounded-latin-700-normal.woff2?url";
+import bodyFont from "@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2?url";
+import { absolute, BRAND, DEFAULT_LOCALE, OG_IMAGE, type Locale } from "../lib/config";
 
 type Alternate = { locale: Locale; href: string };
 
@@ -11,6 +18,10 @@ const {
   canonical,
   alternates = [],
   noindex = false,
+  image,
+  imageAlt,
+  xDefault,
+  schema,
 } = Astro.props as {
   title: string;
   description: string;
@@ -18,38 +29,87 @@ const {
   canonical: string;
   alternates?: Alternate[];
   noindex?: boolean;
+  image?: string;
+  imageAlt?: string;
+  xDefault?: string;
+  schema?: Record<string, unknown>;
 };
 
 const canonicalUrl = absolute(canonical);
+const ogImage = image ?? OG_IMAGE[locale];
+
+// hreflang: il cluster deve essere reciproco e completo. x-default punta alla
+// pagina di scelta lingua quando esiste (la radice), altrimenti alla versione
+// nella lingua di default: un cluster senza x-default lascia decidere al caso.
+const defaultHref =
+  xDefault ?? alternates.find((item) => item.locale === DEFAULT_LOCALE)?.href ?? canonical;
+
+const ogLocale = { it: "it_IT", en: "en_GB" } as const;
+const otherLocales = alternates
+  .map((item) => item.locale)
+  .filter((item) => item !== locale);
 ---
 
 <!doctype html>
 <html lang={locale}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+    <meta name="theme-color" content="#f8f7ff" />
+
+    <link rel="preload" as="font" type="font/woff2" href={displayFont} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={bodyFont} crossorigin />
+
     <link rel="canonical" href={canonicalUrl} />
     {noindex && <meta name="robots" content="noindex,follow" />}
     {
-      alternates.map((item) => (
-        <link
-          rel="alternate"
-          hreflang={item.locale}
-          href={absolute(item.href)}
+      !noindex && (
+        <meta
+          name="robots"
+          content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
         />
+      )
+    }
+    {
+      alternates.map((item) => (
+        <link rel="alternate" hreflang={item.locale} href={absolute(item.href)} />
       ))
     }
-    <link rel="alternate" hreflang="x-default" href={absolute("/it")} />
+    <link rel="alternate" hreflang="x-default" href={absolute(defaultHref)} />
+
     <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
     <meta name="description" content={description} />
+
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={BRAND} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={ogLocale[locale]} />
+    {
+      otherLocales.map((item) => (
+        <meta property="og:locale:alternate" content={ogLocale[item]} />
+      ))
+    }
+    <meta property="og:image" content={absolute(ogImage)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt ?? title} />
+
     <meta name="twitter:card" content="summary_large_image" />
-    <title>{title}</title>
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absolute(ogImage)} />
+    <meta name="twitter:image:alt" content={imageAlt ?? title} />
+
+    {schema && (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+    )}
     <slot name="head" />
   </head>
   <body>

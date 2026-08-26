@@ -1,0 +1,78 @@
+---
+import CtaBlock from "../components/CtaBlock.astro";
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/PageHero.astro";
+import Panel from "../components/Panel.astro";
+import Section from "../components/Section.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  LINKS,
+  assumptionsPath,
+  glossaryPath,
+  methodologyPath,
+  observatoryPath,
+  otherLocale,
+  type Locale,
+} from "../lib/config";
+import { messages } from "../lib/i18n";
+
+const { locale } = Astro.props as { locale: Locale };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+---
+
+<ObsLayout
+  locale={locale}
+  title={t.meta["assumptions-title"]}
+  description={t.meta["assumptions-description"]}
+  path={assumptionsPath(locale)}
+  altPath={assumptionsPath(other)}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={t.nav.assumptions}
+    icon="info"
+    title={t.assumptions.title}
+    lead={t.assumptions.lead}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: t.nav.assumptions },
+    ]}
+  />
+
+  <Section locale={locale} id="assunzioni" share={false}>
+    <ol class="grid gap-3.5 lg:grid-cols-2">
+      {
+        t.assumptions.items.map((item, index) => (
+          <li>
+            <Panel locale={locale} class="h-full">
+              <div class="flex items-start gap-3.5">
+                <span class="num text-[1.4rem] leading-none text-faint">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div class="grid gap-2">
+                  <h2 class="text-[1.05rem]">{item.title}</h2>
+                  <p class="text-muted">{item.body}</p>
+                </div>
+              </div>
+            </Panel>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <section class="section">
+    <div class="shell">
+      <CtaBlock
+        title={t.methodology.title}
+        body={t.methodology.lead}
+        primary={{ label: t.methodology.title, href: methodologyPath(locale) }}
+        secondary={[
+          { label: t.ui.glossary, href: glossaryPath(locale) },
+          { label: t.destination.back, href: observatoryPath(locale) },
+        ]}
+      />
+    </div>
+  </section>
+</ObsLayout>

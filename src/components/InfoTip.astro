@@ -1,0 +1,29 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import Icon from "./Icon.astro";
+
+// Spiegazione contestuale. Il testo sta nell'HTML anche a pannello chiuso:
+// chi legge senza JavaScript, e ogni crawler, lo trova comunque.
+const { locale, text, label } = Astro.props as {
+  locale: Locale;
+  text: string;
+  label?: string;
+};
+const t = messages(locale).observatory;
+---
+
+<details class="info-tip inline-block align-middle">
+  <summary
+    class="inline-flex cursor-pointer items-center text-faint transition-colors hover:text-accent-ink"
+    aria-label={label ?? t.ui.info}
+    title={label ?? t.ui.info}
+  >
+    <Icon name="info" size={15} />
+  </summary>
+  <div
+    class="absolute z-20 mt-1.5 w-[min(300px,80vw)] rounded-(--radius-brand) border border-line-strong bg-surface p-3 text-[0.86rem] leading-relaxed text-muted shadow-[0_10px_30px_-12px_rgba(9,4,29,0.35)]"
+  >
+    {text}
+  </div>
+</details>

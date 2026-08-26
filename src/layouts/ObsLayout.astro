@@ -1,0 +1,64 @@
+---
+import SiteShell from "../components/SiteShell.astro";
+import BaseLayout from "./BaseLayout.astro";
+import { isNoindex, otherLocale, type Locale } from "../lib/config";
+import { graph, organizationSchema, webPageSchema, webSiteSchema } from "../lib/schema";
+
+// Guscio comune a tutte le pagine dell'osservatorio: hreflang reciproci,
+// banner dei dati simulati, noindex finché il dataset non è reale.
+const {
+  locale,
+  title,
+  description,
+  path,
+  altPath,
+  schema,
+  pageType,
+  breadcrumb = true,
+} = Astro.props as {
+  locale: Locale;
+  title: string;
+  description: string;
+  path: string;
+  altPath: string;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+  pageType?: string;
+  breadcrumb?: boolean;
+};
+
+const other = otherLocale(locale);
+const alternates = [
+  { locale, href: path },
+  { locale: other, href: altPath },
+];
+
+// Un solo grafo per pagina: il nodo WebPage c'è sempre — anche dove prima non
+// c'era nessuno structured data — e i nodi specifici del template gli si
+// agganciano dentro lo stesso @graph.
+//
+// Organization e WebSite sono ripetuti su ogni pagina, non solo in home: un
+// motore generativo legge una pagina sola e deve poter risolvere lì chi
+// pubblica. Un `publisher: {"@id": ...}` che punta a un nodo definito altrove
+// è, per chi legge quella pagina, un riferimento nel vuoto.
+const extra = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+const pageSchema = graph([
+  organizationSchema(locale),
+  webSiteSchema(locale),
+  webPageSchema(locale, { title, description, path, type: pageType, breadcrumb }),
+  ...extra,
+]);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  locale={locale}
+  canonical={path}
+  alternates={alternates}
+  noindex={isNoindex(path)}
+  schema={pageSchema}
+>
+  <SiteShell locale={locale} alternatePath={altPath}>
+    <slot />
+  </SiteShell>
+</BaseLayout>

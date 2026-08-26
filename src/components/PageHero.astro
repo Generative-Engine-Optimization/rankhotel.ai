@@ -1,0 +1,86 @@
+---
+import { pathFor, type Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import { breadcrumbSchema } from "../lib/schema";
+import Breadcrumb from "./Breadcrumb.astro";
+import Icon from "./Icon.astro";
+
+// L'intestazione di pagina era ricopiata in otto template con otto spaziature
+// diverse. Qui è una sola, e la composizione 5/7 del brand vale per tutte.
+const {
+  locale,
+  eyebrow,
+  title,
+  lead,
+  breadcrumb = [],
+  icon,
+  cat,
+  compact = false,
+} = Astro.props as {
+  locale: Locale;
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  breadcrumb?: { label: string; href?: string }[];
+  icon?: string;
+  /** Chiave di categoria: tinge l'icona dell'occhiello con il colore della categoria. */
+  cat?: string;
+  compact?: boolean;
+};
+
+// Le briciole di pane erano solo grafica. Dichiarate come BreadcrumbList danno
+// a un motore la gerarchia del sito senza doverla dedurre dalle URL — ed è la
+// riga che compare sotto il titolo nei risultati.
+// La home mancava dalle briciole: la gerarchia partiva dall'osservatorio, come
+// se il sito cominciasse lì. Va aggiunta in pagina e nello schema insieme —
+// briciole visibili e dichiarate che dicono cose diverse sono un rilievo.
+const trail =
+  breadcrumb.length > 0
+    ? [
+        { label: messages(locale).common.nav.home, href: pathFor(locale) },
+        ...breadcrumb,
+        ...(breadcrumb.some((item) => !item.href) ? [] : [{ label: title }]),
+      ]
+    : [];
+
+const crumbs =
+  trail.length > 0
+    ? breadcrumbSchema(Astro.url.pathname.replace(/\/$/, "") || "/", trail)
+    : null;
+---
+
+<div class="hero" data-cat={cat}>
+  <section class={`shell hero-shell ${compact ? "is-compact" : ""}`}>
+    {crumbs && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify({ "@context": "https://schema.org", ...crumbs })}
+        is:inline
+      />
+    )}
+    {trail.length > 0 && (
+      <div class="mb-[clamp(20px,2.4vw,30px)]"><Breadcrumb items={trail} /></div>
+    )}
+    <div class="grid items-start gap-x-[38px] gap-y-[clamp(24px,3vw,34px)] lg:grid-cols-[5fr_7fr]">
+      <div class="grid gap-3.5">
+        {
+          eyebrow && (
+            <p class="eyebrow flex items-center gap-2">
+              {icon && (
+                <span class={cat ? "cat-ink" : undefined} data-cat={cat}>
+                  <Icon name={icon} size={15} />
+                </span>
+              )}
+              {eyebrow}
+            </p>
+          )
+        }
+        <h1>{title}</h1>
+      </div>
+      <div class="grid gap-[22px]">
+        {lead && <p class="lead">{lead}</p>}
+        <slot />
+      </div>
+    </div>
+  </section>
+</div>

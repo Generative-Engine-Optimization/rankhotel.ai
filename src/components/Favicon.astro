@@ -1,0 +1,73 @@
+---
+// Favicon di un dominio.
+//
+// Due comportamenti distinti, e la distinzione è di sostanza:
+//
+// - Dominio reale: si carica la favicon vera dal servizio di DuckDuckGo, con
+//   referrer disattivato. È l'unica richiesta esterna della pagina oltre ai
+//   tile della mappa, e vale la pena perché riconoscere booking.com da un
+//   portale locale a colpo d'occhio è metà del messaggio di questo sito.
+// - Dominio generato: nessuna richiesta. Un sito che non esiste non ha una
+//   favicon, e fingerla sarebbe la stessa bugia che il dataset evita altrove.
+//   Al suo posto un monogramma con l'iniziale, colorato in modo deterministico.
+const {
+  domain,
+  verified = false,
+  size = 16,
+} = Astro.props as { domain: string; verified?: boolean; size?: number };
+
+const letter = domain.replace(/^www\./, "").charAt(0).toUpperCase();
+
+// Tinta stabile per dominio: la stessa lettera su due domini diversi resta
+// distinguibile.
+let hash = 0;
+for (let i = 0; i < domain.length; i += 1) hash = (hash * 31 + domain.charCodeAt(i)) >>> 0;
+const hue = hash % 360;
+---
+
+{
+  verified ? (
+    <img
+      src={`https://icons.duckduckgo.com/ip3/${domain}.ico`}
+      width={size}
+      height={size}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      referrerpolicy="no-referrer"
+      class="shrink-0 rounded-[3px]"
+      style={`width:${size}px;height:${size}px`}
+      data-favicon={letter}
+      data-hue={hue}
+    />
+  ) : (
+    <span
+      class="inline-grid shrink-0 place-items-center rounded-[3px] font-mono font-bold"
+      style={`width:${size}px;height:${size}px;font-size:${Math.round(size * 0.6)}px;background:oklch(0.88 0.05 ${hue});color:oklch(0.38 0.09 ${hue})`}
+      aria-hidden="true"
+    >
+      {letter}
+    </span>
+  )
+}
+
+<script>
+  // Se la favicon non arriva (servizio giù, dominio senza icona, rete chiusa)
+  // il posto non resta vuoto: prende lo stesso monogramma degli altri.
+  document.querySelectorAll<HTMLImageElement>("img[data-favicon]").forEach((img) => {
+    img.addEventListener(
+      "error",
+      () => {
+        const span = document.createElement("span");
+        span.className =
+          "inline-grid shrink-0 place-items-center rounded-[3px] font-mono font-bold";
+        const size = img.width || 16;
+        span.style.cssText = `width:${size}px;height:${size}px;font-size:${Math.round(size * 0.6)}px;background:oklch(0.88 0.05 ${img.dataset.hue});color:oklch(0.38 0.09 ${img.dataset.hue})`;
+        span.textContent = img.dataset.favicon ?? "";
+        span.setAttribute("aria-hidden", "true");
+        img.replaceWith(span);
+      },
+      { once: true },
+    );
+  });
+</script>

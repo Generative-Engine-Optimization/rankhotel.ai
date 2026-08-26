@@ -1,0 +1,44 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import Icon from "./Icon.astro";
+
+// Precedente e successiva in classifica. Chi guarda una destinazione quasi
+// sempre vuole vedere quella sopra o quella sotto, e senza questo deve tornare
+// alla lista ogni volta.
+const { locale, prev, next } = Astro.props as {
+  locale: Locale;
+  prev?: { label: string; href: string; score: string };
+  next?: { label: string; href: string; score: string };
+};
+const t = messages(locale).observatory;
+---
+
+<nav class="grid gap-2.5 sm:grid-cols-2" aria-label={t.ui.prev}>
+  {
+    prev ? (
+      <a class="card flex items-center gap-3 hover:border-line-strong" href={prev.href}>
+        <span class="text-faint"><Icon name="arrowUp" size={18} /></span>
+        <span class="grid gap-0.5">
+          <span class="label">{t.ui.prev}</span>
+          <span class="font-bold">{prev.label}</span>
+        </span>
+        <span class="num ml-auto text-muted">{prev.score}</span>
+      </a>
+    ) : (
+      <span />
+    )
+  }
+  {
+    next && (
+      <a class="card flex items-center gap-3 hover:border-line-strong" href={next.href}>
+        <span class="text-faint"><Icon name="arrowDown" size={18} /></span>
+        <span class="grid gap-0.5">
+          <span class="label">{t.ui.next}</span>
+          <span class="font-bold">{next.label}</span>
+        </span>
+        <span class="num ml-auto text-muted">{next.score}</span>
+      </a>
+    )
+  }
+</nav>

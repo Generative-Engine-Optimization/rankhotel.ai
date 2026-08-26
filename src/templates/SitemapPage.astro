@@ -1,0 +1,249 @@
+---
+import Flag from "../components/Flag.astro";
+import Icon from "../components/Icon.astro";
+import MindmapNode from "../components/MindmapNode.astro";
+import PageHero from "../components/PageHero.astro";
+import Section from "../components/Section.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  assumptionsPath,
+  categoryPath,
+  comparePath,
+  destinationPath,
+  glossaryPath,
+  hotelsIndexPath,
+  mapPath,
+  methodologyPath,
+  observatoryPath,
+  otherLocale,
+  pathFor,
+  queriesPath,
+  sitemapPath,
+  tagPath,
+  tagsPath,
+  enginePath,
+  type Locale,
+} from "../lib/config";
+import { messages, plural } from "../lib/i18n";
+import {
+  ENGINES,
+  destinationIcon,
+  destinationsOf,
+  engineMeta,
+  listCategories,
+  listDestinations,
+  listTags,
+} from "../lib/observatory";
+
+const { locale } = Astro.props as { locale: Locale };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+const m = messages(locale).common;
+
+const categories = listCategories();
+const destinations = listDestinations();
+const tags = listTags();
+
+// La mappa mentale è un albero di dati, non un disegno scritto a mano: se
+// domani nasce una famiglia di pagine, compare qui senza toccare il markup.
+type Leaf = { label: string; href: string; note?: string; icon?: string; engine?: string };
+type Branch = {
+  key: string;
+  label: string;
+  note: string;
+  icon: string;
+  count: number;
+  leaves: Leaf[];
+  more?: { label: string; href: string };
+};
+
+const branches: Branch[] = [
+  {
+    key: "entry",
+    label: t.sitemap["branch-entry"],
+    note: t.sitemap["branch-entry-note"],
+    icon: "compass",
+    count: 3,
+    leaves: [
+      { label: t.national.leaderboard, href: `${observatoryPath(locale)}#classifica`, icon: "chart" },
+      { label: t.map.title, href: mapPath(locale), icon: "pin" },
+      { label: t.tags["index-title"], href: tagsPath(locale), icon: "tag" },
+    ],
+  },
+  {
+    key: "categories",
+    label: t.sitemap["branch-categories"],
+    note: t.sitemap["branch-categories-note"],
+    icon: "layers",
+    count: categories.length,
+    leaves: categories.map((category) => ({
+      label: category.name[locale],
+      href: categoryPath(locale, category.slug[locale]),
+      note: plural(locale, t.tags.count, { n: category.size }),
+      icon: category.icon,
+    })),
+  },
+  {
+    key: "destinations",
+    label: t.sitemap["branch-destinations"],
+    note: t.sitemap["branch-destinations-note"],
+    icon: "pin",
+    count: destinations.length,
+    // In una mappa mentale cento foglie non sono una mappa: qui si mostra la
+    // prima di ogni categoria e si rimanda all'elenco completo.
+    leaves: categories.map((category) => {
+      const first = destinationsOf(category.key)[0];
+      return {
+        label: first.name[locale],
+        href: destinationPath(locale, first.slug[locale]),
+        note: category.short[locale],
+        icon: destinationIcon(first),
+      };
+    }),
+    more: { label: t.sitemap["all-destinations"], href: mapPath(locale) },
+  },
+  {
+    key: "themes",
+    label: t.sitemap["branch-themes"],
+    note: t.sitemap["branch-themes-note"],
+    icon: "tag",
+    count: tags.length,
+    leaves: tags.map((tag) => ({
+      label: tag.name[locale],
+      href: tagPath(locale, tag.slug[locale]),
+      note: plural(locale, t.tags.count, { n: tag.count }),
+      icon: "tag",
+    })),
+  },
+  {
+    key: "engines",
+    label: t.sitemap["branch-engines"],
+    note: t.sitemap["branch-engines-note"],
+    icon: "robot",
+    count: ENGINES.length,
+    leaves: ENGINES.map((engine) => ({
+      label: engineMeta(engine)?.label ?? engine,
+      href: enginePath(locale, engine),
+      engine,
+    })),
+  },
+  {
+    key: "tools",
+    label: t.sitemap["branch-tools"],
+    note: t.sitemap["branch-tools-note"],
+    icon: "search",
+    count: 4,
+    leaves: [
+      { label: t.queries.title, href: queriesPath(locale), icon: "search" },
+      { label: t.compare.title, href: comparePath(locale), icon: "layers" },
+      { label: t.hotelsPage.title, href: hotelsIndexPath(locale), icon: "hotel" },
+      { label: t.map.title, href: mapPath(locale), icon: "pin" },
+    ],
+  },
+  {
+    key: "method",
+    label: t.sitemap["branch-method"],
+    note: t.sitemap["branch-method-note"],
+    icon: "info",
+    count: 3,
+    leaves: [
+      { label: t.methodology.title, href: methodologyPath(locale), icon: "chart" },
+      { label: t.assumptions.title, href: assumptionsPath(locale), icon: "info" },
+      { label: t.ui.glossary, href: glossaryPath(locale), icon: "quote" },
+    ],
+  },
+  {
+    key: "data",
+    label: t.sitemap["branch-data"],
+    note: t.sitemap["branch-data-note"],
+    icon: "globe",
+    count: 4,
+    leaves: [
+      { label: "/api/destinations.json", href: "/api/destinations.json", icon: "layers" },
+      { label: "/api/categories.json", href: "/api/categories.json", icon: "layers" },
+      { label: "/api/queries.json", href: "/api/queries.json", icon: "search" },
+      { label: "/llms.txt", href: "/llms.txt", icon: "robot" },
+    ],
+  },
+];
+
+// Il totale si conta dai rami, non si scrive a mano: un numero fisso in una
+// mappa del sito è la prima cosa che invecchia, e nessuno se ne accorge.
+const perLocale =
+  1 + // home
+  1 + // osservatorio
+  1 + // hotel
+  categories.length +
+  destinations.length +
+  tags.length +
+  ENGINES.length +
+  8; // mappa, domande, confronto, metodo, assunzioni, glossario, temi, questa
+const totalPages = perLocale * 2 + 1; // le due lingue più la radice
+
+// I rami si dispongono a due colonne attorno al centro sugli schermi larghi,
+// in colonna sotto. Metà a sinistra, metà a destra.
+const half = Math.ceil(branches.length / 2);
+const left = branches.slice(0, half);
+const right = branches.slice(half);
+---
+
+<ObsLayout
+  locale={locale}
+  title={t.sitemap["meta-title"]}
+  description={t.sitemap["meta-description"]}
+  path={sitemapPath(locale)}
+  altPath={sitemapPath(other)}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={t.sitemap.title}
+    icon="route"
+    title={t.sitemap.title}
+    lead={t.sitemap.lead}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: t.sitemap.title },
+    ]}
+    compact
+  />
+
+  <Section locale={locale} id="mappa-mentale" share={false}>
+    <div class="mindmap-grid">
+      <div class="mindmap-side">
+        {left.map((branch) => <MindmapNode branch={branch} side="left" />)}
+      </div>
+
+      <div class="mindmap-centre">
+        <div class="mindmap-hub">
+          <Icon name="chart" size={26} />
+          <strong>{t.sitemap.center}</strong>
+          <span class="num text-[0.8rem] text-muted">
+            {plural(locale, t.sitemap.pages, { n: totalPages })}
+          </span>
+        </div>
+        <div class="grid justify-items-center gap-2">
+          <a class="chip gap-1.5" href={pathFor(locale)}>
+            <Icon name="house" size={14} />
+            {t.sitemap.site}
+          </a>
+          <div class="flex gap-1.5">
+            <a class="chip gap-1.5" href={sitemapPath("it")} hreflang="it" data-active={locale === "it"}>
+              <Flag locale="it" size={16} />
+              IT
+            </a>
+            <a class="chip gap-1.5" href={sitemapPath("en")} hreflang="en" data-active={locale === "en"}>
+              <Flag locale="en" size={16} />
+              EN
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="mindmap-side">
+        {right.map((branch) => <MindmapNode branch={branch} side="right" />)}
+      </div>
+    </div>
+
+    <p class="text-[0.84rem] text-faint">{t.sitemap.legend}</p>
+  </Section>
+</ObsLayout>

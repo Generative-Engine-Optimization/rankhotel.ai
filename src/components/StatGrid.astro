@@ -1,0 +1,43 @@
+---
+import type { Locale } from "../lib/config";
+import InfoTip from "./InfoTip.astro";
+
+// Griglia di numeri con etichetta. Compariva in cinque template con cinque
+// markup diversi; qui è una sola forma con una sola spaziatura.
+const {
+  locale,
+  items,
+  columns = 4,
+  size = "md",
+} = Astro.props as {
+  locale: Locale;
+  items: { label: string; value: string; hint?: string; info?: string }[];
+  columns?: 2 | 3 | 4;
+  size?: "sm" | "md" | "lg";
+};
+
+const cols = {
+  2: "grid-cols-2",
+  3: "grid-cols-2 sm:grid-cols-3",
+  4: "grid-cols-2 sm:grid-cols-4",
+}[columns];
+
+const valueSize = { sm: "text-[1.05rem]", md: "text-[1.3rem]", lg: "text-[1.6rem]" }[size];
+---
+
+<!-- subgrid: senza, un item con `hint` alza il proprio valore e le colonne
+     accanto non sono più in linea. Le tre righe sono condivise da tutti. -->
+<dl class={`grid auto-rows-[auto_auto_1fr] gap-x-6 gap-y-5 ${cols}`}>
+  {
+    items.map((item) => (
+      <div class="row-span-3 grid grid-rows-subgrid gap-1">
+        <dt class="label flex items-center gap-1.5">
+          <span>{item.label}</span>
+          {item.info && <InfoTip locale={locale} text={item.info} />}
+        </dt>
+        <dd class={`num font-bold ${valueSize}`}>{item.value}</dd>
+        {item.hint && <dd class="text-[0.78rem] text-faint">{item.hint}</dd>}
+      </div>
+    ))
+  }
+</dl>

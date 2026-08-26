@@ -1,0 +1,116 @@
+---
+import type { Locale } from "../lib/config";
+import { messages } from "../lib/i18n";
+import Flag from "./Flag.astro";
+
+// Le lingue sono due, quindi non serve un menu a tendina: serve un interruttore
+// che mostri insieme dove sei e dove puoi andare.
+//
+// Quello di prima mostrava solo la lingua di destinazione — su una pagina
+// italiana compariva la bandiera inglese — e non c'era modo di sapere se
+// quella bandiera fosse lo stato attuale o la scelta disponibile. È
+// l'ambiguità classica di questo controllo: qui si risolve mostrando entrambe
+// le opzioni, con quella attiva marcata anche per chi non vede il colore.
+const {
+  locale,
+  alternatePath,
+  size = "md",
+} = Astro.props as {
+  locale: Locale;
+  alternatePath: string;
+  size?: "sm" | "md";
+};
+
+const m = messages(locale);
+const options: Locale[] = ["it", "en"];
+
+// La lingua attiva punta alla pagina corrente, non alla home: restare dove si
+// è è l'unico comportamento che non sorprende.
+const here = Astro.url.pathname;
+---
+
+<nav class={`lang ${size === "sm" ? "lang-sm" : ""}`} aria-label={m.common.locale.label}>
+  {
+    options.map((code) => (
+      <a
+        class="lang-opt"
+        href={code === locale ? here : alternatePath}
+        hreflang={code}
+        lang={code}
+        aria-label={m.common.locale[code]}
+        aria-current={code === locale ? "page" : undefined}
+      >
+        <Flag locale={code} size={size === "sm" ? 14 : 15} />
+        {code.toUpperCase()}
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  /* Gli stili stanno qui e non in global.css di proposito: sono il layout di
+     questo componente e di nessun altro, e Astro li incapsula, così una
+     riscrittura del foglio condiviso non può portarseli via.
+
+     La forma è un interruttore segmentato: due opzioni affiancate, quella
+     attiva riempita. Lo stato non è affidato al solo colore — c'è il fondo,
+     c'è il peso del carattere, e c'è aria-current per chi la pagina non la
+     vede. */
+  .lang {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-self: center;
+    align-items: center;
+    gap: 2px;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 2px;
+    background: var(--color-surface);
+  }
+
+  .lang-opt {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 5px;
+    min-height: 32px;
+    border-radius: 999px;
+    padding-inline: 10px;
+    color: var(--color-faint);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      background-color 140ms ease,
+      color 140ms ease;
+  }
+
+  .lang-opt:hover {
+    color: var(--color-ink);
+  }
+
+  .lang-opt[aria-current="page"] {
+    background: color-mix(in srgb, var(--color-accent) 13%, transparent);
+    color: var(--color-accent-ink);
+    font-weight: 700;
+  }
+
+  .lang-sm .lang-opt {
+    min-height: 26px;
+    gap: 4px;
+    padding-inline: 8px;
+    font-size: 0.72rem;
+  }
+
+  /* Sotto i 768px il selettore divide la riga con il menu, che scorre di lato:
+     qui si stringe quel tanto che basta a lasciargli spazio. */
+  @media (max-width: 767px) {
+    .lang-opt {
+      gap: 4px;
+      padding-inline: 8px;
+      font-size: 0.74rem;
+    }
+  }
+</style>

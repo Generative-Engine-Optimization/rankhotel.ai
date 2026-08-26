@@ -1,0 +1,49 @@
+---
+import { regionShape } from "../lib/regions";
+
+// La sagoma della regione, non la sua bandiera.
+//
+// Gli stemmi regionali sono araldici — il Leone di San Marco, il Pegaso, le due
+// aquile del Trentino — e a sedici pixel diventano una macchia: il Veneto da
+// solo pesa mezzo megabyte di SVG. La sagoma no: è un fatto geografico, sta in
+// quattrocento caratteri, e risponde alla domanda che si fa chi legge il nome
+// di un territorio che non conosce, cioè dov'è.
+//
+// Ogni sagoma è normalizzata nella sua scatola, ma la disegniamo dentro un
+// quadrato: in una colonna di tabella venti proporzioni diverse ballerebbero.
+const {
+  region,
+  size = 18,
+  class: className = "",
+} = Astro.props as { region: string; size?: number; class?: string };
+
+const shape = regionShape(region);
+
+// Un contorno sottile su un riempimento chiaro resta leggibile dove la sagoma
+// piena diventerebbe un blocco nero.
+const inset = 1.2;
+---
+
+{
+  shape && (
+    <svg
+      viewBox={`${-inset} ${-inset} ${shape.width + inset * 2} ${shape.height + inset * 2}`}
+      width={size}
+      height={size}
+      preserveAspectRatio="xMidYMid meet"
+      class={`shrink-0 ${className}`}
+      style={`width:${size}px;height:${size}px`}
+      role="img"
+      aria-label={shape.name}
+    >
+      <path
+        d={shape.path}
+        fill="currentColor"
+        fill-opacity="0.16"
+        stroke="currentColor"
+        stroke-width="4.5"
+        stroke-linejoin="round"
+      />
+    </svg>
+  )
+}

@@ -1,0 +1,129 @@
+---
+import CtaBlock from "../components/CtaBlock.astro";
+import DestinationCard from "../components/DestinationCard.astro";
+import DestinationTable from "../components/DestinationTable.astro";
+import Icon from "../components/Icon.astro";
+import MapIsland from "../components/MapIsland.astro";
+import PageHero from "../components/PageHero.astro";
+import Section from "../components/Section.astro";
+import ObsLayout from "../layouts/ObsLayout.astro";
+import {
+  observatoryPath,
+  otherLocale,
+  tagPath,
+  tagsPath,
+  type Locale,
+} from "../lib/config";
+import { interpolate, messages, plural } from "../lib/i18n";
+import { categoryByKey, findTagBySlug, listCategories, listTags, taggedWith } from "../lib/observatory";
+import { itemListSchema } from "../lib/schema";
+import { destinationPath } from "../lib/config";
+
+const { locale, slug } = Astro.props as { locale: Locale; slug: string };
+const other = otherLocale(locale);
+const t = messages(locale).observatory;
+
+const row = findTagBySlug(locale, slug)!;
+const tag = row.key;
+const category = categoryByKey(tag);
+const destinations = taggedWith(tag).sort((a, b) => b.score.mean - a.score.mean);
+const label = row.name[locale];
+
+const title = interpolate(t.tags["meta-title"], { tag: label });
+const description = interpolate(t.tags["meta-description"], { tag: label });
+const schema = itemListSchema(
+  locale,
+  title,
+  destinations.map((destination) => ({
+    name: destination.name[locale],
+    url: destinationPath(locale, destination.slug[locale]),
+  })),
+);
+---
+
+<ObsLayout
+  locale={locale}
+  title={title}
+  description={description}
+  path={tagPath(locale, slug)}
+  altPath={tagPath(other, row.slug[other])}
+  schema={schema}
+>
+  <PageHero
+    locale={locale}
+    eyebrow={t.tags.title}
+    icon={category?.icon ?? "tag"}
+    title={label}
+    lead={row.lead?.[locale] ?? (category ? category.lead[locale] : t.tags.lead)}
+    breadcrumb={[
+      { label: t.nav.observatory, href: observatoryPath(locale) },
+      { label: t.tags.title, href: tagsPath(locale) },
+      { label },
+    ]}
+    compact
+  >
+    <div class="grid gap-3.5">
+      <p class="num text-[1.2rem] font-bold">
+        {plural(locale, t.tags.count, { n: destinations.length })}
+      </p>
+      {/* Quali categorie attraversa questo tema: è la ragione per cui i temi
+          esistono accanto alle categorie invece che al posto loro. */}
+      <div class="flex flex-wrap gap-2">
+        {
+          listCategories()
+            .map((cat) => ({
+              cat,
+              n: destinations.filter((d) => d.category === cat.key).length,
+            }))
+            .filter((row) => row.n > 0)
+            .map((row) => (
+              <span class="chip chip-cat gap-1.5" data-cat={row.cat.key}>
+                <Icon name={row.cat.icon} size={14} />
+                {row.cat.short[locale]}
+                <span class="num text-faint">{row.n}</span>
+              </span>
+            ))
+        }
+      </div>
+    </div>
+  </PageHero>
+
+  <Section locale={locale} id="classifica" title={t.category["ranking-title"]}>
+    <DestinationTable locale={locale} destinations={destinations} showCategory id={`tag-${tag}`} />
+  </Section>
+
+  <Section locale={locale} id="mappa" title={t.map.title} lead={t.map.lead}>
+    <MapIsland locale={locale} destinations={destinations} height={420} showFilters={false} />
+  </Section>
+
+  <Section locale={locale} id="altri" title={t.tags.all} share={false}>
+    <div class="flex flex-wrap gap-2">
+      {
+        listTags()
+          .filter((item) => item.key !== tag)
+          .map((item) => (
+            <a
+              class="chip gap-1.5"
+              href={tagPath(locale, item.slug[locale])}
+              title={item.lead[locale]}
+            >
+              <Icon name={item.icon} size={14} />
+              {item.name[locale]}
+              <span class="num text-faint">{item.count}</span>
+            </a>
+          ))
+      }
+    </div>
+  </Section>
+
+  <section class="section">
+    <div class="shell">
+      <CtaBlock
+        title={t.cta.title}
+        body={t.cta.body}
+        primary={{ label: t.cta.button, href: observatoryPath(locale) }}
+        secondary={[{ label: t.destination.back, href: observatoryPath(locale) }]}
+      />
+    </div>
+  </section>
+</ObsLayout>

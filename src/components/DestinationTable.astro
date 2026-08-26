@@ -1,0 +1,249 @@
+---
+import RegionMark from "./RegionMark.astro";
+import EngineLogo from "./EngineLogo.astro";
+import Icon from "./Icon.astro";
+import TierBadge from "./TierBadge.astro";
+import { destinationPath, type Locale } from "../lib/config";
+import { compact, decimal, signed } from "../lib/format";
+import { messages } from "../lib/i18n";
+import {
+  ENGINES,
+  categoryByKey,
+  destinationIcon,
+  engineMeta,
+  scoreBand,
+  type Destination,
+} from "../lib/observatory";
+import Sparkline from "./Sparkline.astro";
+
+const {
+  locale,
+  destinations,
+  showCategory = false,
+  id = "ranking",
+} = Astro.props as {
+  locale: Locale;
+  destinations: Destination[];
+  showCategory?: boolean;
+  id?: string;
+};
+
+const t = messages(locale).observatory;
+
+// Stessa scala di colore del punteggio grande: la colonna si legge per
+// gradiente ancora prima di leggere le cifre.
+const scoreTone = (value: number) => {
+  const v = Math.max(0, Math.min(100, value));
+  const hue = 18 + (v / 100) * 128;
+  const chroma = 0.09 + (Math.abs(v - 50) / 50) * 0.05;
+  return `oklch(0.5 ${chroma.toFixed(3)} ${hue.toFixed(0)})`;
+};
+---
+
+<div class="grid gap-3.5" data-ranking id={id} data-error-label={t.filters.error}>
+  <div class="flex flex-wrap items-center gap-2" role="group" aria-label={t.engines.switch}>
+    <span class="text-[0.85rem] text-muted">{t.engines.switch}</span>
+    <button class="chip" type="button" data-engine="all" data-active="true">
+      {t.engines.all}
+    </button>
+    {
+      ENGINES.map((engine) => (
+        <button class="chip" type="button" data-engine={engine}>
+          <EngineLogo engine={engine} size={16} />
+        </button>
+      ))
+    }
+    <span class="text-[0.82rem] text-faint" data-ranking-status role="status"></span>
+  </div>
+
+  <p class="text-[0.85rem] text-muted">{t.rank.help}</p>
+
+  <div class="table-wrap table-dense">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col" class="w-12">#</th>
+          <th scope="col">
+            <span class="th-label"><Icon name="territory" size={13} />{t.table.destination}</span>
+          </th>
+          <th scope="col">{t.rank.tier}</th>
+          {showCategory && <th scope="col">{t.table.category}</th>}
+          <th scope="col" class="text-right">
+            <button class="sortable" type="button" data-sort="score" aria-sort="descending">
+              {t.table.score}
+            </button>
+          </th>
+          <th scope="col" class="text-right">
+            <button class="sortable" type="button" data-sort="visitors" aria-sort="none">
+              {t.table.visitors}
+            </button>
+          </th>
+          <th scope="col" class="text-right">
+            <button class="sortable" type="button" data-sort="trend" aria-sort="none">
+              {t.table.trend}
+            </button>
+          </th>
+          <th scope="col" class="text-right">{t.table.history}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          destinations.map((destination, index) => {
+            const category = categoryByKey(destination.category);
+            const engineScores = Object.fromEntries(
+              ENGINES.map((engine) => [engine, destination.byEngine[engine].score]),
+            );
+            return (
+              <tr
+                data-row
+                data-key={destination.key}
+                data-score={destination.score.mean}
+                data-visitors={destination.visitors}
+                data-trend={destination.trend}
+                data-engines={JSON.stringify(engineScores)}
+                data-sd={destination.score.stdDev}
+              >
+                <td class="num text-faint" data-rank>{index + 1}</td>
+                <td>
+                  <a
+                    class="inline-flex items-center gap-2 font-bold"
+                    href={destinationPath(locale, destination.slug[locale])}
+                  >
+                    <span class="text-faint">
+                      <Icon name={destinationIcon(destination)} size={16} />
+                    </span>
+                    {destination.name[locale]}
+                  </a>
+                  <span class="mt-0.5 flex items-center gap-1.5 text-[0.82rem] text-muted">
+                    <RegionMark region={destination.region} size={15} class="text-faint" />
+                    {destination.region}
+                  </span>
+                </td>
+                <td>
+                  <TierBadge locale={locale} tier={destination.tier} size="sm" />
+                </td>
+                {showCategory && (
+                  <td class="text-[0.86rem] text-muted" data-cat={destination.category}>
+                    <span class="inline-flex items-center gap-1.5">
+                      <span class="cat-ink">
+                        <Icon name={category?.icon ?? "tag"} size={15} />
+                      </span>
+                      {category?.short[locale]}
+                    </span>
+                  </td>
+                )}
+                <td class="text-right">
+                  <span class="inline-flex items-baseline justify-end gap-1.5" data-score-cell>
+                    <span
+                      class="font-display font-bold tabular-nums"
+                      style={`color:${scoreTone(destination.score.mean)}`}
+                    >
+                      {decimal(locale, destination.score.mean, 0)}
+                    </span>
+                    <span class="num text-[0.78rem] text-faint">
+                      ±{decimal(locale, destination.score.stdDev, 0)}
+                    </span>
+                  </span>
+                </td>
+                <td class="num text-right text-muted">
+                  {compact(locale, destination.visitors * 1000)}
+                </td>
+                <td
+                  class={`num text-right ${destination.trend > 0 ? "text-success-ink" : destination.trend < 0 ? "text-danger-ink" : "text-faint"}`}
+                >
+                  {signed(destination.trend, 1)}
+                </td>
+                <td class="text-right">
+                  <Sparkline values={destination.spark} width={70} height={22} />
+                </td>
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  import { api } from "../lib/api/client";
+
+  type Row = HTMLTableRowElement;
+
+  // Il contenuto della tabella è già nell'HTML (i crawler devono vederlo).
+  // Il cambio engine però passa davvero dall'API: è la stessa chiamata che
+  // domani farà il backend, con la stessa firma.
+  function setup(root: HTMLElement) {
+    const tbody = root.querySelector("tbody");
+    const status = root.querySelector<HTMLElement>("[data-ranking-status]");
+    if (!tbody) return;
+
+    const rows = () => Array.from(tbody.querySelectorAll<Row>("[data-row]"));
+    let engine = "all";
+    let sortKey = "score";
+    let dir: "asc" | "desc" = "desc";
+
+    const scoreOf = (row: Row) =>
+      engine === "all"
+        ? Number(row.dataset.score)
+        : JSON.parse(row.dataset.engines ?? "{}")[engine];
+
+    function paint() {
+      const list = rows();
+      const value = (row: Row) =>
+        sortKey === "score" ? scoreOf(row) : Number(row.dataset[sortKey as "visitors"]);
+      list.sort((a, b) => (value(a) - value(b)) * (dir === "asc" ? 1 : -1));
+      list.forEach((row, index) => {
+        const rank = row.querySelector("[data-rank]");
+        if (rank) rank.textContent = String(index + 1);
+        const cell = row.querySelector("[data-score-cell]");
+        if (cell) {
+          const score = Math.round(scoreOf(row));
+          const hue = 18 + (Math.max(0, Math.min(100, score)) / 100) * 128;
+          const chroma = 0.09 + (Math.abs(score - 50) / 50) * 0.05;
+          const tone = `oklch(0.5 ${chroma.toFixed(3)} ${hue.toFixed(0)})`;
+          const band =
+            engine === "all"
+              ? `<span class="num text-[0.78rem] text-faint">±${Math.round(Number(row.dataset.sd))}</span>`
+              : "";
+          cell.innerHTML = `<span class="font-display font-bold tabular-nums" style="color:${tone}">${score}</span>${band}`;
+        }
+        tbody.appendChild(row);
+      });
+    }
+
+    root.querySelectorAll<HTMLButtonElement>("[data-engine]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const next = button.dataset.engine ?? "all";
+        root.querySelectorAll("[data-engine]").forEach((b) =>
+          b.setAttribute("data-active", String(b === button)),
+        );
+        if (status) status.textContent = "…";
+        try {
+          // Chiamata reale all'endpoint: latenza, errori e stati inclusi.
+          await api.rankBy(next);
+          engine = next;
+          sortKey = "score";
+          dir = "desc";
+          paint();
+          if (status) status.textContent = "";
+        } catch {
+          if (status) status.textContent = root.dataset.errorLabel ?? "...";
+        }
+      });
+    });
+
+    root.querySelectorAll<HTMLButtonElement>("[data-sort]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const key = button.dataset.sort ?? "score";
+        dir = sortKey === key && dir === "desc" ? "asc" : "desc";
+        sortKey = key;
+        root.querySelectorAll("[data-sort]").forEach((b) => b.setAttribute("aria-sort", "none"));
+        button.setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
+        paint();
+      });
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-ranking]").forEach(setup);
+</script>
