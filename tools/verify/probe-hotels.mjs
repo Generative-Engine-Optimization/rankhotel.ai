@@ -8,9 +8,18 @@
 //
 // I toponimi non sono inventati: sono i nomi delle destinazioni e le entità
 // reali già censite a mano nel seed.
+//
+// ATTENZIONE al punto debole di questo metodo, che per un po' è stato un bug
+// vero: il dominio lo costruiamo NOI dal nome del luogo, quindi ritrovarci il
+// nome del luogo non prova niente. `colosseohotel.com` risponde, il titolo
+// dice "hotel", e per un anno è stato un albergo di Roma: è l'Hotel Colosseo
+// di Shkodër, in Albania. Per questo ogni risposta passa da geo-check, che
+// chiede alla pagina due prove che non abbiamo messo noi — che sia in Italia
+// e che sia in questo territorio.
 
 import { writeFile } from "node:fs/promises";
 import { DESTINATIONS } from "../seed/destinations.mjs";
+import { verdictFor } from "./geo-check.mjs";
 
 const TIMEOUT = 6500;
 const CONCURRENCY = 24;
@@ -68,7 +77,7 @@ const LODGING_TITLE =
 const JUNK =
   /(dominio|domain).{0,20}(vendita|sale|parcheggi|parking|default)|acquista questo dominio|buy this domain|sedo\.com|godaddy|register\.it|aruba\.it|in costruzione|under construction|coming soon|hostinger|namecheap/i;
 
-async function probe(domain) {
+async function probe(domain, destination) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT);
   try {
@@ -85,7 +94,7 @@ async function probe(domain) {
     const landed = new URL(response.url).hostname.replace(/^www\./, "");
     if (landed !== domain) return null;
 
-    const body = (await response.text()).slice(0, 40000);
+    const body = (await response.text()).slice(0, 160000);
     const title = (body.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "")
       .replace(/&#0?39;|&apos;/g, "'")
       .replace(/&amp;/g, "&")
@@ -95,7 +104,16 @@ async function probe(domain) {
     if (!title || title.length < 6) return null;
     if (JUNK.test(title) || JUNK.test(body.slice(0, 4000))) return null;
     if (!LODGING_TITLE.test(title)) return null;
-    return { domain, title };
+
+    // Il controllo che mancava. Senza, qui entrava qualunque struttura del
+    // mondo il cui dominio somigliasse a un toponimo italiano.
+    const clean = body
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ");
+    const geo = verdictFor({ title, body: clean, destination, candidate: { domain } });
+    if (geo.verdict !== "verificato") return null;
+
+    return { domain, title, why: geo.why };
   } catch {
     return null;
   } finally {
@@ -144,7 +162,7 @@ for (const dest of slice) {
   for (const domain of candidatesFor(dest)) {
     if (seen.has(domain)) continue;
     seen.add(domain);
-    jobs.push({ dest: dest.key, domain });
+    jobs.push({ dest: dest.key, destination: dest, domain });
   }
 }
 
@@ -157,9 +175,10 @@ await Promise.all(
   Array.from({ length: CONCURRENCY }, async () => {
     while (queue.length) {
       const job = queue.pop();
-      const hit = await probe(job.domain);
+      const hit = await probe(job.domain, job.destination);
       done += 1;
-      if (hit) found.push({ ...job, ...hit });
+      // `job.destination` è l'oggetto intero: serve al controllo, non al file.
+      if (hit) found.push({ dest: job.dest, ...hit });
       if (done % 500 === 0) {
         console.log(`  ${done}/${jobs.length} · trovate ${found.length}`);
       }

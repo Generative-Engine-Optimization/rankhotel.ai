@@ -102,7 +102,8 @@
       },
       {
         "q": "I numeri pubblicati adesso sono misurazioni reali?",
-        "a": "No, non ancora. In questa fase i valori sono generati a scopo dimostrativo per costruire e mostrare lo strumento, e lo dichiariamo su ogni pagina. Non vanno citati come risultati. Quando partiranno le rilevazioni vere il banner sparirà e i numeri diventeranno misurati."
+        "a": "No, non ancora. In questa fase i valori sono generati a scopo dimostrativo per costruire e mostrare lo strumento, e lo dichiariamo su ogni pagina. Non vanno citati come risultati. Quando partiranno le rilevazioni vere il banner sparirà e i numeri diventeranno misurati.",
+        "demo": true
       }
     ]
   },

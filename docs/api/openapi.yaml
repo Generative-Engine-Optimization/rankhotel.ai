@@ -1,0 +1,2471 @@
+openapi: "3.1.0"
+info:
+  title: "Italian AI Visibility Report — API dell'osservatorio"
+  version: "1.0.0"
+  description: "Il contratto fra il sito e il backend.\n\nGenerato da `tools/api/openapi.mjs` a partire da `tools/api/contract.mjs`:\nnon modificare a mano, si riscrive a ogni `npm run api:spec`.\n\nRegole valide per tutti gli endpoint:\n- ogni 2xx è un envelope `{data, meta}`;\n- ogni errore è `{error: {status, code, message}}`;\n- le mappe per engine contengono sempre chatgpt, gemini e perplexity;\n- le percentuali sono frazioni 0-1, i punteggi sono 0-100;\n- le chiavi sono stabili nel tempo: finiscono nelle URL pubbliche.\n\nLa conformità si verifica con `npm run api:check -- --base <url>`."
+servers:
+  - url: "https://api.rankhotel.ai/v1"
+    description: "Backend (da realizzare)"
+  - url: "https://www.rankhotel.ai/api/v1"
+    description: "Fixture statiche generate dal sito"
+paths:
+  "/meta":
+    get:
+      operationId: "meta"
+      summary: "Costanti del dataset: engine, pesi, fasce, bot, controlli, temi."
+      description: "Costanti del dataset: engine, pesi, fasce, bot, controlli, temi.\n\nUsato da: Tutte le pagine. È il primo endpoint chiamato da ogni build."
+      parameters: []
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "object"
+                    required:
+                      - "generatedFor"
+                      - "seedVersion"
+                      - "simulated"
+                      - "engines"
+                      - "weights"
+                      - "runsPerMonth"
+                      - "historyMonths"
+                      - "firstMeasurement"
+                      - "sitesVerifiedOn"
+                      - "nationalDmo"
+                      - "regionalDmo"
+                      - "hotelsPerDestination"
+                      - "volatileThreshold"
+                      - "tiers"
+                      - "demandTiers"
+                      - "siteKinds"
+                      - "crawlers"
+                      - "auditChecks"
+                      - "tags"
+                    properties:
+                      generatedFor:
+                        type: "string"
+                        pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+                      seedVersion:
+                        type: "string"
+                      simulated:
+                        type: "boolean"
+                      engines:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "label"
+                            - "vendor"
+                            - "popularityBias"
+                            - "editorialBias"
+                            - "officialBias"
+                            - "crawlers"
+                          properties:
+                            key:
+                              type: "string"
+                              enum:
+                                - "chatgpt"
+                                - "gemini"
+                                - "perplexity"
+                            label:
+                              type: "string"
+                            vendor:
+                              type: "string"
+                            popularityBias:
+                              type: "number"
+                              minimum: 0
+                              maximum: 1
+                            editorialBias:
+                              type: "number"
+                              minimum: 0
+                              maximum: 1
+                            officialBias:
+                              type: "number"
+                              minimum: 0
+                              maximum: 1
+                            crawlers:
+                              type: "array"
+                              items:
+                                type: "string"
+                      weights:
+                        type: "object"
+                        required:
+                          - "comparative"
+                          - "internal"
+                          - "sources"
+                          - "technical"
+                        additionalProperties:
+                          type: "number"
+                          minimum: 0
+                          maximum: 100
+                      runsPerMonth:
+                        type: "integer"
+                        minimum: 1
+                      historyMonths:
+                        type: "integer"
+                        minimum: 1
+                      firstMeasurement:
+                        type: "string"
+                        pattern: "^\\d{4}-\\d{2}$"
+                      sitesVerifiedOn:
+                        type: "string"
+                        pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+                      nationalDmo:
+                        type: "object"
+                        required:
+                          - "domain"
+                          - "holder"
+                        properties:
+                          domain:
+                            type: "string"
+                          holder:
+                            type: "string"
+                      regionalDmo:
+                        type: "object"
+                        additionalProperties:
+                          type: "string"
+                      hotelsPerDestination:
+                        type: "integer"
+                        minimum: 1
+                      volatileThreshold:
+                        type: "number"
+                        minimum: 0
+                      tiers:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "min"
+                            - "name"
+                          properties:
+                            key:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            min:
+                              type: "number"
+                            name:
+                              $ref: "#/components/schemas/LocalizedText"
+                      demandTiers:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "min"
+                            - "name"
+                          properties:
+                            key:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            min:
+                              type: "number"
+                            name:
+                              $ref: "#/components/schemas/LocalizedText"
+                      siteKinds:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "name"
+                            - "short"
+                            - "note"
+                          properties:
+                            key:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            name:
+                              $ref: "#/components/schemas/LocalizedText"
+                            short:
+                              $ref: "#/components/schemas/LocalizedText"
+                            note:
+                              $ref: "#/components/schemas/LocalizedText"
+                      crawlers:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "engine"
+                            - "purpose"
+                          properties:
+                            key:
+                              type: "string"
+                            engine:
+                              type:
+                                - "string"
+                                - "null"
+                              enum:
+                                - "chatgpt"
+                                - "gemini"
+                                - "perplexity"
+                            purpose:
+                              $ref: "#/components/schemas/LocalizedText"
+                      auditChecks:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "weight"
+                            - "name"
+                          properties:
+                            key:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            weight:
+                              type: "number"
+                              minimum: 0
+                            name:
+                              $ref: "#/components/schemas/LocalizedText"
+                      tags:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "slug"
+                            - "icon"
+                            - "name"
+                            - "lead"
+                          properties:
+                            key:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            slug:
+                              $ref: "#/components/schemas/LocalizedText"
+                            icon:
+                              type: "string"
+                            name:
+                              $ref: "#/components/schemas/LocalizedText"
+                            lead:
+                              $ref: "#/components/schemas/LocalizedText"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/national":
+    get:
+      operationId: "national"
+      summary: "La vista nazionale aggregata, con classifica e movimenti del mese."
+      description: "La vista nazionale aggregata, con classifica e movimenti del mese.\n\nUsato da: Home, indice osservatorio, pagine engine."
+      parameters: []
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "object"
+                    required:
+                      - "updatedAt"
+                      - "destinations"
+                      - "hotelsTracked"
+                      - "sitesAudited"
+                      - "hotelsReal"
+                      - "hotelsVerified"
+                      - "sitesVerified"
+                      - "sitesGenerated"
+                      - "promptsPerDestination"
+                      - "runsPerMonth"
+                      - "responsesAnalyzed"
+                      - "score"
+                      - "byEngine"
+                      - "factors"
+                      - "sourceMix"
+                      - "langGap"
+                      - "funnel"
+                      - "crawlers"
+                      - "topRising"
+                      - "topFalling"
+                      - "leaderboard"
+                    properties:
+                      updatedAt:
+                        type: "string"
+                        pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+                      destinations:
+                        type: "integer"
+                        minimum: 1
+                      hotelsTracked:
+                        type: "integer"
+                        minimum: 0
+                      sitesAudited:
+                        type: "integer"
+                        minimum: 0
+                      hotelsReal:
+                        type: "integer"
+                        minimum: 0
+                      hotelsVerified:
+                        type: "integer"
+                        minimum: 0
+                      sitesVerified:
+                        type: "integer"
+                        minimum: 0
+                      sitesGenerated:
+                        type: "integer"
+                        minimum: 0
+                      promptsPerDestination:
+                        type: "integer"
+                        minimum: 1
+                      runsPerMonth:
+                        type: "integer"
+                        minimum: 1
+                      responsesAnalyzed:
+                        type: "integer"
+                        minimum: 0
+                      score:
+                        type: "number"
+                        minimum: 0
+                        maximum: 100
+                      byEngine:
+                        type: "object"
+                        required:
+                          - "chatgpt"
+                          - "gemini"
+                          - "perplexity"
+                        additionalProperties:
+                          type: "number"
+                          minimum: 0
+                          maximum: 100
+                      factors:
+                        type: "object"
+                        required:
+                          - "comparative"
+                          - "internal"
+                          - "sources"
+                          - "technical"
+                        additionalProperties:
+                          type: "number"
+                          minimum: 0
+                          maximum: 100
+                      sourceMix:
+                        $ref: "#/components/schemas/SourceMix"
+                      langGap:
+                        type: "object"
+                        required:
+                          - "it"
+                          - "en"
+                        additionalProperties:
+                          type: "number"
+                          minimum: 0
+                          maximum: 100
+                      funnel:
+                        type: "object"
+                        additionalProperties:
+                          type: "number"
+                          minimum: 0
+                          maximum: 100
+                      crawlers:
+                        type: "object"
+                        additionalProperties:
+                          type: "object"
+                          required:
+                            - "engine"
+                            - "purpose"
+                            - "allow"
+                            - "partial"
+                            - "block"
+                          properties:
+                            engine:
+                              type:
+                                - "string"
+                                - "null"
+                              enum:
+                                - "chatgpt"
+                                - "gemini"
+                                - "perplexity"
+                            purpose:
+                              $ref: "#/components/schemas/LocalizedText"
+                            allow:
+                              type: "number"
+                              minimum: 0
+                              maximum: 1
+                            partial:
+                              type: "number"
+                              minimum: 0
+                              maximum: 1
+                            block:
+                              type: "number"
+                              minimum: 0
+                              maximum: 1
+                      topRising:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "name"
+                            - "trend"
+                            - "score"
+                          properties:
+                            key:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            name:
+                              $ref: "#/components/schemas/LocalizedText"
+                            trend:
+                              type: "number"
+                            score:
+                              type: "number"
+                              minimum: 0
+                              maximum: 100
+                      topFalling:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "name"
+                            - "trend"
+                            - "score"
+                          properties:
+                            key:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            name:
+                              $ref: "#/components/schemas/LocalizedText"
+                            trend:
+                              type: "number"
+                            score:
+                              type: "number"
+                              minimum: 0
+                              maximum: 100
+                      leaderboard:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "name"
+                            - "slug"
+                            - "score"
+                            - "category"
+                          properties:
+                            key:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            name:
+                              $ref: "#/components/schemas/LocalizedText"
+                            slug:
+                              $ref: "#/components/schemas/LocalizedText"
+                            score:
+                              type: "number"
+                              minimum: 0
+                              maximum: 100
+                            category:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/categories":
+    get:
+      operationId: "categories"
+      summary: "Le cinque categorie di confronto, con la loro classifica interna."
+      description: "Le cinque categorie di confronto, con la loro classifica interna.\n\nUsato da: Indice osservatorio, pagine categoria, filtri delle query."
+      parameters: []
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Category"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/categories/{key}":
+    get:
+      operationId: "category"
+      summary: "Una singola categoria. 404 se la chiave non esiste."
+      description: "Una singola categoria. 404 se la chiave non esiste.\n\nUsato da: Pagina categoria, quando serve senza scaricare l'elenco intero."
+      parameters:
+        - name: "key"
+          in: "path"
+          required: true
+          description: "Chiave stabile. Esempio: `mare`."
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Category"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/destinations":
+    get:
+      operationId: "destinations"
+      summary: "Le 100 destinazioni in classifica, filtrabili e ordinabili."
+      description: "Le 100 destinazioni in classifica, filtrabili e ordinabili.\n\nUsato da: Classifica nazionale, pagine categoria e tema, mappa, confronto."
+      parameters:
+        - name: "q"
+          in: "query"
+          required: false
+          description: "Ricerca su nome e regione, senza accenti."
+          schema:
+            type: "string"
+        - name: "category"
+          in: "query"
+          required: false
+          description: "Chiave categoria primaria."
+          schema:
+            type: "string"
+        - name: "tag"
+          in: "query"
+          required: false
+          description: "Tema: include anche la categoria primaria."
+          schema:
+            type: "string"
+        - name: "region"
+          in: "query"
+          required: false
+          description: "Nome regione, esatto."
+          schema:
+            type: "string"
+        - name: "tier"
+          in: "query"
+          required: false
+          description: "Chiave fascia (a…e)."
+          schema:
+            type: "string"
+        - name: "engine"
+          in: "query"
+          required: false
+          description: "Ordina per il punteggio di questo engine invece che per la media."
+          schema:
+            type: "string"
+            enum:
+              - "chatgpt"
+              - "gemini"
+              - "perplexity"
+        - name: "sort"
+          in: "query"
+          required: false
+          description: "Campo di ordinamento."
+          schema:
+            type: "string"
+            enum:
+              - "score"
+              - "visitors"
+              - "demand"
+              - "trend"
+              - "name"
+              - "nationalRank"
+            default: "score"
+        - name: "dir"
+          in: "query"
+          required: false
+          description: "Verso dell'ordinamento."
+          schema:
+            type: "string"
+            enum:
+              - "asc"
+              - "desc"
+            default: "desc"
+        - name: "page"
+          in: "query"
+          required: false
+          description: "Pagina, 1-based."
+          schema:
+            type: "integer"
+            default: 1
+        - name: "pageSize"
+          in: "query"
+          required: false
+          description: "Righe per pagina. Massimo 500."
+          schema:
+            type: "integer"
+            default: 60
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Destination"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/destinations/{key}":
+    get:
+      operationId: "destination"
+      summary: "Il dettaglio completo di una destinazione: punteggi, storico, prompt, risposte, siti, hotel, query. ~110 KB. 404 se la chiave non esiste."
+      description: "Il dettaglio completo di una destinazione: punteggi, storico, prompt, risposte, siti, hotel, query. ~110 KB. 404 se la chiave non esiste.\n\nUsato da: Scheda destinazione (200 pagine) e pagina di confronto."
+      parameters:
+        - name: "key"
+          in: "path"
+          required: true
+          description: "Chiave stabile. Esempio: `roma`."
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "object"
+                    required:
+                      - "key"
+                      - "name"
+                      - "slug"
+                      - "region"
+                      - "lat"
+                      - "lng"
+                      - "category"
+                      - "tags"
+                      - "visitors"
+                      - "demand"
+                      - "demandTier"
+                      - "grammar"
+                      - "score"
+                      - "factors"
+                      - "byEngine"
+                      - "categoryRank"
+                      - "categoryRankRange"
+                      - "categorySize"
+                      - "nationalRank"
+                      - "rankRange"
+                      - "tier"
+                      - "trend"
+                      - "hotelsTracked"
+                      - "topHotel"
+                      - "sourceMix"
+                      - "spark"
+                      - "knownFor"
+                      - "updatedAt"
+                      - "runsPerMonth"
+                      - "scoreDetail"
+                      - "history"
+                      - "entities"
+                      - "prompts"
+                      - "summary"
+                      - "sites"
+                      - "sources"
+                      - "hotels"
+                      - "queries"
+                      - "answers"
+                      - "technical"
+                    properties:
+                      key:
+                        type: "string"
+                        pattern: "^[a-z0-9][a-z0-9-]*$"
+                      name:
+                        $ref: "#/components/schemas/LocalizedText"
+                      slug:
+                        $ref: "#/components/schemas/LocalizedText"
+                      region:
+                        type: "string"
+                      lat:
+                        type: "number"
+                        minimum: 35
+                        maximum: 48
+                      lng:
+                        type: "number"
+                        minimum: 6
+                        maximum: 19
+                      category:
+                        type: "string"
+                        pattern: "^[a-z0-9][a-z0-9-]*$"
+                      tags:
+                        type: "array"
+                        items:
+                          type: "string"
+                          pattern: "^[a-z0-9][a-z0-9-]*$"
+                      visitors:
+                        type: "number"
+                        minimum: 0
+                      demand:
+                        type: "number"
+                        minimum: 0
+                      demandTier:
+                        type: "string"
+                        pattern: "^[a-z0-9][a-z0-9-]*$"
+                      grammar:
+                        $ref: "#/components/schemas/Grammar"
+                      score:
+                        $ref: "#/components/schemas/Stat"
+                      factors:
+                        type: "object"
+                        required:
+                          - "comparative"
+                          - "internal"
+                          - "sources"
+                          - "technical"
+                        additionalProperties:
+                          type: "number"
+                          minimum: 0
+                          maximum: 100
+                      byEngine:
+                        type: "object"
+                        required:
+                          - "chatgpt"
+                          - "gemini"
+                          - "perplexity"
+                        additionalProperties:
+                          type: "object"
+                          required:
+                            - "score"
+                            - "rank"
+                          properties:
+                            score:
+                              type: "number"
+                              minimum: 0
+                              maximum: 100
+                            rank:
+                              type: "integer"
+                              minimum: 1
+                      categoryRank:
+                        type: "integer"
+                        minimum: 1
+                      categoryRankRange:
+                        type: "array"
+                        prefixItems:
+                          - type: "integer"
+                            minimum: 1
+                          - type: "integer"
+                            minimum: 1
+                        minItems: 2
+                        maxItems: 2
+                      categorySize:
+                        type: "integer"
+                        minimum: 1
+                      nationalRank:
+                        type: "integer"
+                        minimum: 1
+                      rankRange:
+                        type: "array"
+                        prefixItems:
+                          - type: "integer"
+                            minimum: 1
+                          - type: "integer"
+                            minimum: 1
+                        minItems: 2
+                        maxItems: 2
+                      tier:
+                        type: "string"
+                        pattern: "^[a-z0-9][a-z0-9-]*$"
+                      trend:
+                        type: "number"
+                      hotelsTracked:
+                        type: "integer"
+                        minimum: 0
+                      topHotel:
+                        type: "object"
+                        required:
+                          - "key"
+                          - "name"
+                        properties:
+                          key:
+                            type: "string"
+                          name:
+                            type: "string"
+                      sourceMix:
+                        $ref: "#/components/schemas/SourceMix"
+                      spark:
+                        type: "array"
+                        items:
+                          type: "number"
+                      knownFor:
+                        type: "array"
+                        items:
+                          type: "string"
+                      updatedAt:
+                        type: "string"
+                        pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+                      runsPerMonth:
+                        type: "integer"
+                        minimum: 1
+                      scoreDetail:
+                        type: "object"
+                        required:
+                          - "overall"
+                          - "byEngine"
+                        properties:
+                          overall:
+                            type: "object"
+                            required:
+                              - "score"
+                              - "factors"
+                            properties:
+                              score:
+                                $ref: "#/components/schemas/Stat"
+                              factors:
+                                type: "object"
+                                required:
+                                  - "comparative"
+                                  - "internal"
+                                  - "sources"
+                                  - "technical"
+                                additionalProperties:
+                                  $ref: "#/components/schemas/Stat"
+                          byEngine:
+                            type: "object"
+                            required:
+                              - "chatgpt"
+                              - "gemini"
+                              - "perplexity"
+                            additionalProperties:
+                              type: "object"
+                              required:
+                                - "score"
+                                - "factors"
+                              properties:
+                                score:
+                                  $ref: "#/components/schemas/Stat"
+                                factors:
+                                  type: "object"
+                                  required:
+                                    - "comparative"
+                                    - "internal"
+                                    - "sources"
+                                    - "technical"
+                                  additionalProperties:
+                                    $ref: "#/components/schemas/Stat"
+                      history:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "month"
+                            - "score"
+                            - "byEngine"
+                          properties:
+                            month:
+                              type: "string"
+                              pattern: "^\\d{4}-\\d{2}$"
+                            score:
+                              $ref: "#/components/schemas/Stat"
+                            byEngine:
+                              type: "object"
+                              required:
+                                - "chatgpt"
+                                - "gemini"
+                                - "perplexity"
+                              additionalProperties:
+                                $ref: "#/components/schemas/Stat"
+                      entities:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "name"
+                            - "byEngine"
+                          properties:
+                            name:
+                              type: "string"
+                            byEngine:
+                              type: "object"
+                              required:
+                                - "chatgpt"
+                                - "gemini"
+                                - "perplexity"
+                              additionalProperties:
+                                type: "number"
+                                minimum: 0
+                                maximum: 1
+                      prompts:
+                        type: "object"
+                        required:
+                          - "comparative"
+                          - "internal"
+                        properties:
+                          comparative:
+                            type: "array"
+                            items:
+                              $ref: "#/components/schemas/Prompt"
+                          internal:
+                            type: "array"
+                            items:
+                              $ref: "#/components/schemas/Prompt"
+                      summary:
+                        type: "object"
+                        required:
+                          - "byFunnel"
+                          - "byLang"
+                          - "byLevel"
+                          - "byFunnelLang"
+                        additionalProperties:
+                          type: "object"
+                          additionalProperties:
+                            $ref: "#/components/schemas/SummaryCell"
+                      sites:
+                        type: "array"
+                        items:
+                          $ref: "#/components/schemas/Site"
+                      sources:
+                        type: "object"
+                        required:
+                          - "byKind"
+                          - "top"
+                          - "quality"
+                        properties:
+                          byKind:
+                            $ref: "#/components/schemas/SourceMix"
+                          top:
+                            type: "array"
+                            items:
+                              type: "object"
+                              required:
+                                - "domain"
+                                - "kind"
+                                - "label"
+                                - "synthetic"
+                                - "verified"
+                                - "holder"
+                                - "scope"
+                                - "share"
+                                - "occurrences"
+                              properties:
+                                domain:
+                                  type: "string"
+                                kind:
+                                  type: "string"
+                                label:
+                                  type: "string"
+                                synthetic:
+                                  type: "boolean"
+                                verified:
+                                  type: "boolean"
+                                holder:
+                                  type:
+                                    - "string"
+                                    - "null"
+                                scope:
+                                  type:
+                                    - "string"
+                                    - "null"
+                                share:
+                                  type: "number"
+                                  minimum: 0
+                                  maximum: 1
+                                occurrences:
+                                  type: "integer"
+                                  minimum: 0
+                          quality:
+                            type: "number"
+                            minimum: 0
+                            maximum: 100
+                      hotels:
+                        type: "array"
+                        items:
+                          $ref: "#/components/schemas/Hotel"
+                      queries:
+                        type: "array"
+                        items:
+                          $ref: "#/components/schemas/QueryDetail"
+                      answers:
+                        type: "object"
+                        required:
+                          - "destination"
+                          - "hotels"
+                        properties:
+                          destination:
+                            type: "array"
+                            items:
+                              $ref: "#/components/schemas/Answer"
+                          hotels:
+                            type: "array"
+                            items:
+                              $ref: "#/components/schemas/Answer"
+                      technical:
+                        type: "object"
+                        required:
+                          - "chatgpt"
+                          - "gemini"
+                          - "perplexity"
+                        additionalProperties:
+                          type: "number"
+                          minimum: 0
+                          maximum: 100
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/hotels":
+    get:
+      operationId: "hotels"
+      summary: "Le strutture in classifica nazionale, filtrabili per destinazione."
+      description: "Le strutture in classifica nazionale, filtrabili per destinazione.\n\nUsato da: Pagina hotel."
+      parameters:
+        - name: "q"
+          in: "query"
+          required: false
+          description: "Ricerca su nome struttura e dominio."
+          schema:
+            type: "string"
+        - name: "destination"
+          in: "query"
+          required: false
+          description: "Chiave destinazione."
+          schema:
+            type: "string"
+        - name: "category"
+          in: "query"
+          required: false
+          description: "Chiave categoria."
+          schema:
+            type: "string"
+        - name: "realOnly"
+          in: "query"
+          required: false
+          description: "Solo strutture reali: esclude `synthetic: true`."
+          schema:
+            type: "boolean"
+            default: "false"
+        - name: "sort"
+          in: "query"
+          required: false
+          description: "Campo di ordinamento."
+          schema:
+            type: "string"
+            enum:
+              - "score"
+              - "presence"
+              - "avgPosition"
+              - "auditScore"
+              - "trend"
+              - "name"
+              - "stars"
+            default: "score"
+        - name: "dir"
+          in: "query"
+          required: false
+          description: "Verso dell'ordinamento."
+          schema:
+            type: "string"
+            enum:
+              - "asc"
+              - "desc"
+            default: "desc"
+        - name: "page"
+          in: "query"
+          required: false
+          description: "Pagina, 1-based."
+          schema:
+            type: "integer"
+            default: 1
+        - name: "pageSize"
+          in: "query"
+          required: false
+          description: "Righe per pagina. Massimo 500."
+          schema:
+            type: "integer"
+            default: 60
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/HotelSummary"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/queries":
+    get:
+      operationId: "queries"
+      summary: "L'indice della domanda: una riga per prompt monitorato, con volume, CPC, variazione annua e dodici mesi di storico."
+      description: "L'indice della domanda: una riga per prompt monitorato, con volume, CPC, variazione annua e dodici mesi di storico.\n\nUsato da: Pagina query, con filtri che girano davvero sull'endpoint."
+      parameters:
+        - name: "q"
+          in: "query"
+          required: false
+          description: "Ricerca sul testo della query."
+          schema:
+            type: "string"
+        - name: "category"
+          in: "query"
+          required: false
+          description: "Chiave categoria."
+          schema:
+            type: "string"
+        - name: "destination"
+          in: "query"
+          required: false
+          description: "Chiave destinazione."
+          schema:
+            type: "string"
+        - name: "lang"
+          in: "query"
+          required: false
+          description: "Lingua della domanda."
+          schema:
+            type: "string"
+            enum:
+              - "it"
+              - "en"
+        - name: "funnel"
+          in: "query"
+          required: false
+          description: "Stadio del funnel."
+          schema:
+            type: "string"
+        - name: "level"
+          in: "query"
+          required: false
+          description: "Prompt comparativo o di approfondimento."
+          schema:
+            type: "string"
+            enum:
+              - "comparative"
+              - "internal"
+        - name: "cluster"
+          in: "query"
+          required: false
+          description: "Cluster tematico."
+          schema:
+            type: "string"
+        - name: "sort"
+          in: "query"
+          required: false
+          description: "Campo di ordinamento."
+          schema:
+            type: "string"
+            enum:
+              - "volume"
+              - "cpc"
+              - "yoy"
+              - "difficulty"
+              - "text"
+            default: "volume"
+        - name: "dir"
+          in: "query"
+          required: false
+          description: "Verso dell'ordinamento."
+          schema:
+            type: "string"
+            enum:
+              - "asc"
+              - "desc"
+            default: "desc"
+        - name: "page"
+          in: "query"
+          required: false
+          description: "Pagina, 1-based."
+          schema:
+            type: "integer"
+            default: 1
+        - name: "pageSize"
+          in: "query"
+          required: false
+          description: "Righe per pagina. Massimo 500."
+          schema:
+            type: "integer"
+            default: 60
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/QuerySummary"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/queries/{category}":
+    get:
+      operationId: "queriesByCategory"
+      summary: "Il segmento di indice di una categoria. Esiste per non far scaricare 1,1 MB a chi guarda una categoria sola."
+      description: "Il segmento di indice di una categoria. Esiste per non far scaricare 1,1 MB a chi guarda una categoria sola.\n\nUsato da: Pagina query, al primo filtro per categoria."
+      parameters:
+        - name: "category"
+          in: "path"
+          required: true
+          description: "Chiave stabile. Esempio: `mare`."
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/QuerySummary"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/prompts":
+    get:
+      operationId: "prompts"
+      summary: "I 50 template di prompt e i cinque stadi del funnel."
+      description: "I 50 template di prompt e i cinque stadi del funnel.\n\nUsato da: Metodologia, assunzioni, scheda destinazione."
+      parameters: []
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "object"
+                    required:
+                      - "templates"
+                      - "funnel"
+                    properties:
+                      templates:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "level"
+                            - "funnel"
+                            - "lang"
+                            - "template"
+                          properties:
+                            key:
+                              type: "string"
+                            level:
+                              type: "string"
+                              enum:
+                                - "comparative"
+                                - "internal"
+                            funnel:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            lang:
+                              type: "string"
+                              enum:
+                                - "it"
+                                - "en"
+                            template:
+                              type: "string"
+                      funnel:
+                        type: "array"
+                        items:
+                          type: "object"
+                          required:
+                            - "key"
+                            - "icon"
+                            - "inScope"
+                            - "name"
+                            - "lead"
+                          properties:
+                            key:
+                              type: "string"
+                              pattern: "^[a-z0-9][a-z0-9-]*$"
+                            icon:
+                              type: "string"
+                            inScope:
+                              type: "boolean"
+                            name:
+                              $ref: "#/components/schemas/LocalizedText"
+                            lead:
+                              $ref: "#/components/schemas/LocalizedText"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  "/tags":
+    get:
+      operationId: "tags"
+      summary: "I temi in uso, con quante destinazioni li portano. Ordinati per conteggio decrescente; i temi a zero non sono serviti."
+      description: "I temi in uso, con quante destinazioni li portano. Ordinati per conteggio decrescente; i temi a zero non sono serviti.\n\nUsato da: Indice temi, pagine tema, navigazione laterale."
+      parameters: []
+      responses:
+        "200":
+          description: "Risposta conforme al contratto."
+          headers:
+            Cache-Control:
+              description: "Il dataset cambia una volta al mese."
+              schema:
+                type: "string"
+                example: "public, max-age=86400"
+          content:
+            "application/json":
+              schema:
+                type: "object"
+                required:
+                  - "data"
+                  - "meta"
+                properties:
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Tag"
+                  meta:
+                    $ref: "#/components/schemas/ResponseMeta"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+components:
+  securitySchemes:
+    bearer:
+      type: "http"
+      scheme: "bearer"
+      description: "Opzionale. Vedi `API_TOKEN`."
+  responses:
+    Error:
+      description: "Errore."
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/ApiError"
+  schemas:
+    LocalizedText:
+      type: "object"
+      required:
+        - "it"
+        - "en"
+      properties:
+        it:
+          type: "string"
+        en:
+          type: "string"
+    Stat:
+      type: "object"
+      required:
+        - "mean"
+        - "stdDev"
+        - "min"
+        - "max"
+        - "runs"
+        - "stability"
+      properties:
+        mean:
+          type: "number"
+        stdDev:
+          type: "number"
+          minimum: 0
+        min:
+          type: "number"
+        max:
+          type: "number"
+        runs:
+          type: "integer"
+          minimum: 1
+        stability:
+          type: "string"
+          enum:
+            - "stable"
+            - "moderate"
+            - "volatile"
+    CrawlerMap:
+      type: "object"
+      additionalProperties:
+        type: "string"
+        enum:
+          - "allow"
+          - "block"
+          - "partial"
+    Audit:
+      type: "object"
+      required:
+        - "score"
+        - "checks"
+      properties:
+        score:
+          type: "number"
+          minimum: 0
+          maximum: 100
+        checks:
+          type: "object"
+          additionalProperties:
+            type: "string"
+            enum:
+              - "pass"
+              - "warn"
+              - "fail"
+    SourceMix:
+      type: "object"
+      required:
+        - "dmo"
+        - "editorial"
+        - "ota"
+        - "other"
+      additionalProperties:
+        type: "number"
+        minimum: 0
+        maximum: 1
+    Grammar:
+      type: "object"
+      required:
+        - "article"
+        - "prep"
+        - "articleEn"
+      properties:
+        article:
+          type: "string"
+        prep:
+          type: "string"
+        articleEn:
+          type: "string"
+    Destination:
+      type: "object"
+      required:
+        - "key"
+        - "name"
+        - "slug"
+        - "region"
+        - "lat"
+        - "lng"
+        - "category"
+        - "tags"
+        - "visitors"
+        - "demand"
+        - "demandTier"
+        - "grammar"
+        - "score"
+        - "factors"
+        - "byEngine"
+        - "categoryRank"
+        - "categoryRankRange"
+        - "categorySize"
+        - "nationalRank"
+        - "rankRange"
+        - "tier"
+        - "trend"
+        - "hotelsTracked"
+        - "topHotel"
+        - "sourceMix"
+        - "spark"
+      properties:
+        key:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        name:
+          $ref: "#/components/schemas/LocalizedText"
+        slug:
+          $ref: "#/components/schemas/LocalizedText"
+        region:
+          type: "string"
+        lat:
+          type: "number"
+          minimum: 35
+          maximum: 48
+        lng:
+          type: "number"
+          minimum: 6
+          maximum: 19
+        category:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        tags:
+          type: "array"
+          items:
+            type: "string"
+            pattern: "^[a-z0-9][a-z0-9-]*$"
+        visitors:
+          type: "number"
+          minimum: 0
+        demand:
+          type: "number"
+          minimum: 0
+        demandTier:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        grammar:
+          $ref: "#/components/schemas/Grammar"
+        score:
+          $ref: "#/components/schemas/Stat"
+        factors:
+          type: "object"
+          required:
+            - "comparative"
+            - "internal"
+            - "sources"
+            - "technical"
+          additionalProperties:
+            type: "number"
+            minimum: 0
+            maximum: 100
+        byEngine:
+          type: "object"
+          required:
+            - "chatgpt"
+            - "gemini"
+            - "perplexity"
+          additionalProperties:
+            type: "object"
+            required:
+              - "score"
+              - "rank"
+            properties:
+              score:
+                type: "number"
+                minimum: 0
+                maximum: 100
+              rank:
+                type: "integer"
+                minimum: 1
+        categoryRank:
+          type: "integer"
+          minimum: 1
+        categoryRankRange:
+          type: "array"
+          prefixItems:
+            - type: "integer"
+              minimum: 1
+            - type: "integer"
+              minimum: 1
+          minItems: 2
+          maxItems: 2
+        categorySize:
+          type: "integer"
+          minimum: 1
+        nationalRank:
+          type: "integer"
+          minimum: 1
+        rankRange:
+          type: "array"
+          prefixItems:
+            - type: "integer"
+              minimum: 1
+            - type: "integer"
+              minimum: 1
+          minItems: 2
+          maxItems: 2
+        tier:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        trend:
+          type: "number"
+        hotelsTracked:
+          type: "integer"
+          minimum: 0
+        topHotel:
+          type: "object"
+          required:
+            - "key"
+            - "name"
+          properties:
+            key:
+              type: "string"
+            name:
+              type: "string"
+        sourceMix:
+          $ref: "#/components/schemas/SourceMix"
+        spark:
+          type: "array"
+          items:
+            type: "number"
+    Category:
+      type: "object"
+      required:
+        - "key"
+        - "slug"
+        - "name"
+        - "short"
+        - "icon"
+        - "lead"
+        - "comparativeSubject"
+        - "size"
+        - "score"
+        - "byEngine"
+        - "factors"
+        - "visitors"
+        - "hotelsTracked"
+        - "ranking"
+      properties:
+        key:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        slug:
+          $ref: "#/components/schemas/LocalizedText"
+        name:
+          $ref: "#/components/schemas/LocalizedText"
+        short:
+          $ref: "#/components/schemas/LocalizedText"
+        icon:
+          type: "string"
+        lead:
+          $ref: "#/components/schemas/LocalizedText"
+        comparativeSubject:
+          $ref: "#/components/schemas/LocalizedText"
+        size:
+          type: "integer"
+          minimum: 1
+        score:
+          type: "number"
+          minimum: 0
+          maximum: 100
+        byEngine:
+          type: "object"
+          required:
+            - "chatgpt"
+            - "gemini"
+            - "perplexity"
+          additionalProperties:
+            type: "number"
+            minimum: 0
+            maximum: 100
+        factors:
+          type: "object"
+          required:
+            - "comparative"
+            - "internal"
+            - "sources"
+            - "technical"
+          additionalProperties:
+            type: "number"
+            minimum: 0
+            maximum: 100
+        visitors:
+          type: "number"
+          minimum: 0
+        hotelsTracked:
+          type: "integer"
+          minimum: 0
+        ranking:
+          type: "array"
+          items:
+            type: "string"
+            pattern: "^[a-z0-9][a-z0-9-]*$"
+    HotelSummary:
+      type: "object"
+      required:
+        - "key"
+        - "name"
+        - "destination"
+        - "destinationName"
+        - "category"
+        - "area"
+        - "stars"
+        - "domain"
+        - "synthetic"
+        - "confidence"
+        - "score"
+        - "byEngine"
+        - "presence"
+        - "avgPosition"
+        - "auditScore"
+        - "trend"
+        - "destinationRank"
+      properties:
+        key:
+          type: "string"
+        name:
+          type: "string"
+        destination:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        destinationName:
+          $ref: "#/components/schemas/LocalizedText"
+        category:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        area:
+          type:
+            - "string"
+            - "null"
+        stars:
+          type: "integer"
+          minimum: 1
+          maximum: 5
+        domain:
+          type: "string"
+        synthetic:
+          type: "boolean"
+        confidence:
+          type: "string"
+          enum:
+            - "verified"
+            - "registry-web"
+            - "registry"
+            - "chain"
+            - "guarded"
+            - "listed"
+            - "generated"
+        score:
+          $ref: "#/components/schemas/Stat"
+        byEngine:
+          type: "object"
+          required:
+            - "chatgpt"
+            - "gemini"
+            - "perplexity"
+          additionalProperties:
+            type: "number"
+            minimum: 0
+            maximum: 100
+        presence:
+          type: "number"
+          minimum: 0
+          maximum: 1
+        avgPosition:
+          type: "number"
+          minimum: 0
+        auditScore:
+          type: "number"
+          minimum: 0
+          maximum: 100
+        trend:
+          type: "number"
+        destinationRank:
+          type: "integer"
+          minimum: 1
+    QuerySummary:
+      type: "object"
+      required:
+        - "key"
+        - "destination"
+        - "category"
+        - "scope"
+        - "funnel"
+        - "lang"
+        - "level"
+        - "cluster"
+        - "text"
+        - "volume"
+        - "cpc"
+        - "yoy"
+        - "difficulty"
+        - "spark"
+      properties:
+        key:
+          type: "string"
+        destination:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        category:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        scope:
+          type: "string"
+          enum:
+            - "destination"
+            - "category"
+        funnel:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        lang:
+          type: "string"
+          enum:
+            - "it"
+            - "en"
+        level:
+          type: "string"
+          enum:
+            - "comparative"
+            - "internal"
+        cluster:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        text:
+          type: "string"
+        volume:
+          type: "number"
+          minimum: 0
+        cpc:
+          type: "number"
+          minimum: 0
+        yoy:
+          type: "number"
+        difficulty:
+          type: "number"
+          minimum: 0
+          maximum: 100
+        spark:
+          type: "array"
+          items:
+            type: "number"
+            minimum: 0
+    Site:
+      type: "object"
+      required:
+        - "domain"
+        - "kind"
+        - "label"
+        - "synthetic"
+        - "verified"
+        - "holder"
+        - "scope"
+        - "source"
+        - "note"
+        - "verifiedOn"
+        - "crawlers"
+        - "audit"
+      properties:
+        domain:
+          type: "string"
+        kind:
+          type: "string"
+          enum:
+            - "dmo"
+            - "editorial"
+            - "ota"
+            - "hotel"
+        label:
+          type: "string"
+        synthetic:
+          type: "boolean"
+        verified:
+          type: "boolean"
+        holder:
+          type:
+            - "string"
+            - "null"
+        scope:
+          type:
+            - "string"
+            - "null"
+        source:
+          type:
+            - "string"
+            - "null"
+        note:
+          type:
+            - "string"
+            - "null"
+        verifiedOn:
+          type:
+            - "string"
+            - "null"
+          pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+        crawlers:
+          $ref: "#/components/schemas/CrawlerMap"
+        audit:
+          $ref: "#/components/schemas/Audit"
+    Hotel:
+      type: "object"
+      required:
+        - "key"
+        - "name"
+        - "destination"
+        - "confidence"
+        - "area"
+        - "stars"
+        - "domain"
+        - "synthetic"
+        - "chainDomain"
+        - "rank"
+        - "score"
+        - "byEngine"
+        - "presence"
+        - "avgPosition"
+        - "auditScore"
+        - "trend"
+        - "crawlers"
+        - "audit"
+      properties:
+        key:
+          type: "string"
+        name:
+          type: "string"
+        destination:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        confidence:
+          type: "string"
+        area:
+          type:
+            - "string"
+            - "null"
+        stars:
+          type: "integer"
+          minimum: 1
+          maximum: 5
+        domain:
+          type: "string"
+        synthetic:
+          type: "boolean"
+        chainDomain:
+          type: "boolean"
+        status:
+          type:
+            - "string"
+            - "null"
+        note:
+          type:
+            - "string"
+            - "null"
+        rank:
+          type: "integer"
+          minimum: 1
+        score:
+          $ref: "#/components/schemas/Stat"
+        byEngine:
+          type: "object"
+          required:
+            - "chatgpt"
+            - "gemini"
+            - "perplexity"
+          additionalProperties:
+            type: "object"
+            required:
+              - "score"
+              - "presence"
+              - "position"
+            properties:
+              score:
+                type: "number"
+                minimum: 0
+                maximum: 100
+              presence:
+                type: "number"
+                minimum: 0
+                maximum: 1
+              position:
+                type: "number"
+                minimum: 0
+        presence:
+          type: "number"
+          minimum: 0
+          maximum: 1
+        avgPosition:
+          type: "number"
+          minimum: 0
+        auditScore:
+          type: "number"
+          minimum: 0
+          maximum: 100
+        trend:
+          type: "number"
+        crawlers:
+          $ref: "#/components/schemas/CrawlerMap"
+        audit:
+          $ref: "#/components/schemas/Audit"
+    Prompt:
+      type: "object"
+      required:
+        - "key"
+        - "lang"
+        - "funnel"
+        - "level"
+        - "text"
+        - "byEngine"
+      properties:
+        key:
+          type: "string"
+        lang:
+          type: "string"
+          enum:
+            - "it"
+            - "en"
+        funnel:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        level:
+          type: "string"
+          enum:
+            - "comparative"
+            - "internal"
+        text:
+          type: "string"
+        byEngine:
+          type: "object"
+          required:
+            - "chatgpt"
+            - "gemini"
+            - "perplexity"
+          additionalProperties:
+            type: "object"
+            required:
+              - "mentionRate"
+              - "position"
+              - "runs"
+            properties:
+              mentionRate:
+                type: "number"
+                minimum: 0
+                maximum: 1
+              position:
+                type: "number"
+                minimum: 0
+              runs:
+                type: "integer"
+                minimum: 0
+    AnswerBlock:
+      oneOf:
+        - type: "object"
+          required:
+            - "kind"
+            - "text"
+          properties:
+            kind:
+              type: "string"
+              enum:
+                - "p"
+            text:
+              type: "string"
+        - type: "object"
+          required:
+            - "kind"
+            - "ordered"
+            - "items"
+          properties:
+            kind:
+              type: "string"
+              enum:
+                - "list"
+            ordered:
+              type: "boolean"
+            items:
+              type: "array"
+              items:
+                type: "object"
+                required:
+                  - "label"
+                  - "text"
+                properties:
+                  label:
+                    type: "string"
+                  text:
+                    type: "string"
+    Answer:
+      type: "object"
+      required:
+        - "promptKey"
+        - "promptText"
+        - "subject"
+        - "level"
+        - "funnel"
+        - "lang"
+        - "engine"
+        - "capturedAt"
+        - "run"
+        - "mentioned"
+        - "position"
+        - "mentionRate"
+        - "hotelKeys"
+        - "highlights"
+        - "citations"
+        - "blocks"
+      properties:
+        promptKey:
+          type: "string"
+        promptText:
+          type: "string"
+        subject:
+          type: "string"
+          enum:
+            - "destination"
+            - "hotels"
+        level:
+          type: "string"
+          enum:
+            - "comparative"
+            - "internal"
+        funnel:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        lang:
+          type: "string"
+          enum:
+            - "it"
+            - "en"
+        engine:
+          type: "string"
+          enum:
+            - "chatgpt"
+            - "gemini"
+            - "perplexity"
+        capturedAt:
+          type: "string"
+          pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+        run:
+          type: "integer"
+          minimum: 1
+        mentioned:
+          type: "boolean"
+        position:
+          type:
+            - "number"
+            - "null"
+          minimum: 0
+        mentionRate:
+          type: "number"
+          minimum: 0
+          maximum: 1
+        hotelKeys:
+          type: "array"
+          items:
+            type: "string"
+        highlights:
+          type: "array"
+          items:
+            type: "string"
+        citations:
+          type: "array"
+          items:
+            type: "object"
+            required:
+              - "index"
+              - "domain"
+              - "kind"
+              - "label"
+              - "synthetic"
+            properties:
+              index:
+                type:
+                  - "integer"
+                  - "null"
+              domain:
+                type: "string"
+              kind:
+                type: "string"
+              label:
+                type: "string"
+              synthetic:
+                type: "boolean"
+        blocks:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/AnswerBlock"
+    QueryDetail:
+      type: "object"
+      required:
+        - "key"
+        - "destination"
+        - "category"
+        - "scope"
+        - "promptKey"
+        - "level"
+        - "funnel"
+        - "lang"
+        - "text"
+        - "cluster"
+        - "volume"
+        - "cpc"
+        - "yoy"
+        - "difficulty"
+        - "fanout"
+        - "history"
+      properties:
+        key:
+          type: "string"
+        destination:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        category:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        scope:
+          type: "string"
+          enum:
+            - "destination"
+            - "category"
+        promptKey:
+          type: "string"
+        level:
+          type: "string"
+          enum:
+            - "comparative"
+            - "internal"
+        funnel:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        lang:
+          type: "string"
+          enum:
+            - "it"
+            - "en"
+        text:
+          type: "string"
+        cluster:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        volume:
+          type: "number"
+          minimum: 0
+        cpc:
+          type: "number"
+          minimum: 0
+        yoy:
+          type: "number"
+        difficulty:
+          type: "number"
+          minimum: 0
+          maximum: 100
+        fanout:
+          type: "array"
+          items:
+            type: "object"
+            required:
+              - "text"
+              - "share"
+            properties:
+              text:
+                type: "string"
+              share:
+                type: "number"
+                minimum: 0
+                maximum: 1
+        history:
+          type: "array"
+          items:
+            type: "object"
+            required:
+              - "month"
+              - "volume"
+              - "cpc"
+            properties:
+              month:
+                type: "string"
+                pattern: "^\\d{4}-\\d{2}$"
+              volume:
+                type: "number"
+                minimum: 0
+              cpc:
+                type: "number"
+                minimum: 0
+    SummaryCell:
+      type: "object"
+      required:
+        - "byEngine"
+        - "mentionRate"
+        - "prompts"
+      properties:
+        byEngine:
+          type: "object"
+          required:
+            - "chatgpt"
+            - "gemini"
+            - "perplexity"
+          additionalProperties:
+            type: "object"
+            required:
+              - "mentionRate"
+              - "position"
+            properties:
+              mentionRate:
+                type: "number"
+                minimum: 0
+                maximum: 1
+              position:
+                type: "number"
+                minimum: 0
+        mentionRate:
+          type: "number"
+          minimum: 0
+          maximum: 1
+        prompts:
+          type: "integer"
+          minimum: 0
+    Tag:
+      type: "object"
+      required:
+        - "key"
+        - "slug"
+        - "icon"
+        - "name"
+        - "lead"
+        - "count"
+      properties:
+        key:
+          type: "string"
+          pattern: "^[a-z0-9][a-z0-9-]*$"
+        slug:
+          $ref: "#/components/schemas/LocalizedText"
+        icon:
+          type: "string"
+        name:
+          $ref: "#/components/schemas/LocalizedText"
+        lead:
+          $ref: "#/components/schemas/LocalizedText"
+        count:
+          type: "integer"
+          minimum: 1
+    ResponseMeta:
+      type: "object"
+      required:
+        - "generatedFor"
+        - "version"
+      properties:
+        generatedFor:
+          type: "string"
+          pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+        version:
+          type: "string"
+        total:
+          type: "integer"
+          minimum: 0
+        page:
+          type: "integer"
+          minimum: 1
+        pageSize:
+          type: "integer"
+          minimum: 1
+        simulated:
+          type: "boolean"
+    ApiError:
+      type: "object"
+      required:
+        - "error"
+      properties:
+        error:
+          type: "object"
+          required:
+            - "status"
+            - "code"
+            - "message"
+          properties:
+            status:
+              type: "integer"
+              minimum: 400
+              maximum: 599
+            code:
+              type: "string"
+              enum:
+                - "not_found"
+                - "bad_request"
+                - "unauthorized"
+                - "rate_limited"
+                - "server_error"
+            message:
+              type: "string"

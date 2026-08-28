@@ -7,6 +7,10 @@
 //
 // Il nome non lo decidiamo noi: lo legge la pagina. È l'unica cosa che rende
 // questi dati diversi da nomi inventati bene.
+//
+// E il luogo nemmeno: lo prova la pagina, tramite geo-check. Una riga che
+// arriva senza quella prova entra come `listed`, non come `verified` — sono
+// due affermazioni diverse e il sito le mostra diverse.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { VERIFIED_HOTELS } from "../seed/verified-hotels.mjs";
@@ -156,7 +160,11 @@ for (const [rows, source] of [
       domain: row.domain,
       stars: starsFrom(row.title),
       area: null,
-      confidence: "verified",
+      // "verified" non si assegna per decreto: la sonda lo scrive solo quando
+      // geo-check ha trovato la prova che la struttura è in Italia e in questo
+      // territorio. Prima qui c'era la costante "verified", ed è il motivo per
+      // cui un albergo albanese risultava una struttura romana verificata.
+      confidence: row.why ? "verified" : "listed",
       source,
     });
     counts[source] += 1;

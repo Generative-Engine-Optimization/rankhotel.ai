@@ -1,31 +1,42 @@
 import type { Locale } from "./config";
-import categoriesJson from "../data/observatory/categories.json";
-import destinationsJson from "../data/observatory/destinations.json";
-import hotelsJson from "../data/observatory/hotels.json";
-import metaJson from "../data/observatory/meta.json";
-import nationalJson from "../data/observatory/national.json";
-import promptsJson from "../data/observatory/prompts.json";
+import { server } from "./api/server";
+import type {
+  CategoryDTO,
+  DestinationDTO,
+  DestinationDetailDTO,
+  EngineKey,
+  FactorKey,
+  MetaDTO,
+  NationalDTO,
+  Stat,
+  TagDTO,
+} from "./api/types";
 
-export type EngineKey = "chatgpt" | "gemini" | "perplexity";
-export type FactorKey = "comparative" | "internal" | "sources" | "technical";
+// Il modello di dominio del sito.
+//
+// Da qui in giù non si sa più da dove arrivino i dati: li chiede a
+// `./api/server`, che legge dalle fixture o da un backend vero a seconda di
+// `PUBLIC_API_SOURCE`. Prima questo file importava sei JSON, e cambiare
+// sorgente avrebbe voluto dire riscrivere le cinquanta pagine che lo usano.
+//
+// Il caricamento è un `await` di modulo: succede una volta per build, prima che
+// qualunque pagina venga renderizzata, e tiene sincrone le funzioni qui sotto —
+// che è la ragione per cui nessun template ha dovuto cambiare.
+const [dataset, tagList] = await Promise.all([server.dataset(), server.tags()]);
 
-export type Stat = {
-  mean: number;
-  stdDev: number;
-  min: number;
-  max: number;
-  runs: number;
-  stability: "stable" | "moderate" | "volatile";
-};
+// I tipi del dominio sono quelli del contratto API: un solo posto in cui è
+// scritto che forma ha una destinazione, ed è il file che si dà a chi scrive
+// il backend.
+export type { EngineKey, FactorKey, Stat };
+export type Category = CategoryDTO;
+export type Destination = DestinationDTO;
+export type NationalView = NationalDTO;
+export type Meta = MetaDTO;
+export type Tag = TagDTO;
 
-export type Category = (typeof categoriesJson)[number];
-export type Destination = (typeof destinationsJson)[number];
-export type NationalView = typeof nationalJson;
-export type Meta = typeof metaJson;
-
-export const META = metaJson as Meta;
-export const NATIONAL = nationalJson as NationalView;
-export const ENGINES = META.engines.map((e) => e.key) as EngineKey[];
+export const META = dataset.meta;
+export const NATIONAL = dataset.national;
+export const ENGINES = META.engines.map((engine) => engine.key);
 export const SCORE_WEIGHTS = META.weights;
 export const FACTOR_KEYS: FactorKey[] = [
   "comparative",
@@ -34,8 +45,8 @@ export const FACTOR_KEYS: FactorKey[] = [
   "technical",
 ];
 
-const categories = categoriesJson as Category[];
-const destinations = destinationsJson as Destination[];
+const categories = dataset.categories;
+const destinations = dataset.destinations;
 
 export function listCategories(): Category[] {
   return categories;
@@ -46,19 +57,19 @@ export function listDestinations(): Destination[] {
 }
 
 export function listPrompts() {
-  return promptsJson.templates;
+  return dataset.prompts.templates;
 }
 
 export function funnelStages() {
-  return promptsJson.funnel;
+  return dataset.prompts.funnel;
 }
 
 export function inScopeFunnel() {
-  return promptsJson.funnel.filter((stage) => stage.inScope);
+  return dataset.prompts.funnel.filter((stage) => stage.inScope);
 }
 
 export function topHotels() {
-  return hotelsJson;
+  return dataset.hotels;
 }
 
 export function engineMeta(key: string) {
@@ -124,137 +135,22 @@ export function localizedPaths(locale: Locale, list: { slug: Record<string, stri
 }
 
 // -------------------------------------------------------- dettaglio completo
-// I file per destinazione pesano ~110 KB: si caricano uno alla volta, a build
-// time, solo dalla pagina che li usa. Importarli tutti insieme metterebbe 11 MB
-// dentro ogni bundle.
-const detailFiles = import.meta.glob<{ default: DestinationDetail }>(
-  "../data/observatory/destinations/*.json",
-);
+// Le schede pesano ~110 KB l'una: si caricano una alla volta, solo dalla pagina
+// che le usa. In modalità fixtures è una lettura da disco, con il backend è
+// `GET /destinations/{key}`. La pagina non vede la differenza.
+export type {
+  AnswerBlock,
+  AnswerCitation,
+  AnswerRow,
+  HotelRow,
+  PromptRow,
+  SiteRow,
+} from "./api/types";
+export type { QueryDetailRow as QueryRow } from "./api/types";
+export type DestinationDetail = DestinationDetailDTO;
 
-export type SiteRow = {
-  domain: string;
-  kind: "dmo" | "editorial" | "ota" | "hotel";
-  label: string;
-  synthetic: boolean;
-  crawlers: Record<string, "allow" | "block" | "partial">;
-  audit: { score: number; checks: Record<string, "pass" | "warn" | "fail"> };
-};
-
-export type HotelRow = {
-  key: string;
-  name: string;
-  confidence:
-    | "verified"
-    | "registry-web"
-    | "registry"
-    | "chain"
-    | "guarded"
-    | "listed"
-    | "generated";
-  area: string;
-  stars: number;
-  domain: string;
-  synthetic: boolean;
-  rank: number;
-  score: Stat;
-  byEngine: Record<EngineKey, { score: number; presence: number; position: number }>;
-  presence: number;
-  avgPosition: number;
-  auditScore: number;
-  trend: number;
-  crawlers: Record<string, "allow" | "block" | "partial">;
-};
-
-export type PromptRow = {
-  key: string;
-  lang: Locale;
-  funnel: string;
-  level: "comparative" | "internal";
-  text: string;
-  byEngine: Record<EngineKey, { mentionRate: number; position: number; runs: number }>;
-};
-
-export type AnswerCitation = {
-  index: number | null;
-  domain: string;
-  kind: string;
-  label: string;
-  synthetic: boolean;
-};
-
-export type AnswerBlock =
-  | { kind: "p"; text: string }
-  | { kind: "list"; ordered: boolean; items: { label: string; text: string }[] };
-
-// Una risposta ricostruita: il testo che un engine restituirebbe su un prompt,
-// montato sui numeri che il resto del dataset pubblica. Non è una cattura
-// reale, e il componente che la mostra è tenuto a dirlo.
-export type AnswerRow = {
-  promptKey: string;
-  promptText: string;
-  subject: "destination" | "hotels";
-  level: "comparative" | "internal";
-  funnel: string;
-  lang: Locale;
-  engine: EngineKey;
-  capturedAt: string;
-  run: number;
-  mentioned: boolean;
-  position: number | null;
-  mentionRate: number;
-  hotelKeys: string[];
-  highlights: string[];
-  citations: AnswerCitation[];
-  blocks: AnswerBlock[];
-};
-
-export type QueryRow = {
-  key: string;
-  destination: string;
-  scope: "destination" | "category";
-  funnel: string;
-  lang: Locale;
-  level: string;
-  cluster: string;
-  text: string;
-  volume: number;
-  cpc: number;
-  yoy: number;
-  difficulty: number;
-  fanout: { text: string; share: number }[];
-  history: { month: string; volume: number; cpc: number }[];
-};
-
-export type DestinationDetail = Destination & {
-  knownFor: string[];
-  updatedAt: string;
-  runsPerMonth: number;
-  scoreDetail: {
-    overall: { score: Stat; factors: Record<FactorKey, Stat> };
-    byEngine: Record<EngineKey, { score: Stat; factors: Record<FactorKey, Stat> }>;
-  };
-  history: { month: string; score: Stat; byEngine: Record<EngineKey, Stat> }[];
-  entities: { name: string; byEngine: Record<EngineKey, number> }[];
-  prompts: { comparative: PromptRow[]; internal: PromptRow[] };
-  summary: Record<string, Record<string, { byEngine: Record<EngineKey, { mentionRate: number; position: number }>; mentionRate: number; prompts: number }>>;
-  sites: SiteRow[];
-  sources: {
-    byKind: Record<"dmo" | "editorial" | "ota" | "other", number>;
-    top: { domain: string; kind: string; label: string; synthetic: boolean; share: number; occurrences: number }[];
-    quality: number;
-  };
-  hotels: HotelRow[];
-  queries: QueryRow[];
-  answers: { destination: AnswerRow[]; hotels: AnswerRow[] };
-  technical: Record<EngineKey, number>;
-};
-
-export async function loadDestination(key: string): Promise<DestinationDetail> {
-  const path = `../data/observatory/destinations/${key}.json`;
-  const loader = detailFiles[path];
-  if (!loader) throw new Error(`Destinazione senza dataset: ${key}`);
-  const mod = await loader();
-  return mod.default;
+export function loadDestination(key: string): Promise<DestinationDetail> {
+  return server.destination(key);
 }
 
 // ------------------------------------------------------------------ utility
@@ -263,11 +159,12 @@ export function stability(stat: Stat): "stable" | "moderate" | "volatile" {
   return stat.stability;
 }
 
-export function scoreBand(value: number): "high" | "mid" | "low" {
-  if (value >= 65) return "high";
-  if (value >= 52) return "mid";
-  return "low";
-}
+// La fascia e le tinte del punteggio vivono in ./score, che non importa dati e
+// quindi è raggiungibile anche dagli script che girano nel browser. Qui resta
+// il ri-export, così i venti punti che già la importano da observatory non
+// devono cambiare riga.
+export { barClass, scoreBand, scoreColor, scoreColorSoft } from "./score";
+export type { ScoreBand } from "./score";
 
 // Quanti bot di un engine sono ammessi su un sito: è il ponte fra il dato
 // tecnico e il punteggio per engine.
@@ -367,18 +264,10 @@ export function relatedDestinations(destination: Destination, limit = 4): Destin
     .map((entry) => entry.row);
 }
 
-// Tutti i temi in uso, con quante destinazioni li portano.
-export function listTags() {
-  const counts = new Map<string, number>();
-  for (const destination of destinations) {
-    for (const tag of new Set([destination.category, ...destination.tags])) {
-      counts.set(tag, (counts.get(tag) ?? 0) + 1);
-    }
-  }
-  return META.tags
-    .map((tag) => ({ ...tag, count: counts.get(tag.key) ?? 0 }))
-    .filter((tag) => tag.count > 0)
-    .sort((a, b) => b.count - a.count);
+// I temi in uso, con quante destinazioni li portano. Il conteggio è un
+// aggregato: lo fa la sorgente (`GET /tags`), non il sito.
+export function listTags(): Tag[] {
+  return tagList;
 }
 
 export function findTag(key: string) {

@@ -22,7 +22,7 @@ const t = messages(locale).observatory;
 const label = lang === "it" ? t.lang.it : t.lang.en;
 ---
 
-<span class="inline-flex items-center gap-1.5 align-middle" title={label}>
+<span class="inline-flex items-center gap-1.5 align-middle" aria-label={label}>
   <Flag locale={lang} size={size} />
   <span class={showCode ? "num text-[0.82rem]" : "sr-only"}>{lang.toUpperCase()}</span>
 </span>

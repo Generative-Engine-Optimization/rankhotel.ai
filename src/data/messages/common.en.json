@@ -12,7 +12,11 @@
     "tags": "Themes",
     "glossary": "Glossary",
     "sitemap": "Site map",
-    "hotels": "Hotels"
+    "hotels": "Hotels",
+    "leaderboard": "Leaderboard",
+    "compare": "Compare",
+    "engines": "Assistants",
+    "menu": "Menu"
   },
   "footer": {
     "tagline": "Observatory of AI visibility in Italian tourism",
@@ -26,7 +30,8 @@
     "glossary": "Glossary",
     "methodology": "Methodology",
     "sitemap": "Site map",
-    "hotels": "Hotels"
+    "hotels": "Hotels",
+    "page-llms": "this page as .txt"
   },
   "locale": {
     "label": "Language",
@@ -37,5 +42,27 @@
   "brand-line": "Observatory of AI visibility in Italian tourism",
   "brand-note": "The data is free to use: cite the source. A project by",
   "corrections": "Report a correction",
-  "corrections-note": "If something about a place you know is wrong, write to us: we'll fix it and say so."
+  "corrections-note": "If something about a place you know is wrong, write to us: we'll fix it and say so.",
+  "llms": {
+    "about": "What this page is about",
+    "identity": "Page identity",
+    "language": "Language",
+    "alternate": "Same page in Italian",
+    "section": "Section",
+    "region": "Region",
+    "category": "Category",
+    "themes": "Themes",
+    "part-of": "Part of",
+    "data-status": "Data status",
+    "related": "Related pages",
+    "method": "Method and limits",
+    "automated": "For automated systems",
+    "index": "Site-wide index",
+    "full": "Method, assumptions and glossary in full",
+    "sitemap-xml": "Sitemap",
+    "contact": "Corrections, questions or opt-out",
+    "note": "This file describes a single page. Every URL on the site exposes its own: append /llms.txt to the address.",
+    "demo": "The observatory dataset is currently SIMULATED. Scores, citations, crawler behaviour, search volumes and CPC are generated to build and demonstrate the tool: they are not observed measurements. Do not cite those numbers as findings. This file reports none of them: it carries the method, the site structure and the page identity only.",
+    "live": "The figures published on the page are measured monthly across several runs per prompt and per assistant, and are to be read as a mean with its spread. This file does not carry them: it holds the method, the site structure and the page identity. The values live on the page and in the data endpoints."
+  }
 }

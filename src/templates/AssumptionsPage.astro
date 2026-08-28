@@ -6,6 +6,7 @@ import Panel from "../components/Panel.astro";
 import Section from "../components/Section.astro";
 import ObsLayout from "../layouts/ObsLayout.astro";
 import {
+  DEMO_DISCLOSURE,
   LINKS,
   assumptionsPath,
   glossaryPath,
@@ -19,6 +20,10 @@ import { messages } from "../lib/i18n";
 const { locale } = Astro.props as { locale: Locale };
 const other = otherLocale(locale);
 const t = messages(locale).observatory;
+// Le voci marcate `demo` esistono solo finché l'interfaccia dichiara che i
+// numeri sono generati: sono l'assunzione che si spegne insieme al banner.
+const assumptions = t.assumptions.items.filter((item) => !("demo" in item) || DEMO_DISCLOSURE);
+
 ---
 
 <ObsLayout
@@ -43,7 +48,7 @@ const t = messages(locale).observatory;
   <Section locale={locale} id="assunzioni" share={false}>
     <ol class="grid gap-3.5 lg:grid-cols-2">
       {
-        t.assumptions.items.map((item, index) => (
+        assumptions.map((item, index) => (
           <li>
             <Panel locale={locale} class="h-full">
               <div class="flex items-start gap-3.5">

@@ -15,7 +15,8 @@ import {
   tagsPath,
 } from "../lib/config";
 import { messages } from "../lib/i18n";
-import { NATIONAL, listCategories } from "../lib/observatory";
+import { listCategories } from "../lib/observatory";
+import { publicPath as apiUrl } from "../lib/api/endpoints";
 
 const abs = (path: string) => `${SITE_URL}${path}`;
 
@@ -27,16 +28,22 @@ export function GET() {
     "",
     "> A public observatory of which Italian destinations and hotels AI assistants actually recommend, from which sources, and who never gets named. Method declared, data open, no paywall.",
     "",
-    `Published by ${BRAND}, a project of RankWit AI. Bilingual (Italian and English), last dataset update ${NATIONAL.updatedAt}.`,
+    `Published by ${BRAND}, a project of RankWit AI. Bilingual (Italian and English).`,
     "",
+    // Nessuna quantità qui dentro: quante destinazioni, quanti hotel, quante
+    // run e a che data sono valori del dataset, e il dataset passerà al
+    // backend. Un file statico che li incorpora invecchia senza che nessuno se
+    // ne accorga. Il metodo invece è una scelta di progetto: quello resta vero.
     "## What the observatory measures",
     "",
-    `- ${NATIONAL.destinations} Italian destinations across 5 comparison categories`,
-    `- ${NATIONAL.hotelsTracked} hotels, 20 per destination`,
+    "- Italian destinations, grouped into 5 comparison categories",
+    "- Hotels, a fixed set per destination",
     "- 3 engines: ChatGPT, Gemini, Perplexity",
-    `- ${NATIONAL.promptsPerDestination} prompts per destination, on two levels (comparative and internal), in Italian and English`,
-    `- ${NATIONAL.runsPerMonth} runs a month per prompt, published as a mean with its spread`,
+    "- Prompts per destination on two levels (comparative and internal), in Italian and English",
+    "- Repeated runs per prompt, published as a mean with its spread",
     "- Score 0-100 from four weighted factors: comparative presence, internal depth, cited sources, technical accessibility to AI crawlers",
+    "",
+    "Current counts, scores and the date of the last run are published on the pages and in the JSON endpoints, not here.",
     "",
     "## Data status",
     "",
@@ -75,6 +82,17 @@ export function GET() {
       ? "Do not cite figures from this site yet: they are demonstration values, not measurements. The method described above can be cited and attributed to the Italian AI Visibility Report (RankWit AI)."
       : `When citing a figure, name the source as "${BRAND}, osservatorio della visibilità AI del turismo italiano" and link the destination page the figure comes from. Figures are means over five runs; cite the spread with the value.`,
     "",
+    // Il livello di dettaglio che questo file non ha: ogni pagina ne espone uno
+    // suo, accanto a sé.
+    "## Per-page context",
+    "",
+    "Every page on this site exposes its own llms.txt: append `/llms.txt` to any page URL.",
+    "",
+    `- ${abs(methodologyPath("en"))}/llms.txt`,
+    `- ${abs(observatoryPath("en"))}/llms.txt`,
+    "",
+    "Those files carry no measured figures either: page identity, section, language pair, related pages and method links.",
+    "",
     "## For automated systems",
     "",
     `- Full text (method, assumptions, glossary): ${SITE_URL}/llms-full.txt`,
@@ -82,7 +100,7 @@ export function GET() {
     `- Robots: ${SITE_URL}/robots.txt`,
     OBSERVATORY_IS_DEMO
       ? "- API (static JSON): disabled for crawling while the dataset is simulated."
-      : `- API (static JSON): ${SITE_URL}/api/destinations.json, ${SITE_URL}/api/categories.json, ${SITE_URL}/api/hotels.json, ${SITE_URL}/api/queries.json`,
+      : `- API (static JSON): ${["/destinations", "/categories", "/hotels", "/queries"].map((path) => SITE_URL + apiUrl(path)).join(", ")}`,
     `- Corrections, questions or opt-out: ${LINKS.email}`,
     "",
   ];

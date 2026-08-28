@@ -1,0 +1,249 @@
+---
+import Icon from "./Icon.astro";
+import type { Locale } from "../lib/config";
+import { compact, decimal, monthLabel } from "../lib/format";
+
+// Domanda e visibilità sugli stessi mesi. Prima qui c'era una tabella di
+// stagionalità a dodici colonne, e diceva due cose non vere: che dei dodici
+// mesi avessimo una misura (ne abbiamo tre) e che l'ultimo fosse agosto —
+// l'etichetta era ancorata a mano a 2026-08 mentre i dati arrivavano a ottobre.
+//
+// I mesi non ancora misurati restano in fila, vuoti e dichiarati: una serie che
+// si ferma senza dirlo sembra una serie finita. Ma restano su una corsia
+// stretta: erano tre colonne larghe quanto quelle dei dati, e metà della
+// tabella era spazio bianco che si legge prima dei numeri.
+const {
+  locale,
+  months,
+  upcoming,
+  rows,
+  demandLabel,
+  visibilityLabel,
+  upcomingLabel,
+  changeLabel,
+  demandScaleLabel,
+  visibilityScaleLabel,
+} = Astro.props as {
+  locale: Locale;
+  /** Chiavi `YYYY-MM` dei mesi misurati. */
+  months: string[];
+  /** Chiavi `YYYY-MM` dei mesi ancora da misurare. */
+  upcoming: string[];
+  rows: {
+    key: string;
+    label: string;
+    icon: string;
+    demand: number[];
+    visibility: number[];
+  }[];
+  demandLabel: string;
+  visibilityLabel: string;
+  upcomingLabel: string;
+  /** "Variazione", per l'etichetta accessibile della pastiglia. */
+  changeLabel: string;
+  /** Come si legge la barra della domanda. */
+  demandScaleLabel: string;
+  /** Come si legge la barra della visibilità. */
+  visibilityScaleLabel: string;
+};
+
+// Le colonne: la corsia di sinistra, i mesi misurati che si prendono lo spazio,
+// i mesi futuri su una corsia stretta. Il tracciato si costruisce qui e non nel
+// CSS perché `repeat(0, …)` non è CSS valido: se un giorno i mesi futuri
+// finiscono, la griglia deve reggere lo stesso.
+const buildTrack = (rail: number, measured: number, next: number) => ({
+  track: [
+    `minmax(${rail}px, auto)`,
+    months.length ? `repeat(${months.length}, minmax(${measured}px, 1.4fr))` : "",
+    upcoming.length ? `repeat(${upcoming.length}, ${next}px)` : "",
+  ]
+    .filter(Boolean)
+    .join(" "),
+  min: rail + months.length * measured + upcoming.length * next,
+});
+
+const wide = buildTrack(152, 96, 58);
+// Su telefono la corsia di sinistra si prendeva quasi metà schermo, e restava
+// lì: è agganciata al bordo. Le stesse colonne, più strette.
+const narrow = buildTrack(112, 88, 40);
+
+// Il mese futuro porta solo il nome: nella sua corsia stretta "nov 2026" non
+// ci sta, e l'anno lo dice già l'ultima colonna misurata lì accanto.
+const shortMonth = (key: string) => {
+  const [year, month] = key.split("-").map(Number);
+  return new Intl.DateTimeFormat(locale, { month: "short" }).format(
+    new Date(Date.UTC(year, month - 1, 1)),
+  );
+};
+
+// La domanda si legge dentro la categoria: mare fa dieci volte i volumi di
+// archeologia, e su una scala comune archeologia sarebbe una riga piatta a zero
+// per tre mesi. La barra dice quindi "rispetto al mese più forte di questa
+// categoria", e il numero accanto resta quello vero.
+const demandPeak = (values: number[]) => Math.max(...values, 1);
+
+// La visibilità no: è già un voto da 0 a 100 e vale lo stesso ovunque, quindi
+// resta sulla sua scala assoluta. È anche il motivo per cui le sue barre si
+// muovono poco mentre quelle della domanda crollano — che è esattamente ciò che
+// questa sezione ha da dire.
+const VISIBILITY_MAX = 100;
+
+// …e siccome è ciò che ha da dire, va detto in cifre invece che lasciato
+// dedurre da tre barre. La variazione fra il primo e l'ultimo mese misurato
+// sta accanto al nome della misura: −69% sopra, −0,2% sotto, sulla stessa
+// unità, così il confronto non richiede di guardare due scale diverse.
+const changePct = (values: number[]): number | null => {
+  const first = values[0];
+  const last = values[values.length - 1];
+  if (!first || last === undefined) return null;
+  return ((last - first) / first) * 100;
+};
+
+// Sotto il dieci per cento un decimale: la visibilità si muove lì, e arrotondata
+// all'intero diventerebbe "0%" — che si legge "dato mancante", non "ferma".
+const changeText = (pct: number) => {
+  const digits = Math.abs(pct) < 10 ? 1 : 0;
+  const rounded = Number(pct.toFixed(digits));
+  const sign = rounded > 0 ? "+" : rounded < 0 ? "−" : "";
+  return `${sign}${decimal(locale, Math.abs(rounded), digits)}%`;
+};
+
+const changeArrow = (pct: number) => {
+  const digits = Math.abs(pct) < 10 ? 1 : 0;
+  const rounded = Number(pct.toFixed(digits));
+  return rounded > 0 ? "▲" : rounded < 0 ? "▼" : "·";
+};
+
+const span = months.length
+  ? `${monthLabel(locale, months[0])} → ${monthLabel(locale, months[months.length - 1])}`
+  : "";
+
+const metrics = [
+  { key: "demand", label: demandLabel },
+  { key: "visibility", label: visibilityLabel },
+] as const;
+---
+
+<figure class="month-figure">
+  <div class="scroll-x">
+    <div
+      class="month-grid"
+      style={`--month-track:${wide.track};--month-min:${wide.min}px;--month-track-sm:${narrow.track};--month-min-sm:${narrow.min}px`}
+    >
+      <span class="month-grid-corner" aria-hidden="true"></span>
+      {
+        months.map((month, index) => (
+          <span
+            class="month-grid-head"
+            data-latest={index === months.length - 1 ? "" : undefined}
+          >
+            {monthLabel(locale, month)}
+          </span>
+        ))
+      }
+      {
+        upcoming.map((month, index) => (
+          <span class="month-grid-head month-grid-head-next">
+            {shortMonth(month)}
+            {/* Detto una volta sola: ripetuto su ogni categoria diventerebbe una
+                colonna di testo che si legge al posto dei dati. */}
+            {index === 0 && <span class="month-grid-next">{upcomingLabel}</span>}
+          </span>
+        ))
+      }
+
+      {
+        rows.map((row) => (
+          <>
+            <p class="month-grid-cat" data-cat={row.key}>
+              <span class="month-grid-cat-ink">
+                <span class="cat-ink">
+                  <Icon name={row.icon} size={15} />
+                </span>
+                {row.label}
+              </span>
+            </p>
+
+            {metrics.map((metric) => {
+              const values = metric.key === "demand" ? row.demand : row.visibility;
+              const pct = changePct(values);
+              return (
+                <>
+                  <span class="month-grid-metric">
+                    <span class="month-grid-metric-name">{metric.label}</span>
+                    {pct !== null && (
+                      <span class="month-grid-change num">
+                        <span aria-hidden="true">{changeArrow(pct)}</span>
+                        {changeText(pct)}
+                        <span class="sr-only">
+                          {" "}
+                          {changeLabel}, {span}
+                        </span>
+                      </span>
+                    )}
+                  </span>
+
+                  {values.map((value, index) => (
+                    <span
+                      class="month-grid-cell"
+                      data-cat={metric.key === "demand" ? row.key : undefined}
+                      data-latest={index === values.length - 1 ? "" : undefined}
+                    >
+                      <span class="month-grid-value num">
+                        {metric.key === "demand"
+                          ? compact(locale, value)
+                          : decimal(locale, value, 1)}
+                      </span>
+                      <span
+                        class={
+                          metric.key === "demand" ? "bar month-grid-bar-demand" : "bar"
+                        }
+                      >
+                        <span
+                          style={`width:${Math.round(
+                            (value /
+                              (metric.key === "demand"
+                                ? demandPeak(values)
+                                : VISIBILITY_MAX)) *
+                              100,
+                          )}%`}
+                        />
+                      </span>
+                      <span class="sr-only">
+                        {monthLabel(locale, months[index])}:{" "}
+                        {metric.key === "demand"
+                          ? compact(locale, value)
+                          : `${decimal(locale, value, 1)} / ${VISIBILITY_MAX}`}
+                      </span>
+                    </span>
+                  ))}
+
+                  {upcoming.map((month) => (
+                    <span class="month-grid-cell month-grid-cell-next">
+                      <span class="sr-only">
+                        {monthLabel(locale, month)}: {upcomingLabel}
+                      </span>
+                    </span>
+                  ))}
+                </>
+              );
+            })}
+          </>
+        ))
+      }
+    </div>
+  </div>
+
+  {/* Due misure, due scale: senza dirlo, tre barre di domanda al massimo su
+      cinque categorie sembrano cinque categorie che vanno tutte uguale. */}
+  <figcaption class="month-legend">
+    <span class="month-legend-item">
+      <span class="month-legend-swatch month-legend-swatch-demand" aria-hidden="true"></span>
+      <span><b>{demandLabel}</b> — {demandScaleLabel}</span>
+    </span>
+    <span class="month-legend-item">
+      <span class="month-legend-swatch" aria-hidden="true"></span>
+      <span><b>{visibilityLabel}</b> — {visibilityScaleLabel}</span>
+    </span>
+  </figcaption>
+</figure>

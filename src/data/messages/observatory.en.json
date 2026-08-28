@@ -241,8 +241,13 @@
     "fanout-title": "What the AI expands it into",
     "fanout-lead": "The sub-questions engines generate before composing an answer, with the share of runs they appear in.",
     "volume-title": "Volume and CPC over 24 months",
-    "seasonality-title": "Seasonality by category",
-    "seasonality-lead": "Italian tourism is anything but flat. The month demand exists is the month you need to be there.",
+    "months-title": "Demand and visibility, month by month",
+    "months-lead": "Three measured months, August to October 2026. Demand moves a great deal from one month to the next; AI visibility barely moves at all. The gap between the two is where the work is.",
+    "month-visibility": "AI visibility",
+    "upcoming": "Coming soon",
+    "month-change": "Change",
+    "month-scale-demand": "bars scaled to each category's strongest month: they show the season, not how categories compare.",
+    "month-scale-visibility": "bars on the absolute 0–100 scale, the same for everyone.",
     "local-title": "This destination's queries",
     "local-lead": "The most searched among the ones we monitor here.",
     "explore": "Search the questions",
@@ -343,7 +348,27 @@
   "methodology": {
     "title": "How we calculate the score",
     "lead": "The formula is public, and this page reads it from the code that applies it. They cannot tell two different stories.",
+    "summary-title": "In short",
+    "summary": [
+      {
+        "q": "What we measure",
+        "a": "How often a territory gets recommended, how well the AI actually knows it, who tells its story, and whether its websites can be read."
+      },
+      {
+        "q": "How",
+        "a": "{prompts} questions per territory, in Italian and English, put to {engines} assistants."
+      },
+      {
+        "q": "How often",
+        "a": "{runs} times a month per assistant. We publish the average and how much it moved — never a single answer."
+      },
+      {
+        "q": "What to read",
+        "a": "The band, not the bare position: between 38th and 41st there is no measurable difference."
+      }
+    ],
     "formula-title": "Four things measured, one number",
+    "numbers-title": "The observatory in numbers",
     "weights-title": "The weights",
     "engines-title": "One general score, one per assistant",
     "engines-body": "The general one is the plain average of the three. No hidden weighting between assistants: if ChatGPT counted more than Perplexity, that would be our opinion dressed up as a measurement.",
@@ -353,6 +378,10 @@
     "technical-body": "An AI won't recommend what it couldn't read. Each assistant sends its own programs out to read websites: if a territory blocks ChatGPT's, its ChatGPT score drops. This isn't technical hygiene, it's visibility.",
     "levels-title": "Two kinds of question",
     "levels-body": "In the first, the territory competes with the others in its category. In the second, we only check whether the AI knows it. They are two different things and deserve separate measurement: there are famous territories AI cannot describe, and small ones it describes beautifully.",
+    "level-comparative": "The territory in competition",
+    "level-internal": "The territory on its own",
+    "level-feeds": "Feeds the “{factor}” factor",
+    "level-count": "{n} of {total} questions",
     "data-title": "Data status",
     "data-body": "At this stage the numbers are generated. The schema, the formula and the pages are final: when real runs replace the simulated dataset, not a line of this methodology changes.",
     "formula-example": "Illustrative example: numbers chosen to show how the four factors add up to the score, not any real territory's result."
@@ -387,7 +416,8 @@
       },
       {
         "title": "This phase's data is simulated",
-        "body": "Scores, citations, crawler behaviour, volumes and CPC are generated to build and demonstrate the tool. Official and editorial domains are generated from the destination name rather than taken from real sites: publishing that an existing organisation blocks a crawler without having checked would simply be false."
+        "body": "Scores, citations, crawler behaviour, volumes and CPC are generated to build and demonstrate the tool. Official and editorial domains are generated from the destination name rather than taken from real sites: publishing that an existing organisation blocks a crawler without having checked would simply be false.",
+        "demo": true
       }
     ]
   },
@@ -445,7 +475,8 @@
     "glossary-lead": "Explained the way we'd explain them out loud, not the way a manual would write them.",
     "measured-since": "First measurement: August 2026",
     "runs-title": "The three measurements",
-    "runs-lead": "We measure once a month, repeating every question five times. Each point is an average; the bar says how much the answers moved within that month."
+    "runs-lead": "We measure once a month, repeating every question five times. Each point is an average; the bar says how much the answers moved within that month.",
+    "all": "All"
   },
   "explain": {
     "score": "A 0 to 100 mark for how often an AI names this territory when someone asks where to go. A hundred means it always comes up, first. Zero means that for the AI it doesn't exist.",
@@ -519,7 +550,7 @@
     "branch-data-note": "The same numbers as the pages, in JSON, no sign-up.",
     "site": "The site",
     "all-destinations": "See all one hundred",
-    "legend": "Numbers in brackets count the pages in this language."
+    "legend": "The numbers count pages in this language. The open data is the same for both."
   },
   "hotelsPage": {
     "title": "The hotels",
@@ -546,7 +577,7 @@
       "verified": "The domain responds and the page names this property.",
       "chain": "It sits on a chain domain: it exists, but who may read that site is decided by the group.",
       "guarded": "The domain exists and refuses automated checks. The site is there, the proof that it's this hotel isn't.",
-      "listed": "Present in the starting list, not rechecked in this round.",
+      "listed": "The site responds and it is a lodging business, but the page doesn't prove it sits in this territory. It stays listed without claiming to be verified.",
       "generated": "A name generated to show how the tool works. Not an existing hotel.",
       "registry-web": "Listed in the regional accommodation registry, with a declared website.",
       "registry": "Listed in the regional accommodation registry. No website on record."
@@ -563,6 +594,7 @@
     "legend-score": "**Score** — how often the property is named when someone asks where to stay, from 0 to 100. The ± is how much the answer moved within the same month.",
     "legend-presence": "**How often it shows** — the proportion of answers the property appears in at least once. A high score with a low share means: when it shows up it shows up well, but it rarely shows up.",
     "legend-confidence": "**The tag next to the name** — how much we know about its website. \"Verified\" means the domain responds and the page names this hotel; \"Generated name\" means the row is a demo.",
+    "legend-confidence-plain": "**The tag next to the name** — how much we know about its website. «Verified» means the domain responds and the page names this hotel.",
     "showing-of": "{n} of {total} properties",
     "show-more": "Show {n} more",
     "show-all": "Show all"

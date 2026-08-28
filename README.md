@@ -263,21 +263,45 @@ Il nome dell'engine resta sempre nell'HTML, come testo visibile o come
 tools/seed/          dati curati a mano: destinazioni, categorie, prompt, grammatica
 tools/lib/           modello dello score, PRNG, costruttori del dataset
 tools/generate-*     assembla e scrive src/data/observatory/
-src/lib/observatory  accesso tipizzato ai dati (i file per destinazione via import.meta.glob)
-src/lib/api/         client verso l'API, con latenza simulata e stati di errore
-src/pages/api/       endpoint statici: emettono JSON reali in dist/api a build time
+src/lib/observatory  modello di dominio: legge dal livello API, non da file
+src/lib/api/         il livello dati: contratto, trasporto, client di build e di browser
+src/pages/api/v1/    fixture statiche: emettono JSON reali in dist/api/v1 a build time
+tools/api/           contratto eseguibile, OpenAPI, suite di conformità, mock server
 src/templates/       una pagina per tipo, condivisa fra IT ed EN
 src/data/messages/   tutte le stringhe, IT ed EN in parità di chiavi
 ```
 
-### Il layer API
+### Il livello dati
 
-Il contenuto indicizzabile è renderizzato a build time; filtri, mappa,
-comparatore, ricerca sulle query e cambio engine passano da
-[`src/lib/api/client.ts`](src/lib/api/client.ts), che fa `fetch()` verso gli
-endpoint statici sotto `/api`. Sono richieste HTTP vere, con latenza, abort e
-gestione degli errori: quando arriverà il backend cambia solo `API_BASE` in
-[`src/lib/api/transport.ts`](src/lib/api/transport.ts).
+Tutti i contenuti dinamici passano da `src/lib/api/`. Nessuna pagina, nessun
+componente e nessun template importa più un file di dati: chiedono a
+[`server.ts`](src/lib/api/server.ts) (a build time) o a
+[`client.ts`](src/lib/api/client.ts) (nel browser), e non sanno da dove arrivi
+la risposta.
+
+Oggi arriva dalle fixture generate da `npm run data:generate`, servite come file
+statici sotto `/api/v1/`. Sono le stesse URL, la stessa forma e gli stessi
+header che dovrà servire il backend, e il sito ci fa fetch vere sopra — con
+latenza, abort ed errori.
+
+Il passaggio al backend vero è una variabile d'ambiente, non una modifica al
+codice (vedi [`.env.example`](.env.example)):
+
+```bash
+PUBLIC_API_SOURCE=http
+PUBLIC_API_BASE_URL=https://api.rankhotel.ai/v1
+```
+
+È già verificato: con `npm run api:mock` avviato, le 285 pagine si compilano
+interamente da chiamate HTTP.
+
+| comando | cosa fa |
+| :--- | :--- |
+| `npm run api:check` | verifica il contratto sulle fixture, o su un backend con `-- --base <url>` |
+| `npm run api:mock` | implementazione di riferimento su `localhost:8787/v1` |
+| `npm run api:spec` | rigenera `docs/api/openapi.yaml` |
+
+Per chi deve scrivere le API: [`docs/backend-api.md`](docs/backend-api.md).
 
 In demo si possono forzare gli stati con la querystring:
 `?_debug=slow`, `?_debug=error`, `?_debug=empty`.

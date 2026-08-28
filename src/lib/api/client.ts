@@ -1,89 +1,134 @@
-import { request } from "./transport";
+// =============================================================================
+// CLIENT DEL BROWSER
+// =============================================================================
+//
+// Quello che usano gli script di pagina: cambio engine nella classifica,
+// filtri della pagina query, confronto fra territori. Fa fetch vere verso URL
+// vere, con latenza, stati di caricamento ed errori reali.
+//
+// Differenza con `server.ts`: qui non si importa nessun JSON. Il browser
+// scarica quello che gli serve e nient'altro — le fixture pesano 13 MB e non
+// devono mai entrare in un bundle.
+//
+// Con `PUBLIC_API_SOURCE=fixtures` i filtri girano in locale sulla collezione
+// scaricata, perché un file statico non sa rispondere a `?sort=`. Con `http`
+// gli stessi filtri diventano parametri di query e a rispondere è il backend:
+// la firma delle funzioni non cambia, e nemmeno il codice che le chiama.
+// =============================================================================
+
+import { buildPath, buildQuery } from "./endpoints";
+import { filterDestinations, filterHotels, filterQueries } from "./query";
+import { isFixtures, request, requestEnvelope } from "./transport";
 import type {
-  CategorySummary,
+  CategoryDTO,
+  DestinationDTO,
   DestinationDetailDTO,
-  DestinationSummary,
-  HotelSummary,
+  DestinationFilters,
+  HotelFilters,
+  HotelSummaryDTO,
   MetaDTO,
   NationalDTO,
+  Page,
+  PromptsDTO,
   QueryFilters,
-  QuerySummary,
+  QuerySummaryDTO,
+  TagDTO,
 } from "./types";
 
-// L'unica superficie che pagine e componenti conoscono. Ogni funzione qui
-// corrisponde a un endpoint che il backend dovrà esporre con la stessa forma.
+type Options = { signal?: AbortSignal };
+
+/**
+ * Un elenco. In fixtures scarica la collezione (una volta: poi è in cache) e
+ * applica i filtri in locale; in http li passa al backend.
+ *
+ * `local` è la stessa funzione che il backend deve replicare — è in
+ * `query.ts`, ed è documentata lì.
+ */
+async function collection<T, F extends Record<string, unknown>>(
+  path: string,
+  filters: F,
+  local: (rows: T[], filters: F) => Page<T>,
+  options: Options,
+): Promise<Page<T>> {
+  if (isFixtures()) {
+    const rows = await request<T[]>(path, options);
+    if (options.signal?.aborted) throw new DOMException("Aborted", "AbortError");
+    return local(rows, filters);
+  }
+  const envelope = await requestEnvelope<T[]>(`${path}${buildQuery(filters)}`, options);
+  return {
+    rows: envelope.data,
+    total: envelope.meta.total ?? envelope.data.length,
+    page: envelope.meta.page ?? 1,
+    pageSize: envelope.meta.pageSize ?? envelope.data.length,
+  };
+}
 
 export const api = {
-  meta: () => request<MetaDTO>("/meta.json"),
+  meta: (options: Options = {}) => request<MetaDTO>("/meta", options),
 
-  national: () => request<NationalDTO>("/national.json"),
+  national: (options: Options = {}) => request<NationalDTO>("/national", options),
 
-  categories: () => request<CategorySummary[]>("/categories.json"),
+  categories: (options: Options = {}) => request<CategoryDTO[]>("/categories", options),
 
-  destinations: () => request<DestinationSummary[]>("/destinations.json"),
+  category: (key: string, options: Options = {}) =>
+    request<CategoryDTO>(buildPath("/categories/{key}", { key }), options),
 
-  destination: (key: string) =>
-    request<DestinationDetailDTO>(`/destinations/${key}.json`),
+  prompts: (options: Options = {}) => request<PromptsDTO>("/prompts", options),
 
-  hotels: () => request<HotelSummary[]>("/hotels.json"),
+  tags: (options: Options = {}) => request<TagDTO[]>("/tags", options),
 
-  queries: (category?: string) =>
-    category
-      ? request<QuerySummary[]>(`/queries/${category}.json`)
-      : request<QuerySummary[]>("/queries.json"),
+  destinations: (filters: DestinationFilters = {}, options: Options = {}) =>
+    collection<DestinationDTO, DestinationFilters>(
+      "/destinations",
+      filters,
+      filterDestinations,
+      options,
+    ),
 
-  // Filtri e ordinamento girano sul client sull'indice già scaricato: è ciò
-  // che farà il backend server-side, con la stessa firma.
-  async searchQueries(filters: QueryFilters, signal?: AbortSignal): Promise<{
-    rows: QuerySummary[];
-    total: number;
-  }> {
-    const source = await api.queries(filters.category);
-    if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+  destination: (key: string, options: Options = {}) =>
+    request<DestinationDetailDTO>(buildPath("/destinations/{key}", { key }), options),
 
-    const term = (filters.q ?? "").trim().toLowerCase();
-    let rows = source.filter((row) => {
-      if (filters.category && row.category !== filters.category) return false;
-      if (filters.destination && row.destination !== filters.destination) return false;
-      if (filters.lang && row.lang !== filters.lang) return false;
-      if (filters.funnel && row.funnel !== filters.funnel) return false;
-      if (filters.level && row.level !== filters.level) return false;
-      if (filters.cluster && row.cluster !== filters.cluster) return false;
-      if (term && !row.text.toLowerCase().includes(term)) return false;
-      return true;
-    });
+  hotels: (filters: HotelFilters = {}, options: Options = {}) =>
+    collection<HotelSummaryDTO, HotelFilters>("/hotels", filters, filterHotels, options),
 
-    const sort = filters.sort ?? "volume";
-    const dir = filters.dir === "asc" ? 1 : -1;
-    rows = rows.sort((a, b) => {
-      const va = a[sort as keyof QuerySummary];
-      const vb = b[sort as keyof QuerySummary];
-      if (typeof va === "number" && typeof vb === "number") return (va - vb) * dir;
-      return String(va).localeCompare(String(vb)) * dir;
-    });
-
-    const total = rows.length;
-    const limit = filters.limit ?? 60;
-    return { rows: rows.slice(0, limit), total };
+  /**
+   * Le query monitorate.
+   *
+   * In fixtures, filtrare per categoria scarica il segmento della categoria
+   * (`/queries/{category}`) invece dell'indice intero: 1,1 MB contro ~220 KB.
+   * Il backend non ha questo problema e riceve tutto su `/queries`.
+   */
+  queries(filters: QueryFilters = {}, options: Options = {}): Promise<Page<QuerySummaryDTO>> {
+    const path =
+      isFixtures() && filters.category
+        ? buildPath("/queries/{category}", { category: filters.category })
+        : "/queries";
+    return collection<QuerySummaryDTO, QueryFilters>(path, filters, filterQueries, options);
   },
 
-  // Confronto fino a 4 destinazioni: il backend riceverà le stesse chiavi.
-  async compare(keys: string[]): Promise<DestinationDetailDTO[]> {
-    const picked = keys.filter(Boolean).slice(0, 4);
-    return Promise.all(picked.map((key) => api.destination(key)));
+  /** La classifica riordinata per engine. `"all"` è la media dei tre. */
+  async rankBy(engine: string, options: Options = {}): Promise<DestinationDTO[]> {
+    const { rows } = await api.destinations(
+      {
+        engine: engine === "all" ? undefined : (engine as DestinationFilters["engine"]),
+        sort: "score",
+        dir: "desc",
+        pageSize: 500,
+      },
+      options,
+    );
+    return rows;
   },
 
-  // Riordino per engine, con posizione precedente per mostrare lo scarto.
-  async rankBy(engine: string): Promise<DestinationSummary[]> {
-    const rows = await api.destinations();
-    if (engine === "all") {
-      return [...rows].sort((a, b) => b.score.mean - a.score.mean);
-    }
-    return [...rows].sort(
-      (a, b) => b.byEngine[engine].score - a.byEngine[engine].score,
+  /** Confronto fino a quattro destinazioni: quattro chiamate in parallelo. */
+  compare(keys: string[], options: Options = {}): Promise<DestinationDetailDTO[]> {
+    return Promise.all(
+      keys.filter(Boolean).slice(0, 4).map((key) => api.destination(key, options)),
     );
   },
 };
 
-export type { QueryFilters };
-export { ApiError } from "./transport";
+export { ApiError, API_SOURCE, isFixtures } from "./transport";
+export type { QueryFilters, DestinationFilters, HotelFilters, Page };
+export default api;

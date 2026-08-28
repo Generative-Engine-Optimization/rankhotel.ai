@@ -1,5 +1,5 @@
 ---
-import type { Locale } from "../lib/config";
+import { DEMO_DISCLOSURE, type Locale } from "../lib/config";
 import { messages } from "../lib/i18n";
 import Icon from "./Icon.astro";
 
@@ -11,6 +11,11 @@ const { locale, confidence, size = "md" } = Astro.props as {
   confidence: string;
   size?: "sm" | "md";
 };
+
+// "Nome generato" è l'unico stato che dichiara una riga inventata: quando
+// l'interfaccia non dichiara la fase demo, quel tag non esiste. Gli altri
+// stati parlano di strutture vere e restano.
+const hidden = confidence === "generated" && !DEMO_DISCLOSURE;
 
 const t = messages(locale).observatory.hotelsPage;
 const label = t.confidence[confidence] ?? confidence;
@@ -27,6 +32,7 @@ const style = {
 }[confidence] ?? { tone: "text-faint border-line", icon: "info" };
 ---
 
+{!hidden && (
 <span
   class={`inline-flex shrink-0 items-center gap-1 rounded-(--radius-brand) border px-1.5 py-0.5 ${style.tone} ${size === "sm" ? "text-[0.7rem]" : "text-[0.76rem]"}`}
   title={help}
@@ -34,3 +40,4 @@ const style = {
   <Icon name={style.icon} size={11} />
   {label}
 </span>
+)}

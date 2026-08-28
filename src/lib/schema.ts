@@ -8,6 +8,7 @@ import {
   type Locale,
 } from "./config";
 import { META, NATIONAL, type DestinationDetail } from "./observatory";
+import { publicPath as apiUrl } from "./api/endpoints";
 
 // Gli @id sono il punto di tutta questa pagina: un motore generativo che legge
 // tre pagine diverse deve capire che l'editore è sempre la stessa entità, non
@@ -184,7 +185,7 @@ export function datasetSchema(locale: Locale, name: string, description: string,
     distribution: {
       "@type": "DataDownload",
       encodingFormat: "application/json",
-      contentUrl: absolute("/api/destinations.json"),
+      contentUrl: absolute(apiUrl("/destinations")),
     },
   };
 }

@@ -15,7 +15,7 @@ const t = messages(locale).observatory;
 
 <div class={compact ? "grid gap-2.5" : "grid gap-[18px]"}>
   {
-    FACTOR_KEYS.map((key) => {
+    FACTOR_KEYS.map((key, index) => {
       const value = factors[key];
       const tone = scoreBand(value);
       return (
@@ -29,7 +29,11 @@ const t = messages(locale).observatory;
               <span class="text-faint"> · {t.factors.weight.replace("{n}", String(SCORE_WEIGHTS[key]))}</span>
             </span>
           </div>
-          <div class={`bar bar-${tone}`}>
+          {/* Le quattro barre crescono da zero, una dopo l'altra: la
+              scomposizione si legge come una somma che si compone, non come
+              quattro numeri già lì. Lo sfalsamento è lo stesso della griglia
+              nell'eroe. */}
+          <div class={`bar bar-grow bar-${tone}`} style={`--bar-delay:${index * 90}ms`}>
             <span style={`width:${Math.max(2, value)}%`} />
           </div>
           {!compact && <p class="text-[0.9rem] text-muted">{t.factors[key].help}</p>}

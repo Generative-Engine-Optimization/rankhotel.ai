@@ -1,17 +1,21 @@
 ---
 import type { Locale } from "../lib/config";
-import { messages } from "../lib/i18n";
 import { META } from "../lib/observatory";
 
 // La fascia è la lettura affidabile della classifica. La posizione secca no,
 // e il componente accanto (RankRange) lo dichiara invece di lasciarlo intuire.
+//
+// Il perché delle fasce non sta più in un `title`: era un paragrafo di duecento
+// caratteri appeso a una targhetta larga sessanta pixel, ripetuta fino a cento
+// volte per pagina, invisibile a chi naviga da telefono o da tastiera. Sta una
+// volta sola dove le fasce compaiono — sopra la tabella, nella pagina di
+// confronto, nella sezione delle fasce in metodologia.
 const { locale, tier, size = "md" } = Astro.props as {
   locale: Locale;
   tier: string;
   size?: "sm" | "md";
 };
 
-const t = messages(locale).observatory;
 const row = META.tiers.find((item) => item.key === tier);
 const tone = {
   a: "border-success-ink/40 bg-success/12 text-success-ink",
@@ -24,7 +28,6 @@ const tone = {
 
 <span
   class={`inline-flex items-center gap-1.5 rounded-(--radius-brand) border px-2 py-0.5 ${tone} ${size === "sm" ? "text-[0.76rem]" : "text-[0.84rem]"}`}
-  title={t.rank.help}
 >
   <span class="num font-bold">{tier.toUpperCase()}</span>
   <span>{row?.name[locale]}</span>

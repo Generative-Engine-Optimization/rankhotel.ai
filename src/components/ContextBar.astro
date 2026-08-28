@@ -10,28 +10,46 @@ import Icon from "./Icon.astro";
 const {
   label,
   icon,
+  cat,
   count,
   switchLabel,
+  allLabel,
   items,
 } = Astro.props as {
   locale?: Locale;
   label: string;
   icon: string;
+  /** Chiave di categoria: da lì scende --cat, e l'emblema si tinge da sé. */
+  cat?: string;
   count?: string;
   switchLabel: string;
-  items: { label: string; href: string; icon: string; count?: number; current?: boolean }[];
+  /** Etichetta del bottone che apre l'elenco completo. */
+  allLabel: string;
+  items: {
+    label: string;
+    href: string;
+    icon: string;
+    count?: number;
+    cat?: string;
+    current?: boolean;
+  }[];
 };
 ---
 
-<div class="context-bar" data-context-bar>
+<div class="context-bar" data-context-bar data-nav-root>
   <div class="shell flex items-center gap-x-5 gap-y-2 py-2 max-md:flex-wrap">
     <p class="flex shrink-0 items-center gap-2.5">
-      <span class="context-mark"><Icon name={icon} size={16} /></span>
+      <span class="context-mark" data-cat={cat}><Icon name={icon} size={16} /></span>
       <span class="font-bold">{label}</span>
       {count && <span class="num text-[0.82rem] text-faint">{count}</span>}
     </p>
+    {/* La fila e il bottone stanno nello stesso contenitore: il bottone deve
+        restare ancorato a destra mentre la fila gli scorre accanto. Dentro la
+        fila se ne andrebbe via insieme ai temi, ed è l'unica cosa che non deve
+        mai sparire. */}
+    <div class="flex min-w-0 grow items-center gap-2 max-md:w-full">
     <nav
-      class="flex min-w-0 grow items-center gap-2 overflow-x-auto [scrollbar-width:none] max-md:w-full md:justify-end [&::-webkit-scrollbar]:hidden"
+      class="context-switch scroll-x flex min-w-0 grow items-center gap-2"
       aria-label={switchLabel}
       data-context-scroller
     >
@@ -39,8 +57,9 @@ const {
       {
         items.map((item) => (
           <a
-            class="chip shrink-0 gap-1.5"
+            class="chip chip-cat shrink-0 gap-1.5"
             href={item.href}
+            data-cat={item.cat}
             data-active={item.current ? "true" : undefined}
             data-context-current={item.current ? "true" : undefined}
             aria-current={item.current ? "page" : undefined}
@@ -52,6 +71,43 @@ const {
         ))
       }
     </nav>
+
+    {/* Con ventitré voci scorrere è cercare alla cieca: questo apre l'elenco
+        intero, dove si sceglie guardando invece che trascinando. La fila resta
+        per i vicini, il pannello per tutti. */}
+    <button
+      class="chip nav-trigger shrink-0 gap-1.5"
+      type="button"
+      aria-expanded="false"
+      aria-controls="context-all"
+      data-nav-trigger="context-all"
+    >
+      <Icon name="layers" size={13} />
+      {allLabel}
+      <span class="num text-faint">{items.length}</span>
+      <Icon name="chevronDown" size={12} class="nav-chevron" />
+    </button>
+    </div>
+  </div>
+
+  <div class="nav-panel" id="context-all" data-nav-panel hidden>
+    <div class="shell context-all">
+      {
+        items.map((item) => (
+          <a
+            class="nav-panel-link"
+            href={item.href}
+            data-cat={item.cat}
+            aria-current={item.current ? "page" : undefined}
+            data-active={item.current ? "true" : undefined}
+          >
+            <Icon name={item.icon} size={15} />
+            <span>{item.label}</span>
+            {item.count !== undefined && <span class="num ms-auto text-faint">{item.count}</span>}
+          </a>
+        ))
+      }
+    </div>
   </div>
 </div>
 
@@ -62,7 +118,18 @@ const {
   document.querySelectorAll<HTMLElement>("[data-context-scroller]").forEach((scroller) => {
     const current = scroller.querySelector<HTMLElement>("[data-context-current]");
     if (!current) return;
-    const target = current.offsetLeft - (scroller.clientWidth - current.offsetWidth) / 2;
-    scroller.scrollLeft = Math.max(0, target);
+    // Misurato sui rettangoli e non su `offsetLeft`: quello è relativo al
+    // primo antenato posizionato — la barra, non la fila — quindi cambiava
+    // risultato appena il markup guadagnava un contenitore in mezzo.
+    const centre = () => {
+      const chip = current.getBoundingClientRect();
+      const strip = scroller.getBoundingClientRect();
+      const delta = chip.left - strip.left - (strip.width - chip.width) / 2;
+      scroller.scrollLeft = Math.max(0, scroller.scrollLeft + delta);
+    };
+    centre();
+    // Cambiando larghezza cambia quanto ci sta: senza questo, dopo una
+    // rotazione del telefono la barra dice "sei qui" mostrando tutti gli altri.
+    new ResizeObserver(centre).observe(scroller);
   });
 </script>

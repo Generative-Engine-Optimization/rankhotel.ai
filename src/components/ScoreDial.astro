@@ -2,7 +2,7 @@
 import type { Locale } from "../lib/config";
 import { decimal } from "../lib/format";
 import { messages } from "../lib/i18n";
-import type { Stat } from "../lib/observatory";
+import { scoreColor, scoreColorSoft, type Stat } from "../lib/observatory";
 
 // Il punteggio è il numero che regge tutto il sito: merita di essere letto
 // prima del testo che lo circonda.
@@ -33,20 +33,19 @@ const {
 const t = messages(locale).observatory;
 const value = Math.max(0, Math.min(100, stat.mean));
 
-// Dal rosso al verde passando per l'oro, in oklch: la scala è percettivamente
-// uniforme, quindi due punti di differenza si vedono uguali in tutto l'arco.
-// Chroma più bassa agli estremi bassi, perché un rosso acceso su un borgo che
-// non ha colpa di essere piccolo sarebbe un giudizio, non una misura.
-const hue = 18 + (value / 100) * 128;
-const chroma = 0.09 + (Math.abs(value - 50) / 50) * 0.05;
-const tone = `oklch(0.5 ${chroma.toFixed(3)} ${hue.toFixed(0)})`;
-const soft = `oklch(0.86 ${(chroma * 0.55).toFixed(3)} ${hue.toFixed(0)})`;
+const tone = scoreColor(value);
+const soft = scoreColorSoft(value);
 
 const sizes = {
   sm: { box: 34, font: "1rem", stroke: 3, band: "0.66rem" },
   md: { box: 58, font: "1.6rem", stroke: 4.5, band: "0.72rem" },
   lg: { box: 92, font: "2.6rem", stroke: 6, band: "0.8rem" },
 }[size];
+
+// Solo i quadranti grandi si disegnano. La taglia `sm` vive dentro le tabelle
+// e le schede: cento anelli che partono insieme non sono un effetto, sono una
+// pagina che si muove mentre la si legge.
+const draws = size !== "sm";
 
 const R = 45;
 const CIRC = 2 * Math.PI * R;
@@ -66,6 +65,7 @@ const title = `${t.score.runs.replace("{n}", String(stat.runs))} · ${stat.min}�
           <circle cx="50" cy="50" r={R} fill="none" stroke="var(--color-surface-raised)" stroke-width={sizes.stroke} />
           {showBand && stat.stdDev > 0 && (
             <circle
+              class={draws ? "dial-band-arc" : undefined}
               cx="50"
               cy="50"
               r={R}
@@ -77,7 +77,13 @@ const title = `${t.score.runs.replace("{n}", String(stat.runs))} · ${stat.min}�
               stroke-dashoffset={`${(-bandStart * CIRC).toFixed(1)}`}
             />
           )}
+          {/* La lunghezza del tratto viaggia come variabile perché è da lì che
+              l'anello parte: coperto per tutta la sua misura, e scoperto fino
+              a zero. Il valore finale resta quello dell'attributo, quindi un
+              browser che non anima disegna comunque l'anello giusto. */}
           <circle
+            class={draws ? "dial-ring" : undefined}
+            style={draws ? `--dial-dash:${dash.toFixed(1)}` : undefined}
             cx="50"
             cy="50"
             r={R}

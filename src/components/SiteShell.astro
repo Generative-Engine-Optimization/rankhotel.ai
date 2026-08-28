@@ -1,10 +1,13 @@
 ---
 import {
   BRAND,
+  DEMO_DISCLOSURE,
   BRAND_MARK,
   LINKS,
   assumptionsPath,
+  categoryPath,
   comparePath,
+  enginePath,
   glossaryPath,
   hotelsIndexPath,
   mapPath,
@@ -18,10 +21,13 @@ import {
 } from "../lib/config";
 import { dateLabel, number } from "../lib/format";
 import { interpolate, messages } from "../lib/i18n";
-import { META, NATIONAL } from "../lib/observatory";
+import { ENGINES, META, NATIONAL, engineMeta, listCategories } from "../lib/observatory";
+import { pageLlmsPath } from "../lib/llms";
+import EngineLogo from "./EngineLogo.astro";
 import Icon from "./Icon.astro";
 import LangSwitch from "./LangSwitch.astro";
 import RankwitLink from "./RankwitLink.astro";
+import { publicPath as apiUrl } from "../lib/api/endpoints";
 
 const { locale, alternatePath } = Astro.props as {
   locale: Locale;
@@ -34,57 +40,140 @@ const t = m.observatory;
 const navLink =
   "inline-flex items-center gap-2 text-[0.92rem] tracking-[0.05em] text-muted uppercase hover:text-ink whitespace-nowrap";
 
-// Le voci del menu con la loro icona. Le icone non sono decorazione: sono le
-// stesse che ogni sezione porta al proprio interno — il pin della mappa, il
-// tag dei temi, la lente delle query — quindi il menu e la pagina in cui si
-// arriva parlano lo stesso linguaggio di segni. La mappatura è quella già in
-// uso nella mappa del sito, non una nuova.
+// Il menu. Sei voci piatte lasciavano fuori sei pagine (confronto, categorie,
+// glossario, assunzioni, engine, mappa del sito), raggiungibili solo dal fondo
+// pagina. Ora sono due rami con dentro le loro pagine — gli stessi due rami in
+// cui il footer divide il sito da sempre — più le due voci che non hanno
+// sotto-pagine e restano dirette.
+//
+// Le icone non sono decorazione: sono le stesse che ogni sezione porta al
+// proprio interno — il pin della mappa, il tag dei temi, la lente delle query —
+// quindi il menu e la pagina in cui si arriva parlano lo stesso linguaggio di
+// segni. La mappatura è quella già in uso nella mappa del sito.
+// Dove siamo adesso. Il menu che non dice in che ramo sei è metà menu: qui la
+// voce corrente si marca nel pannello, e il ramo che la contiene si marca nella
+// barra. Confronto senza barra finale e senza ancora, perché `/x` e `/x/` e
+// `/x#y` sono la stessa pagina.
+const here = Astro.url.pathname.replace(/\/$/, "");
+const isHere = (href: string) => href.split("#")[0].replace(/\/$/, "") === here;
+
 const navItems = [
-  { label: m.common.nav.observatory, href: observatoryPath(locale), icon: "compass" },
-  { label: m.common.nav.map, href: mapPath(locale), icon: "pin" },
+  {
+    id: "nav-observatory",
+    label: m.common.nav.observatory,
+    href: observatoryPath(locale),
+    icon: "compass",
+    groups: [
+      {
+        title: t.sitemap["branch-entry"],
+        links: [
+          {
+            label: m.common.nav.leaderboard,
+            href: `${observatoryPath(locale)}#classifica`,
+            icon: "chart",
+          },
+          { label: m.common.nav.map, href: mapPath(locale), icon: "pin" },
+          { label: m.common.nav.compare, href: comparePath(locale), icon: "layers" },
+          { label: m.common.nav.tags, href: tagsPath(locale), icon: "tag" },
+        ],
+      },
+      {
+        title: t.sitemap["branch-categories"],
+        links: listCategories().map((category) => ({
+          label: category.short[locale],
+          href: categoryPath(locale, category.slug[locale]),
+          icon: category.icon,
+          cat: category.key,
+        })),
+      },
+    ],
+  },
   { label: m.common.nav.hotels, href: hotelsIndexPath(locale), icon: "hotel" },
-  { label: m.common.nav.tags, href: tagsPath(locale), icon: "tag" },
   { label: m.common.nav.queries, href: queriesPath(locale), icon: "search" },
-  { label: m.common.nav.methodology, href: methodologyPath(locale), icon: "chart" },
-];
-const footLink = "text-[0.9rem] text-muted hover:text-accent-ink";
+  {
+    id: "nav-method",
+    label: m.common.nav.methodology,
+    href: methodologyPath(locale),
+    icon: "chart",
+    groups: [
+      {
+        title: t.sitemap["branch-method"],
+        links: [
+          { label: m.common.nav.methodology, href: methodologyPath(locale), icon: "chart" },
+          { label: m.common.footer.assumptions, href: assumptionsPath(locale), icon: "info" },
+          { label: m.common.nav.glossary, href: glossaryPath(locale), icon: "quote" },
+          { label: m.common.nav.sitemap, href: sitemapPath(locale), icon: "route" },
+        ],
+      },
+      {
+        title: t.sitemap["branch-engines"],
+        // Il marchio al posto dell'icona: tre voci che si chiamano "assistente"
+        // e portano tutte lo stesso robottino non si distinguono a colpo
+        // d'occhio, ed è l'unica cosa che serve qui dentro.
+        links: ENGINES.map((engine) => ({
+          label: engineMeta(engine)?.label ?? engine,
+          href: enginePath(locale, engine),
+          icon: "robot",
+          engine,
+        })),
+      },
+    ],
+  },
+] as const;
+
 const year = new Date().getFullYear();
 
 // Il footer non è una fila di link che va a capo male: è l'indice del sito,
 // diviso come è diviso il sito, più lo stato dei dati, che deve stare in fondo
 // a ogni pagina e non solo in cima all'osservatorio.
+// Le icone sono le stesse del menu in alto e della mappa del sito: una voce
+// porta lo stesso segno ovunque compaia, così il footer non è un terzo
+// vocabolario da imparare. Anche le tre intestazioni ne hanno uno — sono i
+// tre rami principali dell'osservatorio.
 const columns = [
   {
     id: "foot-observatory",
     title: m.common.nav.observatory,
+    icon: "compass",
     links: [
-      { label: t.national.leaderboard, href: `${observatoryPath(locale)}#classifica` },
-      { label: t.map.title, href: mapPath(locale) },
-      { label: t.hotelsPage.title, href: hotelsIndexPath(locale) },
-      { label: t.tags["index-title"], href: tagsPath(locale) },
-      { label: t.queries.title, href: queriesPath(locale) },
-      { label: t.compare.title, href: comparePath(locale) },
+      {
+        label: t.national.leaderboard,
+        href: `${observatoryPath(locale)}#classifica`,
+        icon: "chart",
+      },
+      { label: t.map.title, href: mapPath(locale), icon: "pin" },
+      { label: t.hotelsPage.title, href: hotelsIndexPath(locale), icon: "hotel" },
+      { label: t.tags["index-title"], href: tagsPath(locale), icon: "tag" },
+      { label: t.queries.title, href: queriesPath(locale), icon: "search" },
+      { label: t.compare.title, href: comparePath(locale), icon: "layers" },
     ],
   },
   {
     id: "foot-method",
     title: m.common.footer.methodology,
+    icon: "info",
     links: [
-      { label: t.methodology.title, href: methodologyPath(locale) },
-      { label: t.assumptions.title, href: assumptionsPath(locale) },
-      { label: t.ui.glossary, href: glossaryPath(locale) },
-      { label: t.sitemap.title, href: sitemapPath(locale) },
+      { label: t.methodology.title, href: methodologyPath(locale), icon: "chart" },
+      { label: t.assumptions.title, href: assumptionsPath(locale), icon: "info" },
+      { label: t.ui.glossary, href: glossaryPath(locale), icon: "quote" },
+      { label: t.sitemap.title, href: sitemapPath(locale), icon: "route" },
     ],
   },
   {
     id: "foot-data",
     mono: true,
     title: t.sitemap["branch-data"],
+    icon: "globe",
     links: [
-      { label: "/api/destinations.json", href: "/api/destinations.json" },
-      { label: "/api/categories.json", href: "/api/categories.json" },
-      { label: "/api/queries.json", href: "/api/queries.json" },
-      { label: "/llms.txt", href: "/llms.txt" },
+      // Il contesto di *questa* pagina, prima di quello del sito: chi arriva
+      // qui da una risposta generativa sta leggendo una pagina sola, e il file
+      // che la descrive è quello che gli serve. `here` è già la posizione
+      // corrente, calcolata sopra per marcare la voce di menu attiva.
+      { label: m.common.footer["page-llms"], href: pageLlmsPath(here || "/"), icon: "robot", plain: true },
+      { label: "/llms.txt", href: "/llms.txt", icon: "robot" },
+      { label: apiUrl("/destinations"), href: apiUrl("/destinations"), icon: "layers" },
+      { label: apiUrl("/categories"), href: apiUrl("/categories"), icon: "layers" },
+      { label: apiUrl("/queries"), href: apiUrl("/queries"), icon: "search" },
     ],
   },
 ];
@@ -99,7 +188,7 @@ const columns = [
 
 <span class="tricolore tricolore-top" aria-hidden="true"></span>
 
-<header class="sticky top-[3px] z-10 border-b border-line bg-paper/90 backdrop-blur-md">
+<header class="sticky top-[3px] z-10 border-b border-line bg-paper/90 backdrop-blur-md" data-nav-root>
   <div
     class="shell flex flex-wrap items-center justify-between gap-x-3 gap-y-2.5 py-3 max-md:pb-2 md:min-h-[72px] md:flex-nowrap md:gap-x-6 md:py-0"
   >
@@ -124,23 +213,256 @@ const columns = [
     <div
       class="order-3 flex w-full min-w-0 items-center gap-3 md:order-none md:w-auto md:contents"
     >
+      {/* Su telefono quattro voci chiedono 522 pixel e ne hanno 233: qualunque
+          ritocco tipografico lascia fuori metà menu. Qui si apre invece a
+          scomparsa, e le stesse voci diventano una colonna.
+          Il bottone nasce `hidden` e lo scopre lo script: senza JavaScript non
+          compare, e la barra resta quella di prima — quattro voci che scorrono
+          di lato. I pannelli restano chiusi come sono nell'HTML; il loro
+          contenuto è comunque scritto in pagina, e per intero sta anche nel
+          piè di pagina, che non dipende da niente. */}
+      <button
+        class="nav-burger"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-nav"
+        data-nav-burger
+        hidden
+      >
+        <Icon name="menu" size={17} />
+        <span>{m.common.nav.menu}</span>
+      </button>
+
       <nav
+        id="site-nav"
         aria-label="Primary"
-        class="nav-primary flex min-w-0 grow items-center overflow-x-auto [scrollbar-width:none] md:w-auto md:grow-0 md:overflow-visible [&::-webkit-scrollbar]:hidden"
+        class="nav-primary min-w-0 grow md:w-auto md:grow-0"
       >
         {
-          navItems.map((item) => (
-            <a class={navLink} href={item.href}>
-              <Icon name={item.icon} size={14} />
-              <span>{item.label}</span>
-            </a>
-          ))
+          navItems.map((item) =>
+            "groups" in item ? (
+              /* Il bottone apre; il link alla pagina del ramo sta dentro il
+                 pannello come prima voce. Un elemento che fa due cose — apre e
+                 naviga — su tocco non può farne nessuna delle due bene. */
+              <div class="nav-branch">
+                <button
+                  class={`${navLink} nav-trigger`}
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls={item.id}
+                  data-nav-trigger={item.id}
+                  data-current={
+                    item.groups.some((group) => group.links.some((link) => isHere(link.href)))
+                      ? "true"
+                      : undefined
+                  }
+                >
+                  <Icon name={item.icon} size={14} />
+                  <span>{item.label}</span>
+                  <Icon name="chevronDown" size={13} class="nav-chevron" />
+                </button>
+
+                <div class="nav-panel" id={item.id} data-nav-panel hidden>
+                  <div class="shell nav-panel-inner">
+                    {item.groups.map((group) => (
+                      <div class="nav-panel-group">
+                        <p class="nav-panel-title">{group.title}</p>
+                        <ul class="nav-panel-list">
+                          {group.links.map((link) => (
+                            <li>
+                              <a
+                                class="nav-panel-link"
+                                href={link.href}
+                                data-cat={"cat" in link ? link.cat : undefined}
+                                data-current={isHere(link.href) ? "true" : undefined}
+                                aria-current={isHere(link.href) ? "page" : undefined}
+                              >
+                                {"engine" in link ? (
+                                  <EngineLogo engine={link.engine} size={17} />
+                                ) : (
+                                  <>
+                                    <Icon name={link.icon} size={15} />
+                                    <span>{link.label}</span>
+                                  </>
+                                )}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <a
+                class={navLink}
+                href={item.href}
+                data-current={isHere(item.href) ? "true" : undefined}
+                aria-current={isHere(item.href) ? "page" : undefined}
+              >
+                <Icon name={item.icon} size={14} />
+                <span>{item.label}</span>
+              </a>
+            ),
+          )
         }
       </nav>
       <LangSwitch locale={locale} alternatePath={alternatePath} />
     </div>
   </div>
+
 </header>
+
+<script>
+  // Le tendine del menu. Il contenuto è già nell'HTML — un crawler lo vede
+  // anche senza eseguire niente — e questo script si limita a mostrarlo e
+  // nasconderlo, tenendo `aria-expanded` allineato a quello che si vede.
+  // Vale per l'intestazione e per la barra di contesto: stesso meccanismo,
+  // stesso comportamento con tastiera e clic fuori. Il contenitore si marca con
+  // `data-nav-root` e il resto è uguale.
+  // Il menu a scomparsa su telefono. Il bottone nasce `hidden` nell'HTML e lo
+  // scopre questo script, che nello stesso momento marca l'intestazione come
+  // richiudibile: senza JavaScript non compare nessun bottone e la barra resta
+  // quella di sempre, invece di lasciare un comando che non fa niente.
+  document.querySelectorAll<HTMLButtonElement>("[data-nav-burger]").forEach((burger) => {
+    const header = burger.closest<HTMLElement>("[data-nav-root]");
+    const nav = header?.querySelector<HTMLElement>("#site-nav");
+    if (!header || !nav) return;
+
+    burger.hidden = false;
+    header.dataset.navCollapsible = "true";
+
+    const set = (open: boolean) => {
+      burger.setAttribute("aria-expanded", String(open));
+      header.dataset.navOpen = open ? "true" : "false";
+    };
+    set(false);
+
+    burger.addEventListener("click", () => {
+      set(burger.getAttribute("aria-expanded") !== "true");
+    });
+
+    // Seguire un link chiude il menu, altrimenti tornando indietro lo si
+    // ritrova spalancato sopra la pagina.
+    nav.addEventListener("click", (event) => {
+      if ((event.target as HTMLElement).closest("a")) set(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && burger.getAttribute("aria-expanded") === "true") {
+        set(false);
+        burger.focus();
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (header.contains(event.target as Node)) return;
+      if (burger.getAttribute("aria-expanded") === "true") set(false);
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>("[data-nav-root]").forEach((header) => {
+    const triggers = Array.from(
+      header.querySelectorAll<HTMLButtonElement>("[data-nav-trigger]"),
+    );
+    if (!triggers.length) return;
+
+    const panelOf = (trigger: HTMLButtonElement) =>
+      header.querySelector<HTMLElement>(`#${trigger.dataset.navTrigger}`);
+
+    function close(trigger: HTMLButtonElement) {
+      trigger.setAttribute("aria-expanded", "false");
+      const panel = panelOf(trigger);
+      if (panel) panel.hidden = true;
+    }
+
+    function open(trigger: HTMLButtonElement) {
+      triggers.forEach((other) => other !== trigger && close(other));
+      trigger.setAttribute("aria-expanded", "true");
+      const panel = panelOf(trigger);
+      if (panel) panel.hidden = false;
+    }
+
+    const linksOf = (trigger: HTMLButtonElement) =>
+      Array.from(panelOf(trigger)?.querySelectorAll<HTMLAnchorElement>("a") ?? []);
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", (event) => {
+        if (trigger.getAttribute("aria-expanded") === "true") {
+          close(trigger);
+          return;
+        }
+        open(trigger);
+        // Il pannello sta fuori dal <nav>, quindi con Tab non ci si entra:
+        // dopo il bottone il fuoco andrebbe alla voce accanto. Chi apre da
+        // tastiera (`detail` a zero) viene portato dentro; chi apre con il
+        // mouse resta dov'è, che il puntatore ce l'ha già.
+        if (event.detail === 0) linksOf(trigger)[0]?.focus();
+      });
+
+      // Una tendina già aperta si cambia passandoci sopra: aprire, chiudere e
+      // riaprire per vedere l'altro ramo è un clic di troppo. Se nessuna è
+      // aperta non succede niente, così il menu non si spalanca da solo a chi
+      // sta solo attraversando la barra con il mouse.
+      trigger.addEventListener("mouseenter", () => {
+        const isOpen = triggers.some((t) => t.getAttribute("aria-expanded") === "true");
+        if (isOpen) open(trigger);
+      });
+
+      // Freccia giù apre ed entra: è quello che ci si aspetta da un menu.
+      trigger.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowDown") return;
+        event.preventDefault();
+        open(trigger);
+        linksOf(trigger)[0]?.focus();
+      });
+    });
+
+    // Dentro il pannello le frecce scorrono le voci, Home e End saltano agli
+    // estremi. Senza, con dieci voci si arriva in fondo solo a colpi di Tab.
+    triggers.forEach((trigger) => {
+      const panel = panelOf(trigger);
+      panel?.addEventListener("keydown", (event) => {
+        const links = linksOf(trigger);
+        const index = links.indexOf(document.activeElement as HTMLAnchorElement);
+        if (index < 0) return;
+        const go = (next: number) => {
+          event.preventDefault();
+          links[(next + links.length) % links.length]?.focus();
+        };
+        if (event.key === "ArrowDown") go(index + 1);
+        else if (event.key === "ArrowUp") go(index - 1);
+        else if (event.key === "Home") go(0);
+        else if (event.key === "End") go(links.length - 1);
+      });
+    });
+
+    // Chi apre una tendina si aspetta che si chiuda cliccando altrove o con
+    // Escape: senza, resta aperta sopra la pagina che si stava leggendo.
+    document.addEventListener("click", (event) => {
+      const target = event.target as Node;
+      if (header.contains(target)) return;
+      triggers.forEach(close);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      const open = triggers.find((t) => t.getAttribute("aria-expanded") === "true");
+      if (!open) return;
+      close(open);
+      // Il fuoco torna da dove è partito, altrimenti chi naviga da tastiera
+      // finisce a inizio pagina.
+      open.focus();
+    });
+
+    // Seguire un link chiude la tendina: senza, tornando indietro nel browser
+    // la si ritrova aperta.
+    header.querySelectorAll("[data-nav-panel] a").forEach((link) => {
+      link.addEventListener("click", () => triggers.forEach(close));
+    });
+  });
+</script>
 
 <script>
   // Le pagine tema e categoria appoggiano una seconda barra appiccicata sotto
@@ -152,6 +474,147 @@ const columns = [
       document.documentElement.style.setProperty("--header-h", `${header.offsetHeight}px`);
     sync();
     new ResizeObserver(sync).observe(header);
+  }
+</script>
+
+<script>
+  // Scorrimento con inerzia. La rotella muove la pagina a scatti secchi — una
+  // tacca, un salto — e su una pagina lunga di tabelle e classifiche quello
+  // scatto è la cosa che si sente di più. Qui ogni tacca diventa una corsa
+  // breve che rallenta: la posizione vera insegue quella richiesta invece di
+  // saltarci sopra.
+  //
+  // Tre confini, e sono la ragione per cui questo non è una libreria:
+  // 1. Solo con un puntatore fine. Su un dito l'inerzia ce l'ha già il sistema,
+  //    e sovrapporne una seconda si sente come un ritardo.
+  // 2. Mai se è stato chiesto meno movimento.
+  // 3. Mai dentro qualcosa che scorre per conto suo — una tabella larga, il
+  //    pannello del menu, la mappa: lì la rotella appartiene a quell'elemento.
+  //
+  // La pagina resta scrollata dal browser (`window.scrollTo`), non traslata:
+  // le barre appiccicate, `position: sticky` e gli osservatori di visibilità
+  // continuano a funzionare come se non ci fosse niente.
+  {
+    const still = matchMedia("(prefers-reduced-motion: reduce)");
+    const fine = matchMedia("(pointer: fine)");
+
+    /** Quanto della distanza residua si copre in un fotogramma a 60 Hz. */
+    const CATCH_UP = 0.18;
+
+    let target = 0;
+    let frame = 0;
+    let last = 0;
+    let steering = false;
+
+    const limit = () =>
+      Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+    const jump = (top: number) =>
+      window.scrollTo({ top, behavior: "instant" as ScrollBehavior });
+
+    const stop = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      steering = false;
+    };
+
+    const step = (now: number) => {
+      frame = 0;
+      const elapsed = Math.min(64, now - last || 16);
+      last = now;
+      const current = window.scrollY;
+      const distance = target - current;
+      // Sotto il mezzo pixel non c'è più niente da mostrare: si posa e basta,
+      // altrimenti il ciclo resta acceso all'infinito per un decimale.
+      if (Math.abs(distance) < 0.5) {
+        jump(target);
+        stop();
+        return;
+      }
+      // Interpolazione indipendente dal refresh: a 60 e a 144 Hz la corsa dura
+      // lo stesso tempo, invece di essere due volte e mezzo più rapida.
+      jump(current + distance * (1 - Math.pow(1 - CATCH_UP, elapsed / 16.667)));
+      frame = requestAnimationFrame(step);
+    };
+
+    // La risposta si ripete identica per tutta una scorsa — il puntatore resta
+    // fermo sullo stesso elemento — e risalire l'albero chiedendo lo stile
+    // calcolato a ogni tacca di trackpad è il modo più facile di far scattare
+    // proprio la cosa che si voleva rendere fluida.
+    let asked: Element | null = null;
+    let answer = false;
+
+    const owned = (node: EventTarget | null) => {
+      let el = node instanceof Element ? node : null;
+      if (el && el === asked) return answer;
+      const target = el;
+      const remember = (value: boolean) => {
+        asked = target;
+        answer = value;
+        return value;
+      };
+
+      // La mappa usa la rotella per lo zoom, e un contenitore può chiamarsi
+      // fuori da solo con `data-native-scroll`.
+      if (el?.closest(".leaflet-container, [data-native-scroll]")) return remember(true);
+
+      while (el && el !== document.body) {
+        if (
+          el.scrollHeight > el.clientHeight + 1 &&
+          /auto|scroll/.test(getComputedStyle(el).overflowY)
+        ) {
+          return remember(true);
+        }
+        el = el.parentElement;
+      }
+      return remember(false);
+    };
+
+    window.addEventListener(
+      "wheel",
+      (event) => {
+        if (still.matches || !fine.matches) return;
+        // Ctrl e meta con la rotella sono lo zoom del browser, non lo scroll.
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        if (event.defaultPrevented) return;
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+        if (owned(event.target)) return;
+
+        const bottom = limit();
+        if (bottom <= 0) return;
+
+        // `deltaMode` non è sempre in pixel: alcune rotelle contano righe, e i
+        // tasti pagina contano schermate.
+        const unit =
+          event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
+
+        // A rotella ferma si riparte da dove la pagina è davvero: nel frattempo
+        // può averla mossa un'ancora, la tastiera o la barra di scorrimento.
+        if (!steering) {
+          target = window.scrollY;
+          steering = true;
+        }
+        target = Math.max(0, Math.min(bottom, target + event.deltaY * unit));
+        event.preventDefault();
+        last = performance.now();
+        if (!frame) frame = requestAnimationFrame(step);
+      },
+      { passive: false },
+    );
+
+    // Qualsiasi altro modo di muovere la pagina ha la precedenza: un'ancora,
+    // una freccia, la barra trascinata. Se la corsa fosse ancora accesa, la
+    // riporterebbe indietro un fotogramma dopo.
+    // La risposta memorizzata vale finché la pagina è quella: se cambia la
+    // finestra, un contenitore può essere diventato scorrevole (o smettere).
+    window.addEventListener("resize", () => {
+      asked = null;
+    });
+
+    const yield_ = () => steering && stop();
+    window.addEventListener("keydown", yield_);
+    window.addEventListener("pointerdown", yield_);
+    window.addEventListener("touchstart", yield_, { passive: true });
   }
 </script>
 
@@ -201,16 +664,21 @@ const columns = [
         {
           columns.map((column) => (
             <nav class="grid content-start gap-2" aria-labelledby={column.id}>
-              <p class="label text-faint" id={column.id}>
+              <p class="label flex items-center gap-1.5 text-faint" id={column.id}>
+                <Icon name={column.icon} size={13} />
                 {column.title}
               </p>
               {/* Una lista vera, non link sciolti: chi naviga a voce sente
                   quante voci ha davanti prima di attraversarle. */}
-              <ul class="grid gap-2">
+              <ul class="grid gap-0.5">
                 {column.links.map((link) => (
                   <li>
-                    <a class={column.mono ? `${footLink} font-mono` : footLink} href={link.href}>
-                      {link.label}
+                    <a
+                      class={column.mono && !("plain" in link) ? "foot-link font-mono" : "foot-link"}
+                      href={link.href}
+                    >
+                      <Icon name={link.icon} size={14} />
+                      <span>{link.label}</span>
                     </a>
                   </li>
                 ))}
@@ -221,9 +689,11 @@ const columns = [
       </div>
     </div>
 
-    {/* Due avvisi della stessa taglia: cosa non fidarsi ancora dei numeri,
-        e come farceli correggere. Il secondo era nascosto in un title. */}
-    <div class="grid gap-3 md:grid-cols-2">
+    {/* Come farci correggere un dato: era nascosto in un title. Accanto stava
+        l'avviso sui numeri generati, che ora compare solo se l'interfaccia
+        dichiara la fase demo — e quando non c'è, questo prende tutta la riga. */}
+    <div class={`grid gap-3 ${DEMO_DISCLOSURE ? "md:grid-cols-2" : ""}`}>
+      {DEMO_DISCLOSURE && (
       <div
         class="grid content-start gap-1.5 rounded-(--radius-brand) border border-gold/35 bg-gold/8 px-4 py-3.5"
       >
@@ -238,6 +708,7 @@ const columns = [
           </a>
         </p>
       </div>
+      )}
 
       <div
         class="grid content-start gap-1.5 rounded-(--radius-brand) border border-line bg-surface px-4 py-3.5"

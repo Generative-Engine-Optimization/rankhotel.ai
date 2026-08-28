@@ -15,9 +15,17 @@ import {
   pathFor,
   queriesPath,
   sitemapPath,
+  tagPath,
+  tagsPath,
   type Locale,
 } from "../lib/config";
-import { ENGINES, NATIONAL, listCategories, listDestinations } from "../lib/observatory";
+import {
+  ENGINES,
+  NATIONAL,
+  listCategories,
+  listDestinations,
+  listTags,
+} from "../lib/observatory";
 
 type Entry = {
   loc: string;
@@ -92,6 +100,13 @@ export function GET() {
       ...pair(queriesPath, "weekly"),
       ...pair(hotelsIndexPath, "daily"),
       ...pair(comparePath, "monthly"),
+      // I temi erano l'unica famiglia di pagine che questa sitemap non
+      // dichiarava: ventitré pagine per lingua raggiungibili dal menu e dalle
+      // schede, ma invisibili a chi legge solo la sitemap.
+      ...pair(tagsPath, "weekly"),
+      ...listTags().flatMap((tag) =>
+        pair((locale) => tagPath(locale, tag.slug[locale]), "weekly"),
+      ),
       ...ENGINES.flatMap((engine) =>
         pair((locale) => enginePath(locale, engine), "weekly"),
       ),
