@@ -19,7 +19,7 @@ const symbol = { allow: "✓", block: "✗", partial: "~" };
   <table>
     <thead>
       <tr>
-        <th scope="col" class="w-12">#</th>
+        <th scope="col" class="w-12 text-right">#</th>
         <th scope="col">
           <span class="th-label"><Icon name="hotel" size={13} />{t.table.hotel}</span>
         </th>
@@ -39,7 +39,7 @@ const symbol = { allow: "✓", block: "✗", partial: "~" };
           </button>
         </th>
         <th scope="col" class="text-right">{t.table.trend}</th>
-        <th scope="col" class="w-10"><span class="sr-only">{t.table.detail}</span></th>
+        <th scope="col" class="w-10 text-right"><span class="sr-only">{t.table.detail}</span></th>
       </tr>
     </thead>
     <tbody>
@@ -52,7 +52,7 @@ const symbol = { allow: "✓", block: "✗", partial: "~" };
               data-presence={hotel.presence}
               data-audit={hotel.auditScore}
             >
-              <td class="num text-faint" data-hrank>{hotel.rank}</td>
+              <td class="num text-right text-faint" data-hrank>{hotel.rank}</td>
               <td>
                 <span class="flex flex-wrap items-center gap-2">
                   <span class="font-bold">{hotel.name}</span>

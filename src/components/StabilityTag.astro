@@ -2,6 +2,7 @@
 import type { Locale } from "../lib/config";
 import { messages } from "../lib/i18n";
 import type { Stat } from "../lib/observatory";
+import InfoTip from "./InfoTip.astro";
 
 const { locale, stat } = Astro.props as { locale: Locale; stat: Stat };
 const t = messages(locale).observatory;
@@ -13,6 +14,7 @@ const tone = {
 }[stat.stability];
 ---
 
-<span class={`pill ${tone}`} title={t.score["stability-help"]}>
-  {t.score.stability[stat.stability]}
+<span class="inline-flex items-center gap-1.5">
+  <span class={`pill ${tone}`}>{t.score.stability[stat.stability]}</span>
+  <InfoTip locale={locale} text={t.score["stability-help"]} />
 </span>

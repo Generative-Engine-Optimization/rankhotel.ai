@@ -10,6 +10,7 @@ import StatGrid from "../components/StatGrid.astro";
 import TierBadge from "../components/TierBadge.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import {
+  DEMO_DISCLOSURE,
   BRAND,
   LINKS,
   categoryPath,
@@ -26,6 +27,7 @@ import {
 } from "../lib/config";
 import { decimal, number } from "../lib/format";
 import { messages } from "../lib/i18n";
+import { publicPath as apiUrl } from "../lib/api/endpoints";
 import {
   ENGINES,
   FACTOR_KEYS,
@@ -84,6 +86,11 @@ const readingRules = [
 // che dataset contiene. Le altre pagine ci si agganciano per @id.
 // Le tre regole di lettura sono già domande e risposte: dichiararle come FAQ è
 // il formato che i motori generativi estraggono meglio.
+// La domanda sui numeri generati vive solo finché l'interfaccia dichiara la
+// fase demo. Filtrata qui una volta sola: in pagina e nello schema FAQ deve
+// comparire lo stesso identico elenco.
+const faqItems = landing.faq.items.filter((item) => !("demo" in item) || DEMO_DISCLOSURE);
+
 const schema = graph([
   organizationSchema(locale),
   webSiteSchema(locale),
@@ -97,7 +104,7 @@ const schema = graph([
   datasetSchema(locale, landing.meta.title, landing.meta.description, pathFor(locale)),
   faqSchema(
     pathFor(locale),
-    landing.faq.items.map((item) => ({ question: item.q, answer: item.a })),
+    faqItems.map((item) => ({ question: item.q, answer: item.a })),
   ),
 ]);
 ---
@@ -137,11 +144,11 @@ const schema = graph([
         ]}
       />
       <div class="flex flex-wrap gap-2.5">
-        <a class="btn gap-2" href={observatoryPath(locale)}>
+        <a class="btn" href={observatoryPath(locale)}>
           {landing.hero.cta}
           <Icon name="arrowRight" size={17} />
         </a>
-        <a class="btn btn-secondary gap-2" href="#come">
+        <a class="btn btn-secondary" href="#come">
           <Icon name="route" size={16} />
           {landing.hero["cta-secondary"]}
         </a>
@@ -288,7 +295,7 @@ const schema = graph([
             <Panel locale={locale} icon={startLinks[index].icon} title={path.name} class="h-full">
               <p class="text-[0.92rem] text-muted">{path.body}</p>
               <a
-                class="btn btn-secondary mt-auto justify-self-start gap-2"
+                class="btn btn-secondary mt-auto"
                 href={startLinks[index].href}
               >
                 {path.cta}
@@ -313,7 +320,7 @@ const schema = graph([
     >
       <div class="grid gap-2.5 lg:grid-cols-2">
         {
-          landing.faq.items.map((item) => (
+          faqItems.map((item) => (
             <details class="card grid content-start gap-2.5">
               <summary class="cursor-pointer">
                 <h3 class="flex items-start gap-2.5 text-[1.02rem]">
@@ -351,10 +358,10 @@ const schema = graph([
             <tbody>
               {
                 [
-                  { path: "/api/destinations.json", note: t.sitemap["branch-destinations"] },
-                  { path: "/api/categories.json", note: t.sitemap["branch-categories"] },
-                  { path: "/api/queries.json", note: t.queries.title },
-                  { path: "/api/hotels.json", note: t.hotels.title },
+                  { path: apiUrl("/destinations"), note: t.sitemap["branch-destinations"] },
+                  { path: apiUrl("/categories"), note: t.sitemap["branch-categories"] },
+                  { path: apiUrl("/queries"), note: t.queries.title },
+                  { path: apiUrl("/hotels"), note: t.hotels.title },
                   { path: "/llms.txt", note: t.methodology["data-title"] },
                 ].map((row) => (
                   <tr>
@@ -373,7 +380,7 @@ const schema = graph([
         <Panel locale={locale} title={landing.closing.title} icon="info" tone="muted">
           <p class="text-[0.92rem] text-muted">{landing.closing.body}</p>
           <div class="flex flex-wrap gap-2.5">
-            <a class="btn gap-2" href={observatoryPath(locale)}>
+            <a class="btn" href={observatoryPath(locale)}>
               {landing.closing.cta}
               <Icon name="arrowRight" size={16} />
             </a>

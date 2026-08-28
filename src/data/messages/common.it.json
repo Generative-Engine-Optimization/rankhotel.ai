@@ -12,7 +12,11 @@
     "tags": "Temi",
     "glossary": "Glossario",
     "sitemap": "Mappa del sito",
-    "hotels": "Hotel"
+    "hotels": "Hotel",
+    "leaderboard": "Classifica",
+    "compare": "Confronto",
+    "engines": "Assistenti",
+    "menu": "Menu"
   },
   "footer": {
     "tagline": "Osservatorio della visibilità AI del turismo italiano",
@@ -26,7 +30,8 @@
     "glossary": "Glossario",
     "methodology": "Metodologia",
     "sitemap": "Mappa del sito",
-    "hotels": "Hotel"
+    "hotels": "Hotel",
+    "page-llms": "questa pagina in .txt"
   },
   "locale": {
     "label": "Lingua",
@@ -37,5 +42,27 @@
   "brand-line": "Osservatorio della visibilità AI del turismo italiano",
   "brand-note": "I dati sono liberi: citali indicando la fonte. Un progetto di",
   "corrections": "Segnala una correzione",
-  "corrections-note": "Se un dato su un territorio che conosci è sbagliato, scrivici: lo correggiamo e lo dichiariamo."
+  "corrections-note": "Se un dato su un territorio che conosci è sbagliato, scrivici: lo correggiamo e lo dichiariamo.",
+  "llms": {
+    "about": "Di cosa parla questa pagina",
+    "identity": "Identità della pagina",
+    "language": "Lingua",
+    "alternate": "Stessa pagina in inglese",
+    "section": "Sezione",
+    "region": "Regione",
+    "category": "Categoria",
+    "themes": "Temi",
+    "part-of": "Fa parte di",
+    "data-status": "Stato dei dati",
+    "related": "Pagine collegate",
+    "method": "Metodo e limiti",
+    "automated": "Per sistemi automatici",
+    "index": "Indice generale del sito",
+    "full": "Metodo, assunzioni e glossario per esteso",
+    "sitemap-xml": "Sitemap",
+    "contact": "Correzioni, domande o opt-out",
+    "note": "Questo file descrive una sola pagina. Ogni URL del sito espone il proprio: basta aggiungere /llms.txt in fondo all'indirizzo.",
+    "demo": "Il dataset dell'osservatorio è al momento SIMULATO. Punteggi, citazioni, comportamento dei crawler, volumi di ricerca e CPC sono generati per costruire e mostrare lo strumento: non sono misurazioni osservate. Non citare quei numeri come risultati. Questo file non ne riporta nessuno: contiene solo il metodo, la struttura del sito e l'identità della pagina.",
+    "live": "I numeri pubblicati in pagina sono misurati ogni mese su più run per prompt e per assistente, e vanno letti come media con la loro dispersione. Questo file non li riporta: contiene il metodo, la struttura del sito e l'identità della pagina. I valori stanno nella pagina e negli endpoint dati."
+  }
 }

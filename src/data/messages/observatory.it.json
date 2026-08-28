@@ -241,8 +241,13 @@
     "fanout-title": "In cosa la espande l'AI",
     "fanout-lead": "Le sotto-domande che gli engine generano prima di comporre la risposta, con la quota di run in cui compaiono.",
     "volume-title": "Volume e CPC su 24 mesi",
-    "seasonality-title": "Stagionalità per categoria",
-    "seasonality-lead": "Il turismo italiano non è piatto. Il mese in cui la domanda c'è è il mese in cui serve esserci.",
+    "months-title": "Domanda e visibilità, mese per mese",
+    "months-lead": "Tre mesi misurati, da agosto a ottobre 2026. La domanda si muove parecchio da un mese all'altro; la visibilità AI quasi per niente. È nella distanza fra le due che c'è il lavoro da fare.",
+    "month-visibility": "Visibilità AI",
+    "upcoming": "Prossimamente",
+    "month-change": "Variazione",
+    "month-scale-demand": "barre in scala sul mese più forte di ogni categoria: dicono la stagione, non il confronto fra categorie.",
+    "month-scale-visibility": "barre sulla scala assoluta da 0 a 100, la stessa per tutti.",
     "local-title": "Le query di questa destinazione",
     "local-lead": "Le più cercate fra quelle che abbiamo monitorato qui.",
     "explore": "Cerca fra le domande",
@@ -343,7 +348,27 @@
   "methodology": {
     "title": "Come calcoliamo il punteggio",
     "lead": "La formula è pubblica, e questa pagina la legge dal codice che la applica. Non possono raccontare due cose diverse.",
+    "summary-title": "In breve",
+    "summary": [
+      {
+        "q": "Cosa misuriamo",
+        "a": "Quanto un territorio viene consigliato, quanto l'AI lo conosce davvero, chi lo racconta e se i suoi siti si lasciano leggere."
+      },
+      {
+        "q": "Come",
+        "a": "{prompts} domande per territorio, in italiano e in inglese, poste a {engines} assistenti."
+      },
+      {
+        "q": "Quante volte",
+        "a": "{runs} volte al mese per assistente. Pubblichiamo la media e quanto ha oscillato, mai una risposta sola."
+      },
+      {
+        "q": "Cosa leggere",
+        "a": "La fascia, non la posizione secca: fra la trentottesima e la quarantunesima non c'è differenza misurabile."
+      }
+    ],
     "formula-title": "Quattro cose misurate, un numero",
+    "numbers-title": "I numeri dell'osservatorio",
     "weights-title": "I pesi",
     "engines-title": "Un punteggio generale, uno per assistente",
     "engines-body": "Il generale è la media semplice dei tre. Nessun peso nascosto fra un assistente e l'altro: se ChatGPT contasse più di Perplexity sarebbe una nostra opinione travestita da misura.",
@@ -353,6 +378,10 @@
     "technical-body": "Un'AI non consiglia quello che non ha potuto leggere. Ogni assistente manda i suoi programmi a leggere i siti: se un territorio blocca quelli di ChatGPT, il suo punteggio su ChatGPT scende. Non è igiene tecnica, è visibilità.",
     "levels-title": "Due tipi di domanda",
     "levels-body": "Nel primo il territorio gareggia con gli altri della sua categoria. Nel secondo si verifica solo se l'AI lo conosce. Sono due cose diverse e vanno misurate separate: ci sono territori famosi che l'AI non sa raccontare, e territori piccoli che racconta benissimo.",
+    "level-comparative": "Il territorio in gara",
+    "level-internal": "Il territorio da solo",
+    "level-feeds": "Alimenta il fattore «{factor}»",
+    "level-count": "{n} domande su {total}",
     "data-title": "Stato dei dati",
     "data-body": "In questa fase i numeri sono generati. Lo schema, la formula e le pagine sono quelli definitivi: quando le run reali sostituiranno il dataset simulato, non cambierà una riga di questa metodologia.",
     "formula-example": "Esempio illustrativo: numeri scelti per mostrare come i quattro fattori compongono il voto, non il punteggio di un territorio reale."
@@ -387,7 +416,8 @@
       },
       {
         "title": "I dati di questa fase sono simulati",
-        "body": "Score, citazioni, comportamento dei bot, volumi e CPC sono generati per costruire e mostrare lo strumento. I domini dei siti ufficiali ed editoriali sono generati dal nome della destinazione, non presi da siti reali: pubblicare che un ente esistente blocca un crawler senza averlo verificato sarebbe falso."
+        "body": "Score, citazioni, comportamento dei bot, volumi e CPC sono generati per costruire e mostrare lo strumento. I domini dei siti ufficiali ed editoriali sono generati dal nome della destinazione, non presi da siti reali: pubblicare che un ente esistente blocca un crawler senza averlo verificato sarebbe falso.",
+        "demo": true
       }
     ]
   },
@@ -445,7 +475,8 @@
     "glossary-lead": "Spiegate come le spiegheremmo a voce, non come le scriverebbe un manuale.",
     "measured-since": "Prima rilevazione: agosto 2026",
     "runs-title": "Le tre rilevazioni",
-    "runs-lead": "Misuriamo una volta al mese, ripetendo ogni domanda cinque volte. Ogni punto è una media; la barra dice quanto le risposte si sono mosse dentro quel mese."
+    "runs-lead": "Misuriamo una volta al mese, ripetendo ogni domanda cinque volte. Ogni punto è una media; la barra dice quanto le risposte si sono mosse dentro quel mese.",
+    "all": "Tutti"
   },
   "explain": {
     "score": "È un voto da 0 a 100 su quanto un'intelligenza artificiale nomina questo territorio quando qualcuno le chiede dove andare. Cento vuol dire che esce sempre, e per primo. Zero vuol dire che per l'AI non esiste.",
@@ -519,7 +550,7 @@
     "branch-data-note": "Gli stessi numeri delle pagine, in JSON, senza registrazione.",
     "site": "Il sito",
     "all-destinations": "Vedi tutte e cento",
-    "legend": "I numeri fra parentesi contano le pagine in questa lingua."
+    "legend": "I numeri contano le pagine in questa lingua. I dati aperti sono gli stessi per entrambe."
   },
   "hotelsPage": {
     "title": "Gli hotel",
@@ -546,7 +577,7 @@
       "verified": "Il dominio risponde e la pagina nomina questa struttura.",
       "chain": "Sta sul dominio di una catena: esiste, ma chi può leggere quel sito lo decide il gruppo.",
       "guarded": "Il dominio esiste e rifiuta i controlli automatici. Il sito c'è, la prova che sia questo hotel no.",
-      "listed": "Presente nell'elenco di partenza, non ricontrollata in questa tornata.",
+      "listed": "Il sito risponde ed è una struttura ricettiva, ma la pagina non prova che stia in questo territorio. Resta in elenco senza dirsi verificata.",
       "generated": "Nome generato per mostrare come funziona lo strumento. Non è un albergo esistente.",
       "registry-web": "Iscritta al registro regionale delle strutture ricettive, con sito dichiarato.",
       "registry": "Iscritta al registro regionale delle strutture ricettive. Non risulta un sito."
@@ -563,6 +594,7 @@
     "legend-score": "**Punteggio** — quanto la struttura viene nominata quando si chiede dove dormire, da 0 a 100. Il ± è di quanto la risposta è cambiata dentro lo stesso mese.",
     "legend-presence": "**Quanto esce** — la quota di risposte in cui la struttura compare almeno una volta. Un punteggio alto con una quota bassa vuol dire: quando esce esce bene, ma esce di rado.",
     "legend-confidence": "**Il tag accanto al nome** — quanto sappiamo del suo sito. «Verificata» vuol dire che il dominio risponde e la pagina nomina questo hotel; «Nome generato» che la riga è dimostrativa.",
+    "legend-confidence-plain": "**Il tag accanto al nome** — quanto sappiamo del suo sito. «Verificata» vuol dire che il dominio risponde e la pagina nomina questo hotel.",
     "showing-of": "{n} di {total} strutture",
     "show-more": "Mostra altre {n}",
     "show-all": "Mostra tutte"

@@ -11,6 +11,7 @@ import SiteLink from "../components/SiteLink.astro";
 import StatGrid from "../components/StatGrid.astro";
 import ObsLayout from "../layouts/ObsLayout.astro";
 import {
+  DEMO_DISCLOSURE,
   destinationPath,
   hotelsIndexPath,
   methodologyPath,
@@ -67,8 +68,14 @@ const showcaseDestination = destinationByKey(ranked[0].destination);
 
 // Le quattro righe di legenda arrivano dai messaggi con il termine in **grassetto**.
 const legend = (["rank", "score", "presence", "confidence"] as const).map((key) => {
-  const [, term, body] = /^\*\*(.+?)\*\*\s*—\s*(.*)$/s.exec(h[`legend-${key}`]) ?? [];
-  return { term: term ?? "", body: body ?? h[`legend-${key}`] };
+  // La riga sul tag nomina «Nome generato», che esiste solo in fase demo: senza
+  // dichiarazione se ne usa la versione che si ferma a «Verificata».
+  const source =
+    key === "confidence" && !DEMO_DISCLOSURE
+      ? h["legend-confidence-plain"]
+      : h[`legend-${key}`];
+  const [, term, body] = /^\*\*(.+?)\*\*\s*—\s*(.*)$/s.exec(source) ?? [];
+  return { term: term ?? "", body: body ?? source };
 });
 ---
 
@@ -109,9 +116,6 @@ const legend = (["rank", "score", "presence", "confidence"] as const).map((key) 
         { label: t.stats.destinations, value: number(locale, NATIONAL.destinations) },
       ]}
     />
-    <Panel locale={locale} tone="muted" icon="info">
-      <p class="text-[0.9rem] text-muted">{h["generated-note"]}</p>
-    </Panel>
   </PageHero>
 
   <Section
@@ -178,7 +182,7 @@ const legend = (["rank", "score", "presence", "confidence"] as const).map((key) 
         <table>
           <thead>
             <tr>
-              <th scope="col" class="w-14">#</th>
+              <th scope="col" class="w-14 text-right">#</th>
               <th scope="col">
                 <span class="th-label"><Icon name="hotel" size={13} />{t.table.hotel}</span>
               </th>
@@ -274,7 +278,7 @@ const legend = (["rank", "score", "presence", "confidence"] as const).map((key) 
       <p class="card text-[0.9rem] text-muted" data-hotel-empty hidden>{t.filters.none}</p>
 
       <button
-        class="btn btn-secondary justify-self-center gap-2"
+        class="btn btn-secondary justify-self-center"
         type="button"
         data-hotel-more
         data-template={h["show-more"]}

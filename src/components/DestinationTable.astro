@@ -11,7 +11,7 @@ import {
   categoryByKey,
   destinationIcon,
   engineMeta,
-  scoreBand,
+  scoreColor,
   type Destination,
 } from "../lib/observatory";
 import Sparkline from "./Sparkline.astro";
@@ -30,14 +30,6 @@ const {
 
 const t = messages(locale).observatory;
 
-// Stessa scala di colore del punteggio grande: la colonna si legge per
-// gradiente ancora prima di leggere le cifre.
-const scoreTone = (value: number) => {
-  const v = Math.max(0, Math.min(100, value));
-  const hue = 18 + (v / 100) * 128;
-  const chroma = 0.09 + (Math.abs(v - 50) / 50) * 0.05;
-  return `oklch(0.5 ${chroma.toFixed(3)} ${hue.toFixed(0)})`;
-};
 ---
 
 <div class="grid gap-3.5" data-ranking id={id} data-error-label={t.filters.error}>
@@ -62,7 +54,7 @@ const scoreTone = (value: number) => {
     <table>
       <thead>
         <tr>
-          <th scope="col" class="w-12">#</th>
+          <th scope="col" class="w-12 text-right">#</th>
           <th scope="col">
             <span class="th-label"><Icon name="territory" size={13} />{t.table.destination}</span>
           </th>
@@ -103,7 +95,7 @@ const scoreTone = (value: number) => {
                 data-engines={JSON.stringify(engineScores)}
                 data-sd={destination.score.stdDev}
               >
-                <td class="num text-faint" data-rank>{index + 1}</td>
+                <td class="num text-right text-faint" data-rank>{index + 1}</td>
                 <td>
                   <a
                     class="inline-flex items-center gap-2 font-bold"
@@ -136,7 +128,7 @@ const scoreTone = (value: number) => {
                   <span class="inline-flex items-baseline justify-end gap-1.5" data-score-cell>
                     <span
                       class="font-display font-bold tabular-nums"
-                      style={`color:${scoreTone(destination.score.mean)}`}
+                      style={`color:${scoreColor(destination.score.mean)}`}
                     >
                       {decimal(locale, destination.score.mean, 0)}
                     </span>
@@ -167,6 +159,7 @@ const scoreTone = (value: number) => {
 
 <script>
   import { api } from "../lib/api/client";
+  import { scoreColor } from "../lib/score";
 
   type Row = HTMLTableRowElement;
 
@@ -199,9 +192,7 @@ const scoreTone = (value: number) => {
         const cell = row.querySelector("[data-score-cell]");
         if (cell) {
           const score = Math.round(scoreOf(row));
-          const hue = 18 + (Math.max(0, Math.min(100, score)) / 100) * 128;
-          const chroma = 0.09 + (Math.abs(score - 50) / 50) * 0.05;
-          const tone = `oklch(0.5 ${chroma.toFixed(3)} ${hue.toFixed(0)})`;
+          const tone = scoreColor(score);
           const band =
             engine === "all"
               ? `<span class="num text-[0.78rem] text-faint">±${Math.round(Number(row.dataset.sd))}</span>`

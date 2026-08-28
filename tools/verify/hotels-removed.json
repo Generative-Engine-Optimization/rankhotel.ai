@@ -1,5 +1,18 @@
 [
  {
+  "destination": "verona",
+  "name": "Palazzo Victoria",
+  "domain": "palazzovictoria.com",
+  "stars": 5,
+  "area": "Corso Porta Borsari",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Xoilac TV - Trực Tiếp Bóng Đá HD 24/7 - Xem Xôi Lạc TV #1 VN",
+  "azione": "non-struttura"
+ },
+ {
   "destination": "venezia",
   "name": "Villa Ducale",
   "domain": "villaducale.com",
@@ -8,24 +21,75 @@
   "confidence": "verified",
   "source": "curated",
   "verdict": "fuori-zona",
-  "why": "in Italia (schema-it, telefono-+39, indirizzo) ma la pagina non nomina Venezia e Laguna",
+  "why": "in Italia (schema-it, telefono-+39, indirizzo, in italiano (11)) ma la pagina non nomina Venezia e Laguna",
   "title": "Villa Ducale | Boutique Hotel con Vista a Taormina | SLH",
   "azione": "altrove",
   "elsewhere": "taormina"
  },
  {
-  "destination": "trapanese",
-  "name": "Zingaro Resort Sea View Village & Spa",
-  "domain": "zingaroresort.com",
-  "stars": 4,
-  "area": null,
+  "destination": "venezia",
+  "name": "Bauer Palazzo",
+  "domain": "bauervenezia.com",
+  "stars": 5,
+  "area": "San Marco",
   "confidence": "verified",
   "source": "curated",
-  "verdict": "non-provata",
-  "why": "la pagina non prova né il paese né il luogo",
-  "title": "Zingaro Resort Sea View Village & Spa - Elegante Hotel immerso nella Riserva dello Zingaro San Vito Lo Capo",
-  "azione": "altrove",
-  "elsewhere": "stelvio"
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "194.242.61.71",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "venezia",
+  "name": "Casa Laguna Hotel & Spa",
+  "domain": "casalaguna.com",
+  "stars": 3,
+  "area": null,
+  "confidence": "verified",
+  "source": "probe",
+  "verdict": "fuori-italia",
+  "why": "il titolo dichiara laguna beach",
+  "title": "Casa Laguna Hotel & Spa | Laguna Beach Hotel with Ocean Views",
+  "azione": "fuori-italia"
+ },
+ {
+  "destination": "val-orcia",
+  "name": "La Bandita Townhouse",
+  "domain": "la-bandita.com",
+  "stars": 4,
+  "area": "Pienza",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "La Bandita Townhouse",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "val-orcia",
+  "name": "Hotel Posta Marcucci",
+  "domain": "hotelpostamarcucci.it",
+  "stars": 4,
+  "area": "Bagno Vignoni",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Hotelpostamarcucci.it - Alla scoperta della Val d'Orcia",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "val-di-noto",
+  "name": "Eremo della Giubiliana",
+  "domain": "eremodellagiubiliana.it",
+  "stars": 5,
+  "area": "Ragusa",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Sito Ufficiale Eremo della Giubiliana a Ragusa | Prenota adesso",
+  "azione": "non-struttura"
  },
  {
   "destination": "sud-sardegna",
@@ -52,6 +116,19 @@
   "why": "il titolo dichiara greece, rhodes, kiotari",
   "title": "ESTE ELEGANT SUITES & VILLAS Kiotari, Rhodes, Greece",
   "azione": "fuori-italia"
+ },
+ {
+  "destination": "siena",
+  "name": "Borgo Scopeto Relais",
+  "domain": "borgoscopeto.it",
+  "stars": 4,
+  "area": "Castelnuovo Berardenga",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Borgoscopeto",
+  "azione": "non-struttura"
  },
  {
   "destination": "salento",
@@ -81,18 +158,30 @@
   "elsewhere": "costiera-amalfitana"
  },
  {
-  "destination": "sibillini",
-  "name": "PIANO ROOMS Bed & Breakfast Vietri sul Mare",
-  "domain": "pianorooms.it",
-  "stars": 3,
+  "destination": "salento",
+  "name": "Masseria Le Mandorle",
+  "domain": "masserialemandorle.it",
+  "stars": 4,
+  "area": "Otranto",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "roma",
+  "name": "All-Inclusive Resort in New York",
+  "domain": "villaroma.com",
+  "stars": 4,
   "area": null,
   "confidence": "verified",
-  "source": "probe",
-  "verdict": "non-provata",
-  "why": "la pagina non prova né il paese né il luogo",
-  "title": "PIANO ROOMS Bed & Breakfast Vietri sul Mare | Amalfi Coast Bed & Breakfast Vietri sul Mare | Amalfi Coast",
-  "azione": "altrove",
-  "elsewhere": "costiera-amalfitana"
+  "source": "curated",
+  "verdict": "fuori-italia",
+  "why": "il titolo dichiara catskill, new york",
+  "title": "All-Inclusive Resort in New York | Family Resort in Catskill| The Villa Roma",
+  "azione": "fuori-italia"
  },
  {
   "destination": "roma",
@@ -108,18 +197,30 @@
   "azione": "fuori-italia"
  },
  {
-  "destination": "pompei-ercolano",
-  "name": "Rooms Rent Vesuvio Bed & Breakfast vicino",
-  "domain": "bbvesuvio.it",
-  "stars": 3,
-  "area": null,
+  "destination": "siena",
+  "name": "Hotel Certosa di Maggiano",
+  "domain": "certosadimaggiano.com",
+  "stars": 5,
+  "area": "Fuori le mura",
   "confidence": "verified",
-  "source": "probe",
-  "verdict": "non-provata",
-  "why": "la pagina non prova né il paese né il luogo",
-  "title": "Rooms Rent Vesuvio Bed & Breakfast vicino Ospedale del Mare di Napoli e San Giorgio a Cremano",
-  "azione": "altrove",
-  "elsewhere": "napoli"
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Soi c u Mobile 888 mi n B c ch nh x c vip nh t MB h m nay",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "ravenna",
+  "name": "Hotel Bisanzio",
+  "domain": "bisanziohotel.com",
+  "stars": 4,
+  "area": "Centro storico",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Bisanzio -",
+  "azione": "non-struttura"
  },
  {
   "destination": "pompei-ercolano",
@@ -133,20 +234,6 @@
   "why": "non è una struttura ricettiva",
   "title": "Hotel Vesuvio : guide voyage Naples, Vésuve et Pompéi",
   "azione": "non-struttura"
- },
- {
-  "destination": "pollino",
-  "name": "Rifugio Pino Loricato",
-  "domain": "rifugiopinoloricato.it",
-  "stars": 2,
-  "area": null,
-  "confidence": "verified",
-  "source": "probe",
-  "verdict": "non-provata",
-  "why": "la pagina non prova né il paese né il luogo",
-  "title": "Home - Rifugio Pino Loricato | Camere e Ristorante sul Pollino | Santuario Madonna del Pollino",
-  "azione": "altrove",
-  "elsewhere": "madonna-campiglio"
  },
  {
   "destination": "primitivo-manduria",
@@ -188,6 +275,19 @@
   "azione": "fuori-italia"
  },
  {
+  "destination": "orvieto",
+  "name": "Hotel La Badia di Orvieto",
+  "domain": "labadiahotel.it",
+  "stars": 4,
+  "area": "La Badia",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "La Badia | Pellicano Hotels",
+  "azione": "non-struttura"
+ },
+ {
   "destination": "napoli",
   "name": "Masseria Cappella Una Masseria in Puglia, nel",
   "domain": "masseriacappella.com",
@@ -196,22 +296,48 @@
   "confidence": "verified",
   "source": "probe",
   "verdict": "fuori-zona",
-  "why": "in Italia (partita-iva, telefono-+39, indirizzo) ma la pagina non nomina Napoli",
+  "why": "in Italia (partita-iva, telefono-+39, indirizzo, in italiano (15)) ma la pagina non nomina Napoli",
   "title": "Masseria Cappella Una Masseria in Puglia, nel cuore della Valle d Itria.",
   "azione": "altrove",
   "elsewhere": "alberobello"
  },
  {
-  "destination": "montepulciano",
-  "name": "Dimora Palazzo",
-  "domain": "dimorapalazzo.com",
+  "destination": "napoli",
+  "name": "Costantinopoli 104",
+  "domain": "costantinopoli104.it",
   "stars": 4,
+  "area": "Centro storico",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Official website Costantinopoli 104 in Naples | Book now",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "orvieto",
+  "name": "Hotel Duomo Orvieto",
+  "domain": "orvietohotelduomo.com",
+  "stars": 3,
+  "area": "Duomo",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "modena",
+  "name": "Duomo City Center Suites",
+  "domain": "duomosuites.com",
+  "stars": 3,
   "area": null,
   "confidence": "verified",
   "source": "probe",
   "verdict": "fuori-italia",
-  "why": "il titolo dichiara texas",
-  "title": "Dimora Palazzo | Best Vacation Rentals & Micro Events in Dallas, Texas Dimora Palazzo | Best Vacation Rentals & Micro Events in Dallas, Texas",
+  "why": "il titolo dichiara heraklion",
+  "title": "Duomo City Center Suites - Heraklion (Crete)",
   "azione": "fuori-italia"
  },
  {
@@ -228,17 +354,18 @@
   "azione": "fuori-italia"
  },
  {
-  "destination": "modena",
-  "name": "Duomo City Center Suites",
-  "domain": "duomosuites.com",
-  "stars": 3,
+  "destination": "ravenna",
+  "name": "Resort Ravenna",
+  "domain": "resortravenna.com",
+  "stars": 4,
   "area": null,
   "confidence": "verified",
-  "source": "probe",
-  "verdict": "fuori-italia",
-  "why": "il titolo dichiara heraklion",
-  "title": "Duomo City Center Suites - Heraklion (Crete)",
-  "azione": "fuori-italia"
+  "source": "curated",
+  "verdict": "non-provata",
+  "why": "la pagina non prova né il paese né il luogo",
+  "title": "Homepage - Resort Ravenna - Unique Villas in Sorrento & Amalfi Coast",
+  "azione": "altrove",
+  "elsewhere": "costiera-amalfitana"
  },
  {
   "destination": "maremma",
@@ -255,6 +382,19 @@
   "elsewhere": "venezia"
  },
  {
+  "destination": "matera",
+  "name": "Palazzo Gattini Luxury Hotel",
+  "domain": "palazzogattini.it",
+  "stars": 5,
+  "area": "Piazza Duomo",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Palazzo Gattini Matera | VRetreats",
+  "azione": "non-struttura"
+ },
+ {
   "destination": "modena",
   "name": "Masseria Ferrari - Trulli e vacanze in Valle",
   "domain": "masseriaferrari.com",
@@ -263,10 +403,36 @@
   "confidence": "verified",
   "source": "probe",
   "verdict": "fuori-zona",
-  "why": "in Italia (partita-iva, cap-provincia, indirizzo) ma la pagina non nomina Modena e Terre di Motori",
+  "why": "in Italia (partita-iva, cap-provincia, indirizzo, in italiano (10)) ma la pagina non nomina Modena e Terre di Motori",
   "title": "Masseria Ferrari - Trulli e vacanze in Valle d’Itria - Puglia",
   "azione": "altrove",
   "elsewhere": "alberobello"
+ },
+ {
+  "destination": "matera",
+  "name": "Sextantio Le Grotte della Civita",
+  "domain": "sextantio.it",
+  "stars": 4,
+  "area": "Sassi",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Sextantio",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "montepulciano",
+  "name": "Dimora Palazzo",
+  "domain": "dimorapalazzo.com",
+  "stars": 4,
+  "area": null,
+  "confidence": "verified",
+  "source": "probe",
+  "verdict": "fuori-italia",
+  "why": "il titolo dichiara texas",
+  "title": "Dimora Palazzo | Best Vacation Rentals & Micro Events in Dallas, Texas Dimora Palazzo | Best Vacation Rentals & Micro Events in Dallas, Texas",
+  "azione": "fuori-italia"
  },
  {
   "destination": "livigno",
@@ -276,8 +442,8 @@
   "area": null,
   "confidence": "verified",
   "source": "probe",
-  "verdict": "non-provata",
-  "why": "la pagina non prova né il paese né il luogo",
+  "verdict": "fuori-zona",
+  "why": "in Italia (in italiano (6)) ma la pagina non nomina Livigno e Alta Valtellina",
   "title": "Dimora Bagni — Location per Matrimoni | Ferrara",
   "azione": "altrove",
   "elsewhere": "ferrara-delta-po"
@@ -304,7 +470,7 @@
   "confidence": "verified",
   "source": "probe",
   "verdict": "fuori-zona",
-  "why": "in Italia (telefono-+39, indirizzo) ma la pagina non nomina Langhe",
+  "why": "in Italia (telefono-+39, indirizzo, in italiano (12)) ma la pagina non nomina Langhe",
   "title": "Dimora Cavour | affittacamere | P.za Cavour, 122, Napoli, NA, Italia",
   "azione": "altrove",
   "elsewhere": "napoli"
@@ -324,20 +490,6 @@
   "elsewhere": "riviera-ponente"
  },
  {
-  "destination": "ravenna",
-  "name": "Resort Ravenna",
-  "domain": "resortravenna.com",
-  "stars": 4,
-  "area": null,
-  "confidence": "verified",
-  "source": "curated",
-  "verdict": "non-provata",
-  "why": "la pagina non prova né il paese né il luogo",
-  "title": "Homepage - Resort Ravenna - Unique Villas in Sorrento & Amalfi Coast",
-  "azione": "altrove",
-  "elsewhere": "costiera-amalfitana"
- },
- {
   "destination": "isola-elba",
   "name": "chaletisola Beautiful ski chalet in the",
   "domain": "chaletisola.com",
@@ -350,6 +502,32 @@
   "title": "chaletisola Beautiful ski chalet in the southern French Alps.",
   "azione": "altrove",
   "elsewhere": "sud-sardegna"
+ },
+ {
+  "destination": "isola-elba",
+  "name": "Camping Isola dElba Scaglieri Village",
+  "domain": "campingscaglieri.it",
+  "stars": 2,
+  "area": null,
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Camping Isola d Elba Scaglieri Village | Campeggio, bungalow e appartamenti sul mare",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "isola-elba",
+  "name": "Baia Bianca Suites",
+  "domain": "baiabianca.it",
+  "stars": 4,
+  "area": "Procchio",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Baia Bianca",
+  "azione": "non-struttura"
  },
  {
   "destination": "ischia-procida",
@@ -367,34 +545,6 @@
  },
  {
   "destination": "gran-sasso",
-  "name": "Cascina Rocca - Agriturismo con piscina a La",
-  "domain": "cascinarocca.com",
-  "stars": 3,
-  "area": null,
-  "confidence": "verified",
-  "source": "probe",
-  "verdict": "fuori-zona",
-  "why": "in Italia (partita-iva, telefono-+39, cap-provincia) ma la pagina non nomina Gran Sasso e Campo Imperatore",
-  "title": "Cascina Rocca - Agriturismo con piscina a La Morra, Langhe",
-  "azione": "altrove",
-  "elsewhere": "langhe"
- },
- {
-  "destination": "gran-sasso",
-  "name": "Residence Castelli Cervinia - Residence",
-  "domain": "residencecastelli.com",
-  "stars": 3,
-  "area": null,
-  "confidence": "verified",
-  "source": "curated",
-  "verdict": "fuori-zona",
-  "why": "in Italia (cap-provincia) ma la pagina non nomina Gran Sasso e Campo Imperatore",
-  "title": "Residence Castelli Cervinia - Residence Appartamenti Breuil Cervinia Valtournenche Valle Aosta Cervino Matterhorn Italy",
-  "azione": "altrove",
-  "elsewhere": "cervinia"
- },
- {
-  "destination": "gran-sasso",
   "name": "Rocca Resort",
   "domain": "roccaresort.com",
   "stars": 4,
@@ -407,6 +557,34 @@
   "azione": "fuori-italia"
  },
  {
+  "destination": "gran-sasso",
+  "name": "Residence Castelli Cervinia - Residence",
+  "domain": "residencecastelli.com",
+  "stars": 3,
+  "area": null,
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "fuori-zona",
+  "why": "in Italia (cap-provincia, in italiano (13)) ma la pagina non nomina Gran Sasso e Campo Imperatore",
+  "title": "Residence Castelli Cervinia - Residence Appartamenti Breuil Cervinia Valtournenche Valle Aosta Cervino Matterhorn Italy",
+  "azione": "altrove",
+  "elsewhere": "cervinia"
+ },
+ {
+  "destination": "gran-sasso",
+  "name": "Cascina Rocca - Agriturismo con piscina a La",
+  "domain": "cascinarocca.com",
+  "stars": 3,
+  "area": null,
+  "confidence": "verified",
+  "source": "probe",
+  "verdict": "fuori-zona",
+  "why": "in Italia (partita-iva, telefono-+39, cap-provincia, in italiano (17)) ma la pagina non nomina Gran Sasso e Campo Imperatore",
+  "title": "Cascina Rocca - Agriturismo con piscina a La Morra, Langhe",
+  "azione": "altrove",
+  "elsewhere": "langhe"
+ },
+ {
   "destination": "gradara",
   "name": "Bed & Breakfast Casa Paolo - Pernottamento a",
   "domain": "casapaolo.it",
@@ -415,7 +593,7 @@
   "confidence": "verified",
   "source": "probe",
   "verdict": "fuori-zona",
-  "why": "in Italia (indirizzo) ma la pagina non nomina Gradara",
+  "why": "in Italia (indirizzo, in italiano (11)) ma la pagina non nomina Gradara",
   "title": "Bed & Breakfast Casa Paolo - Pernottamento a Taormina Giardini Naxos Fiumefreddo di Sicilia Marina di Cottone Piedimonte Etneo",
   "azione": "altrove",
   "elsewhere": "taormina"
@@ -455,7 +633,7 @@
   "confidence": "verified",
   "source": "probe",
   "verdict": "fuori-zona",
-  "why": "in Italia (partita-iva, telefono-+39, cap-provincia) ma la pagina non nomina Gargano",
+  "why": "in Italia (partita-iva, telefono-+39, cap-provincia, in italiano (12)) ma la pagina non nomina Gargano",
   "title": "Masseria Sant Angelo - Masseria con Ristorante - Salento",
   "azione": "altrove",
   "elsewhere": "salento"
@@ -474,18 +652,17 @@
   "azione": "non-struttura"
  },
  {
-  "destination": "gargano",
-  "name": "Palazzo Gargano",
-  "domain": "palazzogargano.it",
-  "stars": 4,
-  "area": null,
+  "destination": "firenze",
+  "name": "Palazzo Vecchietti",
+  "domain": "palazzovecchietti.com",
+  "stars": 5,
+  "area": "Centro storico",
   "confidence": "verified",
-  "source": "probe",
-  "verdict": "fuori-zona",
-  "why": "in Italia (partita-iva, cap-provincia, indirizzo) ma la pagina non nomina Gargano",
-  "title": "Palazzo Gargano | B&B | Hotel | Prignano | Cilento | Paestum |",
-  "azione": "altrove",
-  "elsewhere": "cilento"
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Official website of Palazzo Vecchietti in Florence | Book now",
+  "azione": "non-struttura"
  },
  {
   "destination": "ferrara-delta-po",
@@ -501,6 +678,20 @@
   "azione": "fuori-italia"
  },
  {
+  "destination": "gargano",
+  "name": "Palazzo Gargano",
+  "domain": "palazzogargano.it",
+  "stars": 4,
+  "area": null,
+  "confidence": "verified",
+  "source": "probe",
+  "verdict": "fuori-zona",
+  "why": "in Italia (partita-iva, cap-provincia, indirizzo, in italiano (7)) ma la pagina non nomina Gargano",
+  "title": "Palazzo Gargano | B&B | Hotel | Prignano | Cilento | Paestum |",
+  "azione": "altrove",
+  "elsewhere": "cilento"
+ },
+ {
   "destination": "ferrara-delta-po",
   "name": "Hotel Delta Montevarchi vicino Arezzo Firenze",
   "domain": "hoteldelta.it",
@@ -509,24 +700,10 @@
   "confidence": "verified",
   "source": "curated",
   "verdict": "fuori-zona",
-  "why": "in Italia (partita-iva, telefono-+39, indirizzo) ma la pagina non nomina Ferrara e Delta del Po",
+  "why": "in Italia (partita-iva, telefono-+39, indirizzo, in italiano (12)) ma la pagina non nomina Ferrara e Delta del Po",
   "title": "Hotel Delta Montevarchi vicino Arezzo Firenze Siena Chianti",
   "azione": "altrove",
   "elsewhere": "siena"
- },
- {
-  "destination": "etna",
-  "name": "Monaci delle Terre Nere",
-  "domain": "monacidelleterrenere.it",
-  "stars": 5,
-  "area": "Zafferana Etnea",
-  "confidence": "verified",
-  "source": "curated",
-  "verdict": "non-provata",
-  "why": "la pagina non prova né il paese né il luogo",
-  "title": "Monaci delle Terre Nere | Luxury Wine Resort vicino Taormina",
-  "azione": "altrove",
-  "elsewhere": "taormina"
  },
  {
   "destination": "dolomiti",
@@ -543,6 +720,19 @@
   "elsewhere": "sud-sardegna"
  },
  {
+  "destination": "dolomiti",
+  "name": "Excelsior Dolomites Life Resort",
+  "domain": "myexcelsior.com",
+  "stars": 5,
+  "area": "San Vigilio",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Wellnesshotel in Südtirol: Auf in den Traumurlaub!",
+  "azione": "non-struttura"
+ },
+ {
   "destination": "costiera-amalfitana",
   "name": "Bed & Breakfast in Tacoma, WA ❘ The Villa Bed",
   "domain": "villabb.com",
@@ -556,18 +746,17 @@
   "azione": "fuori-italia"
  },
  {
-  "destination": "costa-smeralda",
-  "name": "Hotel Excelsior Maddalena",
-  "domain": "maddalenahotel.com",
-  "stars": 4,
-  "area": null,
+  "destination": "costiera-amalfitana",
+  "name": "Il San Pietro di Positano",
+  "domain": "ilsanpietro.it",
+  "stars": 5,
+  "area": "Positano",
   "confidence": "verified",
   "source": "curated",
-  "verdict": "non-provata",
-  "why": "la pagina non prova né il paese né il luogo",
-  "title": "Hotel Excelsior Maddalena - Welcome to Sardinia - Hotel 4 Stars",
-  "azione": "altrove",
-  "elsewhere": "sud-sardegna"
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Home - Welcome to Il San Pietro di Positano",
+  "azione": "non-struttura"
  },
  {
   "destination": "cinque-terre",
@@ -582,6 +771,32 @@
   "title": "Residence Azzurro - Casa Vacanze Porto Cesareo, Salento | Appartamenti Vista Mare",
   "azione": "altrove",
   "elsewhere": "salento"
+ },
+ {
+  "destination": "cinque-terre",
+  "name": "La Torretta Lodge",
+  "domain": "torrettas.com",
+  "stars": 4,
+  "area": "Manarola",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Charme & Relax | La Torretta Lodge Manarola",
+  "azione": "non-struttura"
+ },
+ {
+  "destination": "chianti",
+  "name": "Castello di Ama",
+  "domain": "castellodiama.com",
+  "stars": 5,
+  "area": "Gaiole in Chianti",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "arrow-button",
+  "azione": "non-struttura"
  },
  {
   "destination": "capri",
@@ -632,9 +847,22 @@
   "confidence": "verified",
   "source": "probe",
   "verdict": "fuori-zona",
-  "why": "in Italia (partita-iva, telefono-+39) ma la pagina non nomina Alberobello e Valle d'Itria",
+  "why": "in Italia (partita-iva, telefono-+39, in italiano (13)) ma la pagina non nomina Alberobello e Valle d'Itria",
   "title": "Garni Hotel 3 stelle sup. Franca a Selva di Val Gardena - Dolomiti",
   "azione": "altrove",
   "elsewhere": "val-gardena"
+ },
+ {
+  "destination": "assisi",
+  "name": "Hotel Subasio",
+  "domain": "hotelsubasio.com",
+  "stars": 4,
+  "area": "Basilica",
+  "confidence": "verified",
+  "source": "curated",
+  "verdict": "non-struttura",
+  "why": "il titolo non è di una struttura ricettiva",
+  "title": "Subasio News Hub",
+  "azione": "non-struttura"
  }
 ]

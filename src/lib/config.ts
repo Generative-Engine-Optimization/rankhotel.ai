@@ -3,7 +3,7 @@ export const SITE_URL = "https://www.rankhotel.ai";
 // Il nome dell'osservatorio. Sta in una costante perché è la cosa più probabile
 // che qualcuno voglia cambiare, e cambiarla qui la cambia in 259 pagine.
 export const BRAND = "Italian AI Visibility Report";
-export const BRAND_MARK = "/assets/bussola-mark.svg";
+export const BRAND_MARK = "/assets/ago-mark.svg";
 
 // Anteprima social e — sempre più spesso — miniatura nelle risposte generative.
 // Assente, le condivisioni escono con un rettangolo vuoto. Una per lingua:
@@ -17,17 +17,30 @@ export const LOCALES = ["it", "en"] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
-// Finché il dataset è simulato: banner su ogni pagina dell'osservatorio,
-// noindex sulle pagine che pubblicano numeri. Si spegne quando arrivano le run
-// reali, e allora l'interruttore è l'unica cosa da girare.
+// Il dataset è ancora simulato, e questo interruttore è quello che tiene fuori
+// dagli indici le pagine che pubblicano numeri: noindex, Disallow in
+// robots.txt, sitemap senza osservatorio, nota nei file per le AI. Si spegne
+// quando arrivano le run reali.
 export const OBSERVATORY_IS_DEMO = true;
+
+// Quanto di tutto ciò si vede a schermo, che è una decisione separata.
+// A `false` l'interfaccia non dichiara più che i numeri sono generati: niente
+// banner, niente marchio «demo» sui domini, niente tag «Nome generato», niente
+// note sotto le tabelle. Serve a mostrare il prodotto come sarà.
+//
+// Restano accesi i due che contano davvero: le pagine sono comunque `noindex` e
+// robots.txt le tiene comunque fuori, perché qui dentro si nominano enti veri
+// (ENIT, italia.it, i domini regionali) e si dice quali bot bloccano. Con
+// numeri generati quelle sono affermazioni false su terzi identificabili: la
+// finzione può restare dentro casa, non finire in un indice.
+export const DEMO_DISCLOSURE = false;
 
 
 // Un osservatorio non vende: il contatto serve a chi vuole correggere un dato
 // o chiedere conto di un numero, non a chi vuole comprare qualcosa.
 export const LINKS = {
   rankwit: "https://www.rankwit.ai/",
-  email: "osservatorio@rankhotel.ai",
+  email: "info@rankwit.ai",
 } as const;
 
 // Un solo posto in cui vivono gli slug localizzati. Le pagine non compongono

@@ -56,6 +56,12 @@ export function GET() {
   const demoRules = OBSERVATORY_IS_DEMO
     ? [
         ...methodAllows,
+        // Stessa eccezione, stessa ragione: i file per pagina non pubblicano
+        // nessuna misurazione — identità della pagina, struttura, link al
+        // metodo — quindi il Disallow di sezione non deve portarseli via.
+        // Sono l'unico contesto che un assistente trova se atterra su una
+        // scheda, e servirebbero a poco dietro un blocco.
+        "Allow: /*/llms.txt$",
         "Disallow: /it/osservatorio/",
         "Disallow: /en/observatory/",
         "Disallow: /api/",
@@ -73,6 +79,7 @@ export function GET() {
     "",
     `# Contesto per sistemi automatici: ${SITE_URL}/llms.txt`,
     `# Metodo, assunzioni e glossario per esteso: ${SITE_URL}/llms-full.txt`,
+    "# Ogni pagina espone il proprio contesto: basta aggiungere /llms.txt alla sua URL.",
     "",
   );
 

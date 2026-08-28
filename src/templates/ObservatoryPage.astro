@@ -113,15 +113,15 @@ const schema = datasetSchema(
       ]}
     />
     <div class="flex flex-wrap gap-2.5">
-      <a class="btn gap-2" href="#classifica">
+      <a class="btn" href="#classifica">
         {t.hero["cta-explore"]}
         <Icon name="arrowDown" size={17} />
       </a>
-      <a class="btn btn-secondary gap-2" href={mapPath(locale)}>
+      <a class="btn btn-secondary" href={mapPath(locale)}>
         <Icon name="pin" size={16} />
         {t.hero["cta-map"]}
       </a>
-      <a class="btn btn-secondary gap-2" href={glossaryPath(locale)}>
+      <a class="btn btn-secondary" href={glossaryPath(locale)}>
         <Icon name="info" size={16} />
         {t.ui.glossary}
       </a>
@@ -199,7 +199,7 @@ const schema = datasetSchema(
         ))
       }
       <Panel locale={locale} tone="muted" title={t.compare.title} lead={t.compare.lead} icon="layers">
-        <a class="btn btn-secondary justify-self-start gap-2" href={comparePath(locale)}>
+        <a class="btn btn-secondary" href={comparePath(locale)}>
           {t.compare.cta}
           <Icon name="arrowRight" size={16} />
         </a>
@@ -259,7 +259,7 @@ const schema = datasetSchema(
           }
         </div>
       </div>
-      <a class="btn gap-2 lg:justify-self-end" href={comparePath(locale)}>
+      <a class="btn lg:justify-self-end" href={comparePath(locale)}>
         {t.compare.cta}
         <Icon name="arrowRight" size={17} />
       </a>
@@ -269,11 +269,11 @@ const schema = datasetSchema(
   <Section locale={locale} id="mappa" title={t.map.title} lead={t.map.lead}>
     <MapIsland locale={locale} destinations={destinations} height={520} />
     <div class="flex flex-wrap gap-2.5">
-      <a class="btn btn-secondary gap-2" href={mapPath(locale)}>
+      <a class="btn btn-secondary" href={mapPath(locale)}>
         <Icon name="pin" size={16} />
         {t.hero["cta-map"]}
       </a>
-      <a class="btn btn-secondary gap-2" href={queriesPath(locale)}>
+      <a class="btn btn-secondary" href={queriesPath(locale)}>
         <Icon name="search" size={16} />
         {t.queries.explore}
       </a>
@@ -301,7 +301,7 @@ const schema = datasetSchema(
             },
           ]}
         />
-        <a class="btn btn-secondary justify-self-start gap-2" href={hotelsIndexPath(locale)}>
+        <a class="btn btn-secondary" href={hotelsIndexPath(locale)}>
           {t.hotelsPage.national}
           <Icon name="arrowRight" size={16} />
         </a>
@@ -310,7 +310,7 @@ const schema = datasetSchema(
         <table>
           <thead>
             <tr>
-              <th scope="col" class="w-10">#</th>
+              <th scope="col" class="w-10 text-right">#</th>
               <th scope="col">
                 <span class="th-label"><Icon name="hotel" size={13} />{t.table.hotel}</span>
               </th>
@@ -327,7 +327,7 @@ const schema = datasetSchema(
                 .slice(0, 8)
                 .map((hotel, index) => (
                   <tr>
-                    <td class="num text-faint">{index + 1}</td>
+                    <td class="num text-right text-faint">{index + 1}</td>
                     <td>
                       <span class="font-bold">{hotel.name}</span>
                       <span class="block text-[0.78rem] text-muted">

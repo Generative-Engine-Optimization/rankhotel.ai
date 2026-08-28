@@ -10,6 +10,12 @@ const { locale, entities } = Astro.props as {
 };
 
 const t = messages(locale).observatory;
+
+// Quante volte un assistente nomina un'entità. Le soglie non sono quelle del
+// punteggio: qui si misura un tasso di menzione, e due terzi delle risposte è
+// un'altra cosa da un 65 su 100. Restano quelle di prima, scritte una volta.
+const coverageBand = (value: number): "high" | "mid" | "low" =>
+  value >= 0.66 ? "high" : value >= 0.35 ? "mid" : "low";
 ---
 
 <div class="table-wrap table-dense">
@@ -33,14 +39,20 @@ const t = messages(locale).observatory;
             <td class="font-bold">{entity.name}</td>
             {ENGINES.map((engine) => {
               const value = entity.byEngine[engine];
-              const tone = value >= 0.66 ? "text-success-ink" : value >= 0.35 ? "text-gold-ink" : "text-danger-ink";
+              // Una soglia sola per la cifra e per la barra: erano due
+              // espressioni gemelle, e il colore della barra era scritto a mano
+              // in uno style invece di venire dalle classi del foglio.
+              const band = coverageBand(value);
+              const tone = {
+                high: "text-success-ink",
+                mid: "text-gold-ink",
+                low: "text-danger-ink",
+              }[band];
               return (
                 <td class="text-right">
                   <span class="inline-flex items-center gap-2">
-                    <span class="bar w-16">
-                      <span
-                        style={`width:${Math.max(2, value * 100)}%;background:${value >= 0.66 ? "var(--color-success-ink)" : value >= 0.35 ? "var(--color-gold-ink)" : "var(--color-danger-ink)"}`}
-                      />
+                    <span class={`bar w-16 bar-${band}`}>
+                      <span style={`width:${Math.max(2, value * 100)}%`} />
                     </span>
                     <span class={`num text-[0.85rem] ${tone}`}>{Math.round(value * 100)}%</span>
                   </span>

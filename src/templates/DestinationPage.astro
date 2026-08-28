@@ -16,6 +16,7 @@ import PageHero from "../components/PageHero.astro";
 import PageNav from "../components/PageNav.astro";
 import Panel from "../components/Panel.astro";
 import PromptGrid from "../components/PromptGrid.astro";
+import InfoTip from "../components/InfoTip.astro";
 import RankRange from "../components/RankRange.astro";
 import Runs from "../components/Runs.astro";
 import ScoreBreakdown from "../components/ScoreBreakdown.astro";
@@ -30,6 +31,7 @@ import TierBadge from "../components/TierBadge.astro";
 import Toc from "../components/Toc.astro";
 import ObsLayout from "../layouts/ObsLayout.astro";
 import {
+  DEMO_DISCLOSURE,
   categoryPath,
   comparePath,
   destinationPath,
@@ -153,7 +155,9 @@ const demandLabel = META.demandTiers.find(
           label: t.demand.title,
           value: number(locale, destination.demand),
           hint: demandLabel,
-          info: `${t.explain.demand} ${t.data["demand-simulated"]}`,
+          info: DEMO_DISCLOSURE
+            ? `${t.explain.demand} ${t.data["demand-simulated"]}`
+            : t.explain.demand,
         },
         {
           label: t.table.category,
@@ -198,7 +202,10 @@ const demandLabel = META.demandTiers.find(
             <ScoreDial locale={locale} stat={detail.scoreDetail.overall.score} size="lg" />
           </div>
           <div class="grid gap-2">
-            <TierBadge locale={locale} tier={destination.tier} />
+            <span class="inline-flex items-center gap-1.5">
+              <TierBadge locale={locale} tier={destination.tier} />
+              <InfoTip locale={locale} text={t.rank.help} />
+            </span>
             <StabilityTag locale={locale} stat={detail.scoreDetail.overall.score} />
           </div>
           <div class="grid gap-1">
@@ -478,7 +485,7 @@ const demandLabel = META.demandTiers.find(
           </table>
         </div>
         <a
-          class="btn btn-secondary justify-self-start gap-2"
+          class="btn btn-secondary"
           href={`${queriesPath(locale)}?destination=${destination.key}`}
         >
           {t.queries.explore}

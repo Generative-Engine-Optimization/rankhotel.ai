@@ -11,10 +11,14 @@
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "astro": "astro",
     "data:generate": "node tools/generate-observatory.mjs",
+    "api:spec": "node tools/api/openapi.mjs",
+    "api:check": "node tools/api/check.mjs",
+    "api:mock": "node tools/api/mock-server.mjs",
     "data:regions": "node tools/generate-regions.mjs",
     "data:brief": "node tools/export-content-brief.mjs",
     "verify:sites": "node tools/verify/check-domains.mjs tools/verify/dmo-candidates.json tools/verify/dmo-verified.json && node tools/verify/select-sites.mjs tools/verify/dmo-verified.json tools/verify/dmo-selection.json && node tools/verify/write-sites-seed.mjs tools/verify/dmo-selection.json",
     "verify:hotels": "node tools/verify/check-hotels.mjs tools/verify/hotels-verified.json && node tools/verify/write-hotels-seed.mjs tools/verify/hotels-verified.json",
+    "verify:hotels-geo": "node tools/verify/audit-hotels.mjs tools/verify/hotels-audit.json && node tools/verify/apply-audit.mjs tools/verify/hotels-audit.json",
     "data:report": "node tools/export-verification-report.mjs"
   },
   "dependencies": {

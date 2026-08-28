@@ -1,4 +1,5 @@
 ---
+import ContextBar from "../components/ContextBar.astro";
 import CtaBlock from "../components/CtaBlock.astro";
 import DestinationCard from "../components/DestinationCard.astro";
 import DestinationTable from "../components/DestinationTable.astro";
@@ -23,7 +24,14 @@ import {
 } from "../lib/config";
 import { compact, decimal, number, signed } from "../lib/format";
 import { interpolate, messages } from "../lib/i18n";
-import { ENGINES, NATIONAL, destinationsOf, taggedWith, type Category } from "../lib/observatory";
+import {
+  ENGINES,
+  NATIONAL,
+  destinationsOf,
+  listCategories,
+  taggedWith,
+  type Category,
+} from "../lib/observatory";
 import { itemListSchema } from "../lib/schema";
 
 const { locale, category } = Astro.props as { locale: Locale; category: Category };
@@ -62,6 +70,7 @@ const delta = Math.round((category.score - NATIONAL.score) * 10) / 10;
     locale={locale}
     eyebrow={t.nav.categories}
     icon={category.icon}
+    mark={category.icon}
     cat={category.key}
     title={category.name[locale]}
     lead={category.lead[locale]}
@@ -89,16 +98,33 @@ const delta = Math.round((category.score - NATIONAL.score) * 10) / 10;
       ]}
     />
     <div class="flex flex-wrap gap-2.5">
-      <a class="btn gap-2" href="#classifica">
+      <a class="btn" href="#classifica">
         {t.hero["cta-explore"]}
         <Icon name="arrowDown" size={17} />
       </a>
-      <a class="btn btn-secondary gap-2" href={tagPath(locale, category.slug[locale])}>
+      <a class="btn btn-secondary" href={tagPath(locale, category.slug[locale])}>
         <Icon name="tag" size={16} />
         {t.tags.title}
       </a>
     </div>
   </PageHero>
+
+  <ContextBar
+    label={category.short[locale]}
+    icon={category.icon}
+    cat={category.key}
+    count={String(category.size)}
+    switchLabel={t.category.switch}
+    allLabel={t.ui.all}
+    items={listCategories().map((row) => ({
+      label: row.short[locale],
+      href: categoryPath(locale, row.slug[locale]),
+      icon: row.icon,
+      count: row.size,
+      cat: row.key,
+      current: row.key === category.key,
+    }))}
+  />
 
   <Section
     locale={locale}

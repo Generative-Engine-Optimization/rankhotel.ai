@@ -1,4 +1,5 @@
 ---
+import ContextBar from "../components/ContextBar.astro";
 import CtaBlock from "../components/CtaBlock.astro";
 import DestinationCard from "../components/DestinationCard.astro";
 import DestinationTable from "../components/DestinationTable.astro";
@@ -53,6 +54,8 @@ const schema = itemListSchema(
     locale={locale}
     eyebrow={t.tags.title}
     icon={category?.icon ?? "tag"}
+    mark={category?.icon ?? "tag"}
+    cat={category?.key}
     title={label}
     lead={row.lead?.[locale] ?? (category ? category.lead[locale] : t.tags.lead)}
     breadcrumb={[
@@ -88,7 +91,26 @@ const schema = itemListSchema(
     </div>
   </PageHero>
 
-  <Section locale={locale} id="classifica" title={t.category["ranking-title"]}>
+  <ContextBar
+    label={label}
+    icon={category?.icon ?? "tag"}
+    cat={category?.key}
+    count={plural(locale, t.tags.count, { n: destinations.length })}
+    switchLabel={t.tags.switch}
+    allLabel={t.ui.all}
+    items={listTags().map((item) => ({
+      label: item.name[locale],
+      href: tagPath(locale, item.slug[locale]),
+      icon: item.icon,
+      count: item.count,
+      cat: item.key,
+      current: item.key === tag,
+    }))}
+  />
+
+  <Section locale={locale} id="classifica" eyebrow={label}
+    title={t.tags["ranking-title"]}
+    lead={plural(locale, t.tags.count, { n: destinations.length })}>
     <DestinationTable locale={locale} destinations={destinations} showCategory id={`tag-${tag}`} />
   </Section>
 
@@ -99,13 +121,12 @@ const schema = itemListSchema(
   <Section locale={locale} id="altri" title={t.tags.all} share={false}>
     <div class="flex flex-wrap gap-2">
       {
-        listTags()
-          .filter((item) => item.key !== tag)
-          .map((item) => (
+        listTags().map((item) => (
             <a
               class="chip gap-1.5"
               href={tagPath(locale, item.slug[locale])}
-              title={item.lead[locale]}
+              data-active={item.key === tag ? "true" : undefined}
+              aria-current={item.key === tag ? "page" : undefined}
             >
               <Icon name={item.icon} size={14} />
               {item.name[locale]}

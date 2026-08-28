@@ -55,13 +55,42 @@ const FOREIGN = [
   "turchia", "istanbul", "antalya", "konyaalti", "egypt", "egitto", "morocco",
   "marocco", "tunisia", "dubai", "thailand", "vietnam", "heraklion",
   "united", "states", "tacoma", "california", "florida", "texas", "catskills",
-  "canada", "mexico", "messico", "brasil", "argentina", "paphos", "sozopol",
+  "catskill", "new york", "laguna beach", "canada", "mexico", "messico",
+  "brasil", "argentina", "paphos", "sozopol",
 ].map(normalise);
 
 // Cirillico, greco, thai, cinese, arabo, ebraico: un sito di una struttura
 // italiana può essere tradotto, ma il titolo della home in questi alfabeti
 // dice che l'originale non è italiano.
 const NON_LATIN = /[Ѐ-ӿͰ-Ͽ฀-๿一-鿿؀-ۿ֐-׿]/;
+
+// Un titolo di struttura ricettiva nomina il tipo di struttura. Se non lo fa,
+// quel dominio non è un albergo, qualunque cosa risponda: `palazzovictoria.com`
+// è una televisione vietnamita di calcio, `bauervenezia.com` un indirizzo IP
+// nudo. Nel dataset stavano come strutture di Verona e di Venezia.
+/**
+ * Titoli che non appartengono a nessuna struttura: un indirizzo IP nudo, un
+ * titolo vuoto, un altro alfabeto, o testo a brandelli.
+ *
+ * NON basta che manchi la parola "hotel": "Borgoscopeto", "La Bandita
+ * Townhouse" ed "Eremo della Giubiliana" sono alberghi veri con un nome
+ * proprio per titolo, e pretendere la parola-tipo li cancellava. Si scarta
+ * solo ciò che è positivamente spazzatura.
+ */
+export function junkTitle(title) {
+  const clean = (title ?? "").trim();
+  if (clean.length < 4) return "titolo assente";
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(clean)) return "il titolo è un indirizzo IP";
+  if (NON_LATIN.test(clean)) return "il titolo non è in alfabeto latino";
+  // Testo sminuzzato: è la firma di una lingua a diacritici a cui la pulizia
+  // delle entità HTML ha tolto gli accenti, e non è italiano.
+  const shreds = clean.split(/\s+/).filter((w) => w.length <= 2).length;
+  if (shreds >= 5) return "il titolo non è testo leggibile";
+  return null;
+}
+
+export const LODGING_TITLE =
+  /\b(hotel|albergo|relais|resort|agriturismo|masseria|locanda|dimora|residence|b&b|bed\s*&?\s*breakfast|camere|suites?|chalet|rifugio|baita|ostello|garni|guest\s*house|country\s*house|boutique|affittacamere|casa|villa|borgo|tenuta|podere|cascina|maso|apartments?|appartament)\b/i;
 
 // Non sono strutture ricettive: agenzie web, domini in vendita, guide di
 // viaggio, portali. Rispondono e nominano "hotel", ma non lo sono.
@@ -77,6 +106,28 @@ const ADDRESS_IT =
   /\b(?:via|viale|piazza|piazzale|corso|contrada|localit[àa]|strada|vicolo|largo|frazione)\s+[a-zàèéìòù'’.\- ]{3,40},?\s*\d{1,4}[a-z]?\b/i;
 const CAP = /\b\d{5}\b\s*[-–,]?\s*[a-zàèéìòù'’\- ]{3,30}\s*\(\s*[a-z]{2}\s*\)/i;
 
+// La lingua della pagina.
+//
+// Serve perché nessun elenco di paesi esteri sarà mai completo: "Catskills" al
+// plurale c'era, "Catskill" al singolare no, e un resort dello stato di New
+// York è rimasto fra gli hotel di Roma. Invece di rincorrere il mondo parola
+// per parola si guarda dall'altra parte — un albergo italiano il suo sito lo
+// scrive in italiano.
+//
+// Parole di servizio, non nomi: "hotel" e "spa" sono uguali in mezza Europa,
+// "prenota" e "colazione" no.
+const ITALIAN_WORDS = [
+  "della", "degli", "nostro", "nostra", "camere", "prenota", "soggiorno",
+  "colazione", "ristorante", "dove siamo", "contatti", "servizi", "ospiti",
+  "disponibilit", "offerte", "struttura", "cucina", "piscina", "vacanza",
+  "cookie", "informativa", "privacy e", "scopri", "tariffe", "notte",
+];
+
+function italianLanguage(text) {
+  const lower = text.toLowerCase();
+  return ITALIAN_WORDS.filter((w) => lower.includes(w)).length;
+}
+
 /**
  * Quanto la pagina prova di stare in Italia.
  * La partita IVA vale doppio: è un obbligo di legge per le imprese italiane e
@@ -89,8 +140,13 @@ export function italyEvidence(text) {
   if (PHONE_IT.test(text)) found.push("telefono-+39");
   if (CAP.test(text)) found.push("cap-provincia");
   if (ADDRESS_IT.test(text)) found.push("indirizzo");
+  // Sei parole di servizio italiane su un sito non capitano per caso. Da sola
+  // la lingua non prova il luogo, e infatti resta un indizio debole: dice che
+  // il sito è italiano, non che l'albergo sia in questo territorio.
+  const italianWords = italianLanguage(text);
+  if (italianWords >= 6) found.push(`in italiano (${italianWords})`);
   const strong = found.includes("partita-iva") || found.includes("schema-it");
-  return { found, score: (strong ? 2 : 0) + found.length, strong };
+  return { found, italianWords, score: (strong ? 2 : 0) + found.length, strong };
 }
 
 // Parole che compaiono nel nome di mezza ricettività italiana. Trovarle su una
@@ -163,6 +219,9 @@ export function verdictFor({ title = "", body = "", destination, candidate = {} 
   if (NOT_A_PROPERTY.test(title)) {
     return { verdict: "non-struttura", why: "non è una struttura ricettiva" };
   }
+
+  const junk = junkTitle(title);
+  if (junk) return { verdict: "non-struttura", why: junk };
 
   const foreign = foreignEvidence(title);
   if (foreign.nonLatin) {

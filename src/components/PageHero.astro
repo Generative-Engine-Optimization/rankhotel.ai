@@ -15,6 +15,7 @@ const {
   breadcrumb = [],
   icon,
   cat,
+  mark,
   compact = false,
 } = Astro.props as {
   locale: Locale;
@@ -25,6 +26,9 @@ const {
   icon?: string;
   /** Chiave di categoria: tinge l'icona dell'occhiello con il colore della categoria. */
   cat?: string;
+  /** Emblema grande sopra l'occhiello: una pagina che appartiene a un insieme
+      (un tema, una categoria) si riconosce prima dal segno che dal titolo. */
+  mark?: string;
   compact?: boolean;
 };
 
@@ -62,7 +66,12 @@ const crumbs =
       <div class="mb-[clamp(20px,2.4vw,30px)]"><Breadcrumb items={trail} /></div>
     )}
     <div class="grid items-start gap-x-[38px] gap-y-[clamp(24px,3vw,34px)] lg:grid-cols-[5fr_7fr]">
-      <div class="grid gap-3.5">
+      <div class="grid justify-items-start gap-3.5">
+        {mark && (
+          <span class="page-mark" data-cat={cat}>
+            <Icon name={mark} size={26} />
+          </span>
+        )}
         {
           eyebrow && (
             <p class="eyebrow flex items-center gap-2">
@@ -84,3 +93,139 @@ const crumbs =
     </div>
   </section>
 </div>
+
+<script is:inline>
+  // I numeri dell'eroe salgono da zero. Il valore finale è già nell'HTML — chi
+  // non esegue JavaScript legge il numero, non uno zero — e questo script si
+  // limita a ripercorrerlo: azzera, conta, e riscrive esattamente la stringa
+  // che c'era prima. Quali nodi siano numeri lo dichiara `StatGrid` in fase di
+  // build (`data-countup`), qui non si indovina niente leggendo il testo.
+  //
+  // È inline, e non un modulo differito, per una ragione sola: azzerare i
+  // numeri dopo il primo disegno si vedrebbe come un lampo del valore pieno.
+  // Qui il parser è ancora dentro l'intestazione, e non ha disegnato nulla.
+  (() => {
+    const hero = document.currentScript?.previousElementSibling;
+    const nodes = hero ? hero.querySelectorAll("[data-countup]") : [];
+    if (!nodes.length) return;
+
+    // Chi ha chiesto meno animazioni tiene i numeri fermi: non è una
+    // decorazione a cui rinunciare, è la stessa informazione senza il moto.
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const lang = document.documentElement.lang || "it";
+    const formatters = new Map();
+    const format = (decimals, value) => {
+      let formatter = formatters.get(decimals);
+      if (!formatter) {
+        formatter = new Intl.NumberFormat(lang, {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        });
+        formatters.set(decimals, formatter);
+      }
+      return formatter.format(value);
+    };
+
+    const write = (counter, value) => {
+      counter.el.textContent =
+        counter.prefix + format(counter.decimals, value) + counter.suffix;
+    };
+
+    const counters = [];
+    nodes.forEach((el, index) => {
+      const to = Number(el.dataset.countup);
+      if (!Number.isFinite(to) || to === 0) return;
+      counters.push({
+        el,
+        to,
+        decimals: Number(el.dataset.countupDecimals) || 0,
+        prefix: el.dataset.countupPrefix || "",
+        suffix: el.dataset.countupSuffix || "",
+        // La fila non parte tutta insieme: si accende da sinistra, così
+        // l'occhio ha il tempo di seguire un numero per volta.
+        delay: index * 90,
+        // Un numero grande ci mette un po' di più ad arrivare: quattro cifre
+        // che sfilano nello stesso tempo di due sembrano un errore di stampa.
+        duration: 1050 + Math.min(650, String(Math.round(Math.abs(to))).length * 130),
+        startAt: 0,
+        done: false,
+      });
+    });
+    if (!counters.length) return;
+
+    // Da qui in poi lo zero è sullo schermo: tutto ciò che segue deve
+    // riportarlo al valore vero, anche se qualcosa va storto.
+    counters.forEach((counter) => write(counter, 0));
+
+    const finish = () => counters.forEach((counter) => write(counter, counter.to));
+
+    // Frenata lunga: parte decisa e si posa sull'ultima cifra invece di
+    // fermarsi di colpo. È la stessa curva del resto delle transizioni.
+    const ease = (t) => 1 - Math.pow(1 - t, 5);
+
+    let frame = 0;
+    const tick = (now) => {
+      frame = 0;
+      let live = false;
+      for (const counter of counters) {
+        if (counter.done || !counter.startAt) continue;
+        const t = Math.min(1, Math.max(0, (now - counter.startAt) / counter.duration));
+        write(counter, counter.to * ease(t));
+        if (t < 1) live = true;
+        else counter.done = true;
+      }
+      if (live && !frame) frame = requestAnimationFrame(tick);
+    };
+
+    // Su telefono la griglia dei numeri sta sotto la piega: contare mentre
+    // nessuno guarda vuol dire mostrare solo il risultato. Parte quando entra
+    // in campo — e per l'eroe, sullo schermo largo, è subito.
+    if (!("IntersectionObserver" in window)) {
+      finish();
+      return;
+    }
+
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          watcher.unobserve(entry.target);
+          const counter = counters.find((item) => item.el === entry.target);
+          if (!counter || counter.startAt) continue;
+          counter.startAt = performance.now() + counter.delay;
+          if (!frame) frame = requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    counters.forEach((counter) => watcher.observe(counter.el));
+
+    // In una scheda in secondo piano i fotogrammi non arrivano: la corsa
+    // partirebbe, resterebbe ferma a zero e finirebbe di scatto nel momento in
+    // cui qualcuno guarda. Tornando in primo piano si riparte da capo, che è
+    // l'unico istante in cui l'effetto ha qualcuno davanti.
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) return;
+      const now = performance.now();
+      let restart = false;
+      for (const counter of counters) {
+        if (counter.done || !counter.startAt) continue;
+        counter.startAt = now + counter.delay;
+        write(counter, 0);
+        restart = true;
+      }
+      if (restart && !frame) frame = requestAnimationFrame(tick);
+    });
+
+    // Rete di sicurezza: se la scheda resta in secondo piano abbastanza a
+    // lungo, o se qualcosa impedisce ai fotogrammi di arrivare, i numeri non
+    // devono restare a zero.
+    setTimeout(() => {
+      if (counters.some((counter) => !counter.done)) {
+        watcher.disconnect();
+        finish();
+      }
+    }, 8000);
+  })();
+</script>

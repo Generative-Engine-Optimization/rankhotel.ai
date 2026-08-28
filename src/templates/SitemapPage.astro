@@ -25,6 +25,8 @@ import {
   type Locale,
 } from "../lib/config";
 import { messages, plural } from "../lib/i18n";
+import { pageLlmsPath } from "../lib/llms";
+import { publicPath as apiUrl } from "../lib/api/endpoints";
 import {
   ENGINES,
   destinationIcon,
@@ -52,18 +54,20 @@ type Branch = {
   label: string;
   note: string;
   icon: string;
-  count: number;
+  // Si dichiara solo quando il ramo mostra meno foglie di quante ne conta —
+  // le cento destinazioni. Negli altri casi si conta da sé: un numero scritto
+  // a mano accanto a un elenco è la prima cosa che smette di dire il vero.
+  count?: number;
   leaves: Leaf[];
   more?: { label: string; href: string };
 };
 
-const branches: Branch[] = [
+const rawBranches: Branch[] = [
   {
     key: "entry",
     label: t.sitemap["branch-entry"],
     note: t.sitemap["branch-entry-note"],
     icon: "compass",
-    count: 3,
     leaves: [
       { label: t.national.leaderboard, href: `${observatoryPath(locale)}#classifica`, icon: "chart" },
       { label: t.map.title, href: mapPath(locale), icon: "pin" },
@@ -75,7 +79,6 @@ const branches: Branch[] = [
     label: t.sitemap["branch-categories"],
     note: t.sitemap["branch-categories-note"],
     icon: "layers",
-    count: categories.length,
     leaves: categories.map((category) => ({
       label: category.name[locale],
       href: categoryPath(locale, category.slug[locale]),
@@ -107,7 +110,6 @@ const branches: Branch[] = [
     label: t.sitemap["branch-themes"],
     note: t.sitemap["branch-themes-note"],
     icon: "tag",
-    count: tags.length,
     leaves: tags.map((tag) => ({
       label: tag.name[locale],
       href: tagPath(locale, tag.slug[locale]),
@@ -120,7 +122,6 @@ const branches: Branch[] = [
     label: t.sitemap["branch-engines"],
     note: t.sitemap["branch-engines-note"],
     icon: "robot",
-    count: ENGINES.length,
     leaves: ENGINES.map((engine) => ({
       label: engineMeta(engine)?.label ?? engine,
       href: enginePath(locale, engine),
@@ -132,12 +133,12 @@ const branches: Branch[] = [
     label: t.sitemap["branch-tools"],
     note: t.sitemap["branch-tools-note"],
     icon: "search",
-    count: 4,
+    // La mappa geografica stava anche qui, ma è già una delle porte d'ingresso:
+    // ripeterla gonfiava due conteggi con la stessa pagina.
     leaves: [
       { label: t.queries.title, href: queriesPath(locale), icon: "search" },
       { label: t.compare.title, href: comparePath(locale), icon: "layers" },
       { label: t.hotelsPage.title, href: hotelsIndexPath(locale), icon: "hotel" },
-      { label: t.map.title, href: mapPath(locale), icon: "pin" },
     ],
   },
   {
@@ -145,11 +146,11 @@ const branches: Branch[] = [
     label: t.sitemap["branch-method"],
     note: t.sitemap["branch-method-note"],
     icon: "info",
-    count: 3,
     leaves: [
       { label: t.methodology.title, href: methodologyPath(locale), icon: "chart" },
       { label: t.assumptions.title, href: assumptionsPath(locale), icon: "info" },
       { label: t.ui.glossary, href: glossaryPath(locale), icon: "quote" },
+      { label: t.sitemap.title, href: sitemapPath(locale), icon: "route" },
     ],
   },
   {
@@ -157,15 +158,44 @@ const branches: Branch[] = [
     label: t.sitemap["branch-data"],
     note: t.sitemap["branch-data-note"],
     icon: "globe",
-    count: 4,
+    // Erano quattro su dieci. Gli endpoint per chiave sono quelli che le pagine
+    // interrogano davvero — il confronto vive su /api/destinations/{key}.json —
+    // e restavano invisibili proprio a chi cerca i dati.
     leaves: [
-      { label: "/api/destinations.json", href: "/api/destinations.json", icon: "layers" },
-      { label: "/api/categories.json", href: "/api/categories.json", icon: "layers" },
-      { label: "/api/queries.json", href: "/api/queries.json", icon: "search" },
+      { label: apiUrl("/destinations"), href: apiUrl("/destinations"), icon: "layers" },
+      {
+        label: apiUrl("/destinations/{key}"),
+        href: apiUrl("/destinations/{key}", { key: "roma" }),
+        icon: "pin",
+      },
+      { label: apiUrl("/categories"), href: apiUrl("/categories"), icon: "layers" },
+      { label: apiUrl("/queries"), href: apiUrl("/queries"), icon: "search" },
+      {
+        label: apiUrl("/queries/{category}"),
+        href: apiUrl("/queries/{category}", { category: "mare" }),
+        icon: "search",
+      },
+      { label: apiUrl("/hotels"), href: apiUrl("/hotels"), icon: "hotel" },
+      { label: apiUrl("/national"), href: apiUrl("/national"), icon: "chart" },
+      { label: apiUrl("/meta"), href: apiUrl("/meta"), icon: "info" },
       { label: "/llms.txt", href: "/llms.txt", icon: "robot" },
+      { label: "/llms-full.txt", href: "/llms-full.txt", icon: "robot" },
+      // Il contesto per pagina non è un file solo: è una convenzione. La si
+      // dichiara come tale, con un esempio raggiungibile, esattamente come qui
+      // sopra per gli endpoint per chiave.
+      {
+        label: "{pagina}/llms.txt",
+        href: pageLlmsPath(observatoryPath(locale)),
+        icon: "robot",
+      },
     ],
   },
 ];
+
+const branches = rawBranches.map((branch) => ({
+  ...branch,
+  count: branch.count ?? branch.leaves.length,
+}));
 
 // Il totale si conta dai rami, non si scrive a mano: un numero fisso in una
 // mappa del sito è la prima cosa che invecchia, e nessuno se ne accorge.

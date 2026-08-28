@@ -1,6 +1,7 @@
 ---
 import CategorySelect from "../components/CategorySelect.astro";
 import Icon from "../components/Icon.astro";
+import MonthGrid from "../components/MonthGrid.astro";
 import PageHero from "../components/PageHero.astro";
 import Section from "../components/Section.astro";
 import ObsLayout from "../layouts/ObsLayout.astro";
@@ -11,16 +12,17 @@ import {
   queriesPath,
   type Locale,
 } from "../lib/config";
-import { monthLabel, number } from "../lib/format";
+import { number } from "../lib/format";
 import { messages } from "../lib/i18n";
 import { datasetSchema } from "../lib/schema";
 import {
+  META,
   inScopeFunnel,
   listCategories,
   listDestinations,
 } from "../lib/observatory";
 import { queryRowHtml, type QueryRow, type RowLabels } from "../lib/queries-table";
-import queriesJson from "../data/observatory/queries.json";
+import { server } from "../lib/api/server";
 
 const { locale } = Astro.props as { locale: Locale };
 const other = otherLocale(locale);
@@ -30,7 +32,9 @@ const categories = listCategories();
 const destinations = listDestinations();
 const stages = inScopeFunnel();
 
-const rows = queriesJson as QueryRow[];
+// L'indice della domanda arriva dall'endpoint, non da un import di JSON: la
+// pagina non sa se dietro c'è una fixture o il backend.
+const rows = (await server.allQueries()) as QueryRow[];
 
 const clusters = [...new Set(rows.map((row) => row.cluster))].sort();
 // Gli slug dei cluster sono chiavi interne: in pagina compaiono tradotti.
@@ -44,24 +48,51 @@ const PAGE_SIZE = 60;
 // un crawler, e i filtri poi ripartono dall'API.
 const initial = [...rows].sort((a, b) => b.volume - a.volume).slice(0, PAGE_SIZE);
 
-// Heatmap di stagionalità: media normalizzata degli ultimi 12 mesi per
-// categoria, calcolata dai dati pubblicati e non da una tabella a parte.
-const months = Array.from({ length: 12 }, (_, index) => index);
-const heat = categories.map((category) => {
+// I mesi. Non più scritti a mano: li dice META. La sparkline delle query copre
+// gli ultimi dodici mesi e finisce con `generatedFor`, quindi i mesi misurati
+// sono la sua coda — tanti quanti `historyMonths`, che è anche la lunghezza
+// dello storico di punteggio di ogni destinazione.
+const SPARK_MONTHS = 12;
+const UPCOMING = 3;
+
+function shiftMonth(key: string, delta: number): string {
+  const [year, month] = key.split("-").map(Number);
+  const d = new Date(Date.UTC(year, month - 1 + delta, 1));
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+const lastMonth = META.generatedFor.slice(0, 7);
+const measuredMonths = Array.from({ length: META.historyMonths }, (_, index) =>
+  shiftMonth(lastMonth, index - (META.historyMonths - 1)),
+);
+const upcomingMonths = Array.from({ length: UPCOMING }, (_, index) =>
+  shiftMonth(lastMonth, index + 1),
+);
+
+// Domanda e visibilità sugli stessi mesi, per categoria.
+// La domanda esce dalle query italiane (le sole che misurano il mercato
+// interno); la visibilità è la media dello storico di punteggio delle venti
+// destinazioni della categoria. Le due serie non condividono l'unità, e infatti
+// nel componente non condividono nemmeno la scala.
+const monthRows = categories.map((category) => {
   const list = rows.filter((row) => row.category === category.key && row.lang === "it");
-  const totals = months.map((month) =>
-    list.reduce((sum, row) => sum + (row.spark[month] ?? 0), 0),
+  const offset = SPARK_MONTHS - META.historyMonths;
+  const demand = measuredMonths.map((_, index) =>
+    list.reduce((sum, row) => sum + (row.spark[offset + index] ?? 0), 0),
   );
-  const mean = totals.reduce((s, v) => s + v, 0) / 12 || 1;
-  return { category, values: totals.map((value) => value / mean) };
+  const inCategory = destinations.filter((d) => d.category === category.key);
+  const visibility = measuredMonths.map((_, index) => {
+    const total = inCategory.reduce((sum, d) => sum + (d.spark[index] ?? 0), 0);
+    return inCategory.length ? total / inCategory.length : 0;
+  });
+  return {
+    key: category.key,
+    label: category.short[locale],
+    icon: category.icon,
+    demand,
+    visibility,
+  };
 });
-const lastMonths = queriesJson.length
-  ? Array.from({ length: 12 }, (_, index) => {
-      const base = new Date(Date.UTC(2026, 7, 1));
-      const d = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth() - 11 + index, 1));
-      return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
-    })
-  : [];
 
 // Le etichette della riga: le stesse a build time e nel browser, così la
 // tabella non cambia aspetto al primo filtro.
@@ -201,49 +232,22 @@ const clientLabels = {
 
   <Section
     locale={locale}
-    id="stagionalita"
-    title={t.queries["seasonality-title"]}
-    lead={t.queries["seasonality-lead"]}
+    id="mesi"
+    title={t.queries["months-title"]}
+    lead={t.queries["months-lead"]}
   >
-      <div class="table-wrap table-dense table-stickycol">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">{t.table.category}</th>
-              {
-                lastMonths.map((month) => (
-                  <th scope="col" class="text-center num">
-                    {monthLabel(locale, month).split(" ")[0]}
-                  </th>
-                ))
-              }
-            </tr>
-          </thead>
-          <tbody>
-            {
-              heat.map((row) => (
-                <tr>
-                  <td class="font-bold">{row.category.short[locale]}</td>
-                  {row.values.map((value) => {
-                    // Opacità proporzionale alla domanda: il colore da solo non
-                    // basta, il numero resta leggibile in ogni cella.
-                    const alpha = Math.min(0.85, Math.max(0.05, (value - 0.35) / 1.4));
-                    return (
-                      <td
-                        class="text-center num text-[0.78rem]"
-                        style={`background:color-mix(in srgb, var(--color-accent) ${Math.round(alpha * 100)}%, transparent)`}
-                        title={`${row.category.short[locale]}: ${Math.round(value * 100)}%`}
-                      >
-                        {Math.round(value * 100)}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
+      <MonthGrid
+        locale={locale}
+        months={measuredMonths}
+        upcoming={upcomingMonths}
+        rows={monthRows}
+        demandLabel={t.table.volume}
+        visibilityLabel={t.queries["month-visibility"]}
+        upcomingLabel={t.queries.upcoming}
+        changeLabel={t.queries["month-change"]}
+        demandScaleLabel={t.queries["month-scale-demand"]}
+        visibilityScaleLabel={t.queries["month-scale-visibility"]}
+      />
   </Section>
 
   <Section
@@ -378,7 +382,7 @@ const clientLabels = {
                   ))
                 }
                 <th scope="col" class="text-right">{t.table.history}</th>
-                <th scope="col" class="w-24"><span class="sr-only">{t.queries.detail}</span></th>
+                <th scope="col" class="w-24 text-right"><span class="sr-only">{t.queries.detail}</span></th>
               </tr>
             </thead>
             <tbody data-queries-body set:html={initialHtml} />
@@ -580,13 +584,17 @@ const clientLabels = {
       pushUrl();
       try {
         // Chiamata reale: latenza, abort e stati di errore come col backend.
-        const request: Record<string, string | number> = {
+        // Con le fixture i filtri girano in locale, con `PUBLIC_API_SOURCE=http`
+        // partono come query string: qui non cambia niente.
+        const filters: Record<string, string | number> = {
           sort,
           dir,
-          limit: labels.pageSize ?? 60,
+          pageSize: labels.pageSize ?? 60,
         };
-        for (const key of activeKeys()) request[key] = state[key];
-        const { rows, total } = await api.searchQueries(request as any, controller.signal);
+        for (const key of activeKeys()) filters[key] = state[key];
+        const { rows, total } = await api.queries(filters as any, {
+          signal: controller.signal,
+        });
         body.innerHTML = rows
           .map((row: any) => queryRowHtml(row, locale as any, labels.row))
           .join("");

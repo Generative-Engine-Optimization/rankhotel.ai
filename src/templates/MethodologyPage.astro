@@ -12,6 +12,7 @@ import TierBadge from "../components/TierBadge.astro";
 import Toc from "../components/Toc.astro";
 import ObsLayout from "../layouts/ObsLayout.astro";
 import {
+  DEMO_DISCLOSURE,
   assumptionsPath,
   glossaryPath,
   methodologyPath,
@@ -21,7 +22,7 @@ import {
 } from "../lib/config";
 import { number } from "../lib/format";
 import { faqSchema } from "../lib/schema";
-import { messages } from "../lib/i18n";
+import { interpolate, messages } from "../lib/i18n";
 import {
   ENGINES,
   FACTOR_KEYS,
@@ -51,30 +52,59 @@ const factorIcon = {
   technical: "robot",
 } as const;
 
-const blocks = [
-  { title: t.methodology["engines-title"], body: t.methodology["engines-body"], icon: "robot" },
-  { title: t.methodology["runs-title"], body: t.methodology["runs-body"], icon: "calendar" },
-  { title: t.methodology["technical-title"], body: t.methodology["technical-body"], icon: "globe" },
-  { title: t.methodology["levels-title"], body: t.methodology["levels-body"], icon: "layers" },
+// Queste quattro spiegazioni stavano tutte dentro la sezione sugli assistenti,
+// che parlava d'altro: chi cercava "perché cinque rilevazioni" non aveva modo
+// di trovarlo, né dall'indice né scorrendo. Ora ognuna è una sezione con la sua
+// ancora; qui restano solo per lo schema FAQ, che le rende citabili una a una.
+const faqBlocks = [
+  { title: t.methodology["levels-title"], body: t.methodology["levels-body"] },
+  { title: t.methodology["runs-title"], body: t.methodology["runs-body"] },
+  { title: t.methodology["engines-title"], body: t.methodology["engines-body"] },
+  { title: t.methodology["technical-title"], body: t.methodology["technical-body"] },
+];
+
+// I due tipi di domanda alimentano due fattori diversi del punteggio. Il nesso
+// era scritto da nessuna parte: si diceva che esistono due livelli, e altrove
+// che esistono quattro fattori, senza mai legarli. I conteggi si contano dai
+// template veri, così non possono divergere da quello che viene chiesto.
+const prompts = listPrompts();
+const levels = [
+  {
+    key: "comparative" as const,
+    label: t.methodology["level-comparative"],
+    icon: "compass",
+    n: prompts.filter((prompt) => prompt.level === "comparative").length,
+  },
+  {
+    key: "internal" as const,
+    label: t.methodology["level-internal"],
+    icon: "layers",
+    n: prompts.filter((prompt) => prompt.level === "internal").length,
+  },
 ];
 
 // I quattro blocchi qui sotto e le spiegazioni dei fattori sono già scritti
 // come domanda e risposta: dichiararli FAQ rende ogni risposta citabile da sola
 // da un motore generativo, senza che debba ricostruirla dal testo intorno.
 const faq = faqSchema(methodologyPath(locale), [
-  ...blocks.map((block) => ({ question: block.title, answer: block.body })),
+  ...faqBlocks.map((block) => ({ question: block.title, answer: block.body })),
   ...FACTOR_KEYS.map((key) => ({
     question: t.factors[key].name,
     answer: t.explain[key],
   })),
 ]);
 
+// L'indice segue l'ordine in cui le domande vengono in mente: cosa misurate,
+// cosa chiedete, quante volte, a chi, e poi come si legge il numero che esce.
 const sections = [
   { id: "formula", label: t.methodology["formula-title"], icon: "chart" },
+  { id: "domande", label: t.methodology["levels-title"], icon: "quote" },
+  { id: "rilevazioni", label: t.methodology["runs-title"], icon: "calendar" },
   { id: "engine", label: t.engines.title, icon: "robot" },
+  { id: "tecnica", label: t.methodology["technical-title"], icon: "globe" },
   { id: "fasce", label: t.rank["tiers-title"], icon: "layers" },
   { id: "funnel", label: t.funnel.title, icon: "route" },
-  { id: "numeri", label: t.stats.responses, icon: "calendar" },
+  { id: "numeri", label: t.methodology["numbers-title"], icon: "info" },
 ];
 ---
 
@@ -98,16 +128,54 @@ const sections = [
     ]}
   >
     <div class="flex flex-wrap gap-2.5">
-      <a class="btn btn-secondary gap-2" href={glossaryPath(locale)}>
+      <a class="btn btn-secondary" href={glossaryPath(locale)}>
         <Icon name="info" size={16} />
         {t.ui.glossary}
       </a>
-      <a class="btn btn-secondary gap-2" href={assumptionsPath(locale)}>
+      <a class="btn btn-secondary" href={assumptionsPath(locale)}>
         {t.assumptions.title}
         <Icon name="arrowRight" size={16} />
       </a>
     </div>
   </PageHero>
+
+  {/* La risposta breve prima della pagina lunga: chi arriva qui con una domanda
+      sola la trova in quattro righe, e un motore generativo ha un blocco
+      citabile invece di doverlo ricostruire dal testo intorno. */}
+  <div class="shell grid gap-3.5 pb-[34px]">
+    <Panel locale={locale} icon="compass" title={t.methodology["summary-title"]} tone="muted">
+      <dl class="grid gap-x-8 gap-y-3.5 sm:grid-cols-2">
+        {
+          t.methodology.summary.map((row) => (
+            <div class="grid gap-1">
+              <dt class="text-[0.8rem] font-bold tracking-widest text-accent-ink uppercase">
+                {row.q}
+              </dt>
+              <dd class="text-[0.94rem] text-muted">
+                {interpolate(row.a, {
+                  prompts: prompts.length,
+                  engines: ENGINES.length,
+                  runs: META.runsPerMonth,
+                })}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </Panel>
+
+    {/* Stava in fondo, nell'ultima sezione. È l'avvertenza che cambia come si
+        legge tutto quello che c'è sopra: sopra ci deve stare. */}
+    {DEMO_DISCLOSURE && (
+    <Panel locale={locale} tone="warn" title={t.methodology["data-title"]} icon="info">
+      <p class="text-muted">{t.methodology["data-body"]}</p>
+      <a class="inline-flex items-center gap-1.5 text-accent-ink" href={assumptionsPath(locale)}>
+        {t.assumptions.title}
+        <Icon name="arrowRight" size={15} />
+      </a>
+    </Panel>
+    )}
+  </div>
 
   <div class="shell with-toc block-end">
     <Toc locale={locale} items={sections} />
@@ -143,6 +211,43 @@ const sections = [
         </div>
       </Section>
 
+      <Section
+        locale={locale}
+        id="domande"
+        title={t.methodology["levels-title"]}
+        lead={t.methodology["levels-body"]}
+      >
+        <div class="grid gap-3.5 md:grid-cols-2">
+          {
+            levels.map((level) => (
+              <Panel locale={locale} icon={level.icon} title={level.label}>
+                <p class="text-muted">{t.factors[level.key].help}</p>
+                <div class="grid gap-1 border-t border-line pt-3.5 text-[0.86rem]">
+                  <p class="font-bold">
+                    {interpolate(t.methodology["level-feeds"], {
+                      factor: t.factors[level.key].name,
+                    })}
+                  </p>
+                  <p class="num text-muted">
+                    {interpolate(t.methodology["level-count"], {
+                      n: level.n,
+                      total: prompts.length,
+                    })}
+                  </p>
+                </div>
+              </Panel>
+            ))
+          }
+        </div>
+      </Section>
+
+      <Section
+        locale={locale}
+        id="rilevazioni"
+        title={t.methodology["runs-title"]}
+        lead={t.methodology["runs-body"]}
+      />
+
       <Section locale={locale} id="engine" title={t.engines.title} lead={t.explain.engines}>
         <div class="grid gap-3.5 sm:grid-cols-3">
           {
@@ -151,7 +256,6 @@ const sections = [
               return (
                 <Panel locale={locale}>
                   <strong><EngineLogo engine={engine} size={22} /></strong>
-                  <span class="pill">{meta.vendor}</span>
                   <ul class="grid gap-1">
                     {meta.crawlers.map((crawler) => (
                       <li class="num text-[0.84rem] text-muted">{crawler}</li>
@@ -162,16 +266,15 @@ const sections = [
             })
           }
         </div>
-        <div class="grid gap-3.5 lg:grid-cols-2">
-          {
-            blocks.map((block) => (
-              <Panel locale={locale} title={block.title} icon={block.icon}>
-                <p class="text-muted">{block.body}</p>
-              </Panel>
-            ))
-          }
-        </div>
+        <p class="max-w-[820px] text-muted">{t.methodology["engines-body"]}</p>
       </Section>
+
+      <Section
+        locale={locale}
+        id="tecnica"
+        title={t.methodology["technical-title"]}
+        lead={t.methodology["technical-body"]}
+      />
 
       <Section
         locale={locale}
@@ -242,7 +345,12 @@ const sections = [
         </div>
       </Section>
 
-      <Section locale={locale} id="numeri" title={t.stats.responses} lead={t.explain.runs}>
+      <Section
+        locale={locale}
+        id="numeri"
+        title={t.methodology["numbers-title"]}
+        lead={t.explain.runs}
+      >
         <StatGrid
           locale={locale}
           columns={4}
@@ -257,13 +365,6 @@ const sections = [
             },
           ]}
         />
-        <Panel locale={locale} tone="warn" title={t.methodology["data-title"]} icon="info">
-          <p class="text-muted">{t.methodology["data-body"]}</p>
-          <a class="inline-flex items-center gap-1.5 text-accent-ink" href={assumptionsPath(locale)}>
-            {t.assumptions.title}
-            <Icon name="arrowRight" size={15} />
-          </a>
-        </Panel>
       </Section>
     </div>
   </div>

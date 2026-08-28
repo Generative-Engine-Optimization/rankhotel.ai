@@ -1,5 +1,6 @@
 ---
 import type { Locale } from "../lib/config";
+import { countUpAttrs } from "../lib/countup";
 import InfoTip from "./InfoTip.astro";
 
 // Griglia di numeri con etichetta. Compariva in cinque template con cinque
@@ -23,19 +24,25 @@ const cols = {
 }[columns];
 
 const valueSize = { sm: "text-[1.05rem]", md: "text-[1.3rem]", lg: "text-[1.6rem]" }[size];
+
+// Il valore porta con sé di che numero è fatto. Chi lo anima è lo script
+// dell'intestazione, e anima solo quelli dentro l'eroe: qui non si decide se
+// muoverli, si dichiara soltanto che sono numeri — una griglia spostata dentro
+// o fuori dall'eroe non deve toccare nient'altro.
+const rows = items.map((item) => ({ ...item, countUp: countUpAttrs(locale, item.value) }));
 ---
 
 <!-- subgrid: senza, un item con `hint` alza il proprio valore e le colonne
      accanto non sono più in linea. Le tre righe sono condivise da tutti. -->
 <dl class={`grid auto-rows-[auto_auto_1fr] gap-x-6 gap-y-5 ${cols}`}>
   {
-    items.map((item) => (
+    rows.map((item) => (
       <div class="row-span-3 grid grid-rows-subgrid gap-1">
         <dt class="label flex items-center gap-1.5">
           <span>{item.label}</span>
           {item.info && <InfoTip locale={locale} text={item.info} />}
         </dt>
-        <dd class={`num font-bold ${valueSize}`}>{item.value}</dd>
+        <dd class={`num font-bold ${valueSize}`} {...(item.countUp ?? {})}>{item.value}</dd>
         {item.hint && <dd class="text-[0.78rem] text-faint">{item.hint}</dd>}
       </div>
     ))

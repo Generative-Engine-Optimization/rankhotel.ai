@@ -102,7 +102,8 @@
       },
       {
         "q": "Are the numbers published right now real measurements?",
-        "a": "Not yet. At this stage the values are generated for demonstration, to build and show the tool, and we say so on every page. They should not be cited as findings. When the real runs begin the banner disappears and the numbers become measured."
+        "a": "Not yet. At this stage the values are generated for demonstration, to build and show the tool, and we say so on every page. They should not be cited as findings. When the real runs begin the banner disappears and the numbers become measured.",
+        "demo": true
       }
     ]
   },

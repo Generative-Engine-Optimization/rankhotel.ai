@@ -110,6 +110,18 @@
 
   html {
     scroll-behavior: smooth;
+    /* Un'ancora non deve fermarsi sotto l'intestazione appiccicata. La misura
+       è quella vera, pubblicata dall'header in `--header-h`: su telefono va a
+       capo e cresce, e il numero scritto a mano sbagliava proprio lì. */
+    scroll-padding-top: calc(var(--header-h, 72px) + 16px);
+  }
+
+  /* Chi ha chiesto meno animazioni salta all'ancora invece di scorrerci: vale
+     per i link interni come per la corsa dei numeri nell'eroe. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
@@ -186,10 +198,15 @@
     padding-bottom: var(--space-block);
   }
 
+  /* Il bottone. Lo spazio fra icona e testo e l'allineamento in griglia sono
+     parte del componente: erano scritti a mano in ventidue punti su ventotto,
+     e una regola che va ripetuta ogni volta non è una regola. */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    justify-self: start;
+    gap: 8px;
     min-height: 44px;
     border: 1px solid var(--color-accent-strong);
     border-radius: var(--radius-brand);
@@ -197,11 +214,39 @@
     background: var(--color-accent-strong);
     color: #fff;
     font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      border-color 140ms ease,
+      background-color 140ms ease,
+      color 140ms ease,
+      transform 90ms ease;
   }
 
   .btn:hover {
     border-color: var(--color-accent-ink);
     background: var(--color-accent-ink);
+  }
+
+  /* La conferma della pressione. Su un telefono, senza, fra il dito che tocca
+     e la pagina che cambia non succede niente. */
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  /* L'anello di focus di sistema è accent su fondo accent-strong: due viola a
+     due passi di distanza. Qui serve un colore che stacchi da entrambe le
+     varianti. */
+  .btn:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    transform: none;
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .btn-secondary {
@@ -213,6 +258,29 @@
   .btn-secondary:hover {
     border-color: var(--color-accent);
     background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+
+  .btn-secondary:active {
+    background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+
+  /* La misura piccola esisteva già, ma scritta come tre utility a mano dentro
+     una tabella. Scritta una volta, si riusa uguale. */
+  .btn-sm {
+    min-height: 36px;
+    padding-inline: 12px;
+    gap: 6px;
+    font-size: 0.85rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn {
+      transition: none;
+    }
+
+    .btn:active {
+      transform: none;
+    }
   }
 
   .eyebrow {
@@ -320,17 +388,31 @@
      cliccabile cresce insieme allo spazio. */
   .nav-primary { gap: 0; }
 
-  .nav-primary > a {
+  /* Le voci di primo livello sono di due tipi: un link, oppure il bottone di un
+     ramo — che sta dentro `.nav-branch` per tenersi accanto il suo pannello.
+     Le regole vanno scritte per tutti e due, altrimenti spaziatura e filo
+     saltano proprio sui confini fra un tipo e l'altro: era il caso di
+     Osservatorio|Hotel e di Query|Metodologia. */
+  .nav-primary > a,
+  .nav-primary > .nav-branch > .nav-trigger {
     padding-block: 5px;
     padding-inline: 13px;
   }
 
-  .nav-primary > a + a {
+  .nav-primary > a:not(:first-child),
+  .nav-primary > .nav-branch:not(:first-child) > .nav-trigger {
     border-inline-start: 1px solid var(--color-line);
   }
 
-  .nav-primary > a:first-child { padding-inline-start: 0; }
-  .nav-primary > a:last-child { padding-inline-end: 0; }
+  .nav-primary > a:first-child,
+  .nav-primary > .nav-branch:first-child > .nav-trigger {
+    padding-inline-start: 0;
+  }
+
+  .nav-primary > a:last-child,
+  .nav-primary > .nav-branch:last-child > .nav-trigger {
+    padding-inline-end: 0;
+  }
 
   @media (max-width: 767px) {
     .nav-primary > a {
@@ -348,6 +430,14 @@
     border-collapse: collapse;
   }
 
+  .table-wrap {
+    /* Le cifre di una colonna devono incolonnarsi anche quando la cella non è
+       marcata `.num`: «1.240» sopra «980» con le cifre di larghezza diversa non
+       si confrontano a colpo d'occhio, ed è l'unica cosa che una tabella di
+       numeri deve saper fare. Sul testo non cambia niente. */
+    font-variant-numeric: tabular-nums;
+  }
+
   .table-wrap :is(th, td) {
     border-bottom: 1px solid var(--color-line);
     padding: 14px 16px;
@@ -355,12 +445,86 @@
     vertical-align: top;
   }
 
-  .table-wrap th {
+  /* La testata era distinta dai dati solo dal maiuscoletto: stesso fondo
+     bianco, stesso filetto sottile. Su una tabella lunga, appena la prima riga
+     usciva dallo schermo non si capiva più dove finiva l'intestazione. Ora ha
+     un fondo suo e un filetto più marcato sotto — le stesse due cose che la
+     tabella di confronto faceva già da sola.
+     Il filetto è un'ombra interna e non un bordo: su una testata `sticky` il
+     bordo di una cella `collapse` non viaggia con lei e resta indietro di un
+     pixel mentre si scorre. */
+  .table-wrap thead th {
+    background: var(--color-surface-muted);
+    box-shadow: inset 0 -1px 0 var(--color-line-strong);
     color: var(--color-muted);
     font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
+    /* Le etichette su due righe («visitatori stimati/anno») partivano in alto
+       e finivano a mezz'aria sopra i dati, mentre quelle su una riga restavano
+       appese in cima. Allineate in basso stanno tutte sulla stessa riga, quella
+       attaccata ai numeri che etichettano. */
+    vertical-align: bottom;
+  }
+
+  /* `vertical-align: bottom` allinea il fondo delle *celle*, non quello del
+     contenuto: un'etichetta con icona è una scatola in linea più alta del
+     testo, si appoggia alla base della riga e finisce due pixel sopra le
+     etichette di sola parola. Allineando al fondo anche lei, le undici testate
+     chiudono tutte sullo stesso pixel. */
+  .table-wrap thead th :is(.th-label, .sortable) {
+    vertical-align: bottom;
+  }
+
+  /* La posizione è una colonna di numeri e va a destra come le altre. Non con
+     l'utility `text-right` sulla cella: le utility stanno in un layer che vince
+     su questo, e in modalità scheda non si riuscirebbe più a rimetterla a
+     sinistra (vedi `.table-cards td[data-cell="rank"]`). */
+  .table-wrap td[data-cell="rank"] {
+    text-align: right;
+  }
+
+  /* `.th-label` è usata in sette intestazioni ma non aveva più nessuna regola:
+     l'icona restava un'immagine in riga e mandava l'etichetta a capo, così ogni
+     testata con icona era alta due righe con il simbolo da solo sopra. Qui
+     l'icona e il testo tornano sulla stessa riga; l'icona non si stringe e non
+     si allarga, il testo può andare a capo da solo se la colonna è stretta. */
+  .table-wrap thead .th-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .table-wrap thead .th-label > svg {
+    flex: none;
+    color: var(--color-faint);
+  }
+
+  /* La testata è il primo elemento dentro un contenitore con gli angoli
+     arrotondati, e con `.table-sticky` il contenitore non ritaglia (gli serve
+     `overflow: visible` per lo sticky): senza questi due raggi il fondo della
+     testata sborda dagli angoli. */
+  .table-wrap thead tr:first-child th:first-child {
+    border-start-start-radius: var(--radius-brand);
+  }
+
+  .table-wrap thead tr:first-child th:last-child {
+    border-start-end-radius: var(--radius-brand);
+  }
+
+  /* Otto colonne su undici sono ordinabili e lo dichiaravano solo cambiando
+     colore al passaggio. Un fondo e un'area cliccabile più larga del testo le
+     rendono bottoni anche a prima vista. I margini negativi pareggiano il
+     padding: la riga di testata non cresce di un pixel. */
+  .table-wrap thead th .sortable {
+    margin: -4px -8px;
+    border-radius: 4px;
+    padding: 4px 8px;
+  }
+
+  .table-wrap thead th .sortable:hover {
+    background: color-mix(in oklab, var(--color-accent) 12%, transparent);
   }
 
   .table-wrap tr:last-child td {
@@ -400,11 +564,70 @@
     font-size: 0.72em;
   }
 
+  /* L'anello si disegna. La sua parte piena dice quanto manca a cento, e
+     vederla correre lungo il cerchio è la stessa informazione della lunghezza,
+     letta nel tempo invece che nello spazio. Poi si posa la banda: prima dove
+     il punteggio è arrivato, e solo dopo quanto ha oscillato — sono due letture
+     diverse e arrivano in ordine.
+
+     Non serve JavaScript e non c'è niente da nascondere prima: l'attributo
+     `stroke-dasharray` porta già il valore giusto, e l'animazione parte dal
+     tratto coperto per tornarci sopra. Chi non la esegue vede l'anello finito,
+     che è quello che conta. */
+  @keyframes dial-draw {
+    from {
+      stroke-dashoffset: var(--dial-dash);
+    }
+  }
+
+  @keyframes dial-settle {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .dial-ring {
+    animation: dial-draw 950ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  }
+
+  .dial-band-arc {
+    animation: dial-settle 420ms ease-out 820ms both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dial-ring,
+    .dial-band-arc {
+      animation: none;
+    }
+  }
+
   .bar {
     height: 8px;
     overflow: hidden;
     border-radius: 999px;
     background: var(--color-surface-raised);
+  }
+
+  /* Solo l'anatomia del punteggio cresce da zero: `.bar` sta anche dentro le
+     tabelle, e trenta barre che partono insieme sono la pagina che si agita,
+     non un effetto. `scaleX` e non `width`, così la barra non rifà il calcolo
+     del layout a ogni fotogramma — il ritaglio tondo ce l'ha già il
+     contenitore. */
+  @keyframes bar-grow {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  .bar-grow > span {
+    transform-origin: left center;
+    animation: bar-grow 700ms cubic-bezier(0.33, 1, 0.68, 1) var(--bar-delay, 0ms) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar-grow > span {
+      animation: none;
+    }
   }
 
   .bar > span {
@@ -495,6 +718,33 @@
 
   .chip:hover { border-color: var(--color-line-strong); color: var(--color-ink); }
 
+  /* La transizione stava sulla regola `a.card, a.chip`: i chip che sono
+     <button> — i filtri, il cambio engine, condividi — cambiavano di scatto
+     mentre quelli che sono link scivolavano. Stesso oggetto, due comportamenti.
+     Qui vale per tutti, e la pressione si vede. */
+  .chip {
+    cursor: pointer;
+    transition:
+      border-color 140ms ease,
+      background-color 140ms ease,
+      color 140ms ease,
+      transform 90ms ease;
+  }
+
+  .chip:active { transform: translateY(1px); }
+
+  .chip:disabled,
+  .chip[aria-disabled="true"] {
+    transform: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chip { transition: none; }
+    .chip:active { transform: none; }
+  }
+
   .chip[aria-pressed="true"],
   .chip[data-active="true"] {
     border-color: var(--color-accent);
@@ -548,6 +798,15 @@
   .sortable[aria-sort="ascending"]::after { content: "↑"; opacity: 1; }
   .sortable[aria-sort="descending"]::after { content: "↓"; opacity: 1; }
   .sortable[aria-sort]:not([aria-sort="none"]) { color: var(--color-accent-ink); }
+
+  /* Otto intestazioni di tabella sono cliccabili e non lo dichiaravano: nessuno
+     stato al passaggio, nessun segno finché non le si ordinava. */
+  .sortable:hover { color: var(--color-accent-ink); }
+
+  .sortable:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
 
   /* Prima colonna ancorata: su una tabella larga, scorrendo verso i mesi di
      destra il nome della categoria usciva di scena e restavano numeri senza
@@ -628,12 +887,24 @@
 
     .table-cards td[data-cell="head"] { padding-bottom: 10px; }
 
+    /* In scheda il valore si stringe sul suo contenuto, e una barra larga in
+       percentuale si riduce a un puntino a destra: sembra un pallino di stato,
+       non una misura. Larghezza fissa, così le barre di righe diverse si
+       leggono anche l'una contro l'altra. */
+    .table-cards td[data-label] .bar {
+      min-width: 140px;
+    }
+
     /* La posizione in classifica, che in tabella è la prima colonna, in scheda
        diventa la riga sopra il nome. */
     .table-cards td[data-cell="rank"] {
       color: var(--color-faint);
       font-family: var(--font-mono);
       font-size: 0.76rem;
+      /* In tabella la posizione è una colonna di numeri e sta a destra; in
+         scheda è la riga sopra il nome, e a destra finirebbe da sola in fondo
+         a una riga vuota. */
+      text-align: left;
     }
 
     .table-cards td[data-cell="rank"]::before { content: "#"; }
@@ -683,8 +954,6 @@
     position: sticky;
     top: 88px;
     z-index: 2;
-    background: var(--color-surface-muted);
-    box-shadow: inset 0 -1px 0 var(--color-line);
   }
 
   /* overflow-x:auto renderebbe il contenitore uno scroller anche in verticale,
@@ -856,11 +1125,6 @@
       padding: 14px;
       background: var(--color-surface);
     }
-  }
-
-  /* L'ancora di sezione non deve finire sotto l'header appiccicato. */
-  [data-section] {
-    scroll-margin-top: 88px;
   }
 
   /* Griglia con indice a sinistra e contenuto a destra. */
@@ -1674,5 +1938,649 @@
       border-color: color-mix(in oklab, var(--hero-tint) 32%, transparent);
       background: color-mix(in oklab, var(--hero-tint) 9%, var(--color-surface));
     }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Le tendine del menu. Il pannello è figlio dell'intestazione e non del <nav>:
+   su telefono il nav scorre di lato, e un pannello in posizione assoluta là
+   dentro verrebbe ritagliato dal contenitore che scorre.
+   --------------------------------------------------------------------------- */
+@layer components {
+  /* Il display sta qui e non fra le utility: `flex` scritto in classe vive in
+     un layer che vince su questo, e da lì il menu a scomparsa non si sarebbe
+     più potuto chiudere. */
+  .nav-primary {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-branch {
+    display: contents;
+  }
+
+  .nav-burger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-brand);
+    padding-inline: 12px;
+    background: var(--color-surface);
+    color: var(--color-muted);
+    font-size: 0.86rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .nav-burger[aria-expanded="true"] {
+    border-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  @media (min-width: 768px) {
+    /* Da tablet in su il menu sta tutto in barra: il bottone non serve. */
+    .nav-burger { display: none; }
+  }
+
+  .nav-trigger {
+    cursor: pointer;
+  }
+
+  .nav-chevron {
+    transition: transform 140ms ease;
+  }
+
+  .nav-trigger[aria-expanded="true"],
+  .nav-primary [data-current="true"] {
+    color: var(--color-accent-ink);
+  }
+
+  /* Il ramo in cui ci si trova porta un filo sotto: il colore da solo, su una
+     barra dove tutto è già viola, non basta a dire "sei qui". */
+  .nav-primary [data-current="true"] {
+    box-shadow: inset 0 -2px 0 var(--color-accent);
+  }
+
+  .nav-trigger[aria-expanded="true"] .nav-chevron {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-chevron { transition: none; }
+  }
+
+  .nav-panel {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    z-index: 20;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-surface);
+    box-shadow: 0 18px 32px -24px rgb(9 4 29 / 0.5);
+  }
+
+  .nav-panel-inner {
+    display: grid;
+    gap: 22px 44px;
+    padding-block: 20px 24px;
+  }
+
+  @media (min-width: 640px) {
+    .nav-panel-inner {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .nav-panel-title {
+    margin-bottom: 9px;
+    color: var(--color-faint);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .nav-panel-list {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-panel-link {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    /* Quarantaquattro pixel di bersaglio: queste voci si toccano con il
+       pollice, non solo con un mouse. */
+    min-height: 40px;
+    border-radius: var(--radius-brand);
+    padding-inline: 9px;
+    color: var(--color-ink);
+    font-size: 0.94rem;
+  }
+
+  .nav-panel-link > svg {
+    flex: none;
+    color: var(--cat, var(--color-faint));
+  }
+
+  .nav-panel-link:hover,
+  .nav-panel-link:focus-visible {
+    background: var(--color-surface-muted);
+    color: var(--color-accent-ink);
+  }
+
+  /* La pagina aperta, dentro il pannello. Mai solo colore: c'è anche il pallino
+     a sinistra, che si vede anche a chi il viola non lo distingue. */
+  .nav-panel-link[data-current="true"] {
+    background: color-mix(in oklab, var(--color-accent) 10%, transparent);
+    color: var(--color-accent-ink);
+    font-weight: 700;
+  }
+
+  .nav-panel-link[data-current="true"]::after {
+    content: "";
+    margin-inline-start: auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* I marchi degli assistenti arrivano dal loro componente, che porta con sé
+     una spaziatura sua: qui dentro deve stare in fila con le voci a icona. */
+  .nav-panel-link > span {
+    gap: 9px;
+  }
+
+  /* L'elenco completo dei temi sotto la barra di contesto: ventitré voci in
+     colonne, così si sceglie guardando invece che trascinando la fila. */
+  .context-all {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 2px 18px;
+    padding-block: 16px 20px;
+  }
+
+  .context-all .nav-panel-link[data-active="true"] {
+    background: color-mix(in oklab, var(--cat, var(--color-accent)) 12%, transparent);
+    color: var(--cat, var(--color-accent-ink));
+    font-weight: 700;
+  }
+
+  /* Sotto md il menu è una colonna che si apre sotto l'intestazione. Il
+     ritaglio non è più un problema — la fila non scorre più di lato — e per
+     questo i pannelli possono stare dentro al <nav>, dove il lettore di
+     schermo li trova subito dopo il bottone che li apre. */
+  @media (max-width: 767px) {
+    [data-nav-collapsible="true"] .nav-primary {
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      z-index: 20;
+      display: grid;
+      align-items: stretch;
+      border-bottom: 1px solid var(--color-line);
+      padding: 10px 0 14px;
+      background: var(--color-surface);
+      box-shadow: 0 18px 32px -24px rgb(9 4 29 / 0.5);
+    }
+
+    [data-nav-collapsible="true"][data-nav-open="false"] .nav-primary {
+      display: none;
+    }
+
+    /* Aperti tutti e due i rami la colonna supera lo schermo: a scorrere deve
+       essere il menu intero, non il singolo sotto-elenco. */
+    [data-nav-collapsible="true"] .nav-primary {
+      max-height: min(76vh, 560px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .nav-primary > *,
+    .nav-primary .nav-trigger,
+    .nav-primary > a {
+      width: 100%;
+    }
+
+    /* I filetti fra le voci dividono una fila, non una colonna: in verticale
+       diventano una riga a sinistra che non separa niente.
+       I selettori ricalcano quelli di sopra riga per riga: scritti più corti
+       perdevano per specificità, e il `@media` non ne aggiunge. */
+    .nav-primary > a:not(:first-child),
+    .nav-primary > .nav-branch:not(:first-child) > .nav-trigger {
+      border-inline-start: 0;
+    }
+
+    .nav-primary > a,
+    .nav-primary > .nav-branch > .nav-trigger,
+    .nav-primary > a:first-child,
+    .nav-primary > .nav-branch:first-child > .nav-trigger,
+    .nav-primary > a:last-child,
+    .nav-primary > .nav-branch:last-child > .nav-trigger {
+      min-height: 44px;
+      padding-inline: 16px;
+    }
+
+    .nav-primary .nav-trigger {
+      justify-content: flex-start;
+    }
+
+    .nav-primary .nav-chevron {
+      margin-inline-start: auto;
+    }
+
+    /* In colonna il pannello non ha niente da sovrapporre: scorre con il resto
+       del menu, rientrato, come un sotto-elenco. */
+    .nav-panel {
+      position: static;
+      border: 0;
+      box-shadow: none;
+      background: var(--color-surface-muted);
+    }
+
+    .nav-panel-inner {
+      width: auto;
+      padding: 12px 16px 14px;
+    }
+  }
+
+}
+
+/* ---------------------------------------------------------------------------
+   Domanda e visibilità sui mesi misurati. Una griglia sola per tutte le
+   categorie: le colonne dei mesi devono stare incolonnate fra una categoria e
+   l'altra, altrimenti il confronto — che è tutto il senso della sezione — non
+   si può fare a occhio.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .month-figure {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .month-grid {
+    display: grid;
+    /* Il tracciato arriva dal componente: i mesi misurati si prendono lo
+       spazio, quelli futuri restano su una corsia stretta. Erano larghi
+       uguali, e su tre misure e tre attese metà tabella era vuota. */
+    grid-template-columns: var(--month-track);
+    align-items: center;
+    gap: 0;
+    /* Sotto questa larghezza le colonne si schiaccerebbero fino a rendere le
+       barre indistinguibili: meglio far scorrere (`.scroll-x` sul contenitore
+       ci mette le ombre ai bordi). */
+    min-width: var(--month-min, 560px);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-brand);
+    background: var(--color-surface);
+  }
+
+  .month-grid-corner,
+  .month-grid-head {
+    padding: 10px 12px;
+    /* Alta abbastanza da tenere, sopra i nomi dei mesi, la riga che dichiara
+       la corsia dei mesi ancora da misurare. */
+    min-height: 48px;
+    background: var(--color-surface-muted);
+    box-shadow: inset 0 -1px 0 var(--color-line-strong);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    /* Stessa testata delle tabelle: è la stessa cosa e deve sembrarlo. */
+    align-self: stretch;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  /* La corsia di sinistra regge il nome della misura: se scorre via, le cifre
+     restano senza etichetta. Resta agganciata al bordo, e per farlo deve avere
+     un fondo suo — altrimenti i numeri le passano sotto. */
+  .month-grid-corner,
+  .month-grid-metric {
+    position: sticky;
+    inset-inline-start: 0;
+    /* Sopra tutto: scorrendo di lato le cifre le passano sotto. */
+    z-index: 3;
+    border-inline-end: 1px solid var(--color-line);
+  }
+
+  .month-grid-corner { border-start-start-radius: var(--radius-brand); }
+  .month-grid > .month-grid-head:last-of-type { border-start-end-radius: var(--radius-brand); }
+
+  /* L'ultimo mese misurato è "adesso": è la colonna da cui si parte a leggere,
+     e senza un segno è indistinguibile dalle due precedenti. */
+  .month-grid-head[data-latest] {
+    background: var(--color-surface-raised);
+    color: var(--color-ink);
+  }
+
+  .month-grid-cell[data-latest] {
+    background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+  }
+
+  /* I mesi che non abbiamo ancora misurato non sono dati: l'etichetta c'è
+     perché la fila continui, ma sbiadita. */
+  .month-grid-head-next {
+    position: relative;
+    padding-inline: 8px;
+    color: var(--color-faint);
+    font-weight: 400;
+  }
+
+  /* La prima delle tre regge la scritta che esce dalla sua colonna: senza
+     sollevarla, il fondo delle due successive gliela taglia a metà. */
+  .month-grid-head-next:has(> .month-grid-next) { z-index: 2; }
+
+  /* Una fascia intera nel colore della categoria: cinque blocchi da due righe
+     ciascuno hanno bisogno di un confine che si veda anche scorrendo di lato,
+     e il colore è già quello che identifica la categoria ovunque nel sito. */
+  .month-grid-cat {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--cat) 7%, transparent);
+    padding: 8px 12px;
+    font-weight: 700;
+  }
+
+  /* Il nome resta visibile mentre la griglia scorre di lato. */
+  .month-grid-cat-ink {
+    position: sticky;
+    inset-inline-start: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .month-grid-metric {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 3px 8px;
+    background: var(--color-surface);
+    padding: 8px 12px;
+  }
+
+  .month-grid-metric-name {
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+  }
+
+  /* La frase della sezione — la domanda si muove, la visibilità no — era
+     lasciata dedurre da tre barre. Qui è una cifra sola, sulla stessa unità per
+     tutte e due le misure, così il confronto non chiede di leggere due scale.
+     Neutra di colore: il crollo della domanda a ottobre è la stagione, non un
+     risultato da segnare in rosso. */
+  .month-grid-change {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    border-radius: 999px;
+    background: var(--color-surface-raised);
+    padding: 1px 7px;
+    color: var(--color-ink);
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  .month-grid-cell {
+    display: grid;
+    gap: 4px;
+    align-self: stretch;
+    align-content: center;
+    border-inline-start: 1px solid var(--color-line);
+    padding: 8px 12px;
+  }
+
+  .month-grid-value {
+    font-size: 0.8rem;
+    line-height: 1.1;
+  }
+
+  /* La domanda porta il colore della sua categoria, la visibilità quello
+     dell'accent: due misure diverse non possono avere lo stesso segno. */
+  .month-grid-bar-demand > span { background: var(--cat, var(--color-accent)); }
+
+  /* Il posto del mese che verrà: tratteggiato, così si legge come "vuoto per
+     ora" e non come "zero". */
+  .month-grid-cell-next {
+    min-height: 34px;
+    border-inline-start: 1px dashed var(--color-line-strong);
+  }
+
+  /* Scritta una volta sola, sopra i tre mesi che verranno: in una colonna da
+     cinquantotto pixel non ci sta, quindi esce dalla sua e corre sopra le altre
+     due — lì sotto ci sono solo i loro nomi, allineati in basso. */
+  .month-grid-next {
+    position: absolute;
+    inset-block-start: 9px;
+    inset-inline-start: 8px;
+    color: var(--color-faint);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Due misure, due scale. Senza dirlo, cinque barre di domanda al massimo su
+     cinque categorie sembrano cinque categorie che vanno tutte uguale. */
+  .month-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    color: var(--color-muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .month-legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    max-width: 46ch;
+  }
+
+  .month-legend-item b { color: var(--color-ink); font-weight: 600; }
+
+  .month-legend-swatch {
+    flex: none;
+    margin-top: 0.42em;
+    width: 22px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--color-accent);
+  }
+
+  /* Il campione della domanda porta i colori delle categorie nell'ordine in cui
+     compaiono: è la barra che cambia colore riga per riga. */
+  .month-legend-swatch-demand {
+    background: linear-gradient(
+      90deg,
+      var(--color-cat-mare) 0 20%,
+      var(--color-cat-montagna-parchi) 20% 40%,
+      var(--color-cat-enogastronomia) 40% 60%,
+      var(--color-cat-unesco) 60% 80%,
+      var(--color-cat-borghi) 80% 100%
+    );
+  }
+
+  @media (max-width: 640px) {
+    .month-grid {
+      grid-template-columns: var(--month-track-sm, var(--month-track));
+      min-width: var(--month-min-sm, var(--month-min, 560px));
+    }
+
+    .month-grid-cell,
+    .month-grid-metric,
+    .month-grid-cat { padding-inline: 10px; }
+
+    .month-grid-head { padding-inline: 10px; }
+
+    .month-legend { font-size: 0.76rem; }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Barra di contesto. Su una pagina tema o categoria l'eroe con il nome sparisce
+   dopo due schermate, e da lì in giù una classifica di borghi e una di località
+   di mare sono indistinguibili. La barra sta subito dopo l'eroe e si aggancia
+   sotto l'intestazione proprio quando quello esce di scena: nessun JavaScript,
+   solo `sticky` messo nel punto giusto del flusso.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .context-bar {
+    position: sticky;
+    top: var(--header-h, 72px);
+    z-index: 9;
+    border-block: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Ventitré temi non ci stanno mai in una riga, e la fila era allineata a
+     destra con `justify-content: flex-end`. Su un contenitore che scorre quello
+     è un modo per perdere il contenuto: l'eccedenza esce dal bordo *iniziale*,
+     dove lo scorrimento non arriva. Qui diciassette chip su ventitré stavano a
+     sinistra dello schermo — fino a -2177px — con `scrollWidth` uguale a
+     `clientWidth`, cioè irraggiungibili con qualsiasi gesto. Anche il tema
+     corrente, che è la ragione per cui la barra esiste.
+     Il margine automatico fa la stessa cosa quando lo spazio c'è, e si annulla
+     quando non c'è: pochi temi restano a destra, tanti temi scorrono da
+     sinistra. Sotto `lg` l'etichetta è nascosta e non genera scatola: nessun
+     margine, la fila parte da sinistra, ed è giusto così. */
+  .context-switch > :first-child {
+    margin-inline-start: auto;
+  }
+
+  /* L'emblema porta il colore della categoria quando ce l'ha: è lo stesso
+     --cat che tingono chip, pallini e pin. */
+  .context-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid color-mix(in srgb, var(--cat, var(--color-accent)) 34%, transparent);
+    border-radius: var(--radius-brand);
+    background: color-mix(in srgb, var(--cat, var(--color-accent)) 10%, var(--color-surface));
+    color: var(--cat, var(--color-accent-ink));
+  }
+
+  /* Lo stesso segno, in grande, nell'eroe: una pagina che appartiene a un
+     insieme si riconosce prima dal simbolo che dal titolo. */
+  .page-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid color-mix(in srgb, var(--cat, var(--color-accent)) 34%, transparent);
+    border-radius: var(--radius-brand);
+    background: color-mix(in srgb, var(--cat, var(--color-accent)) 10%, var(--color-surface));
+    color: var(--cat, var(--color-accent-ink));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Le voci del footer. Erano testo nudo con un cambio di colore al passaggio:
+   quattordici righe che si leggono una per una. Con l'icona si scorrono, e con
+   il riquadro al passaggio l'area cliccabile smette di essere alta quanto una
+   riga di testo — su un telefono era il bersaglio più stretto del sito.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .foot-link {
+    display: flex;
+    /* Sei voci su quattordici vanno a capo: con l'allineamento al centro
+       l'icona galleggiava a metà fra le due righe. Va agganciata alla prima,
+       dove sta l'occhio di chi scorre l'elenco. */
+    align-items: flex-start;
+    gap: 8px;
+    margin-inline: -8px;
+    border-radius: var(--radius-brand);
+    padding: 6px 8px;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .foot-link:hover {
+    background: var(--color-surface);
+    color: var(--color-accent-ink);
+  }
+
+  /* L'icona sta un passo indietro rispetto all'etichetta finché non ci si passa
+     sopra: deve aiutare a trovare la riga, non competere con il testo. */
+  .foot-link > svg {
+    margin-top: 3px;
+    color: var(--color-faint);
+    transition: color 120ms ease;
+  }
+
+  .foot-link:hover > svg {
+    color: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .foot-link,
+    .foot-link > svg {
+      transition: none;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Passaggio tra pagine. Il sito è duecentottantacinque pagine che condividono
+   intestazione, piè di pagina e la stessa griglia: senza transizione ogni link
+   è un lampo bianco che le fa sembrare duecentottantacinque siti diversi.
+
+   Non è un router e non è JavaScript: è il browser che tiene l'ultimo
+   fotogramma della pagina che stiamo lasciando finché la prossima non è pronta
+   a disegnarsi. Dove non è supportato non succede semplicemente niente — la
+   navigazione resta quella di sempre, un documento per volta, che è anche la
+   ragione per cui il sito non ha mai avuto un router.
+   --------------------------------------------------------------------------- */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: ease;
+}
+
+/* L'intestazione non attraversa la dissolvenza. È lo stesso oggetto prima e
+   dopo — stesso marchio, stesso menu, spesso perfino la stessa voce marcata —
+   e vederla svanire e riapparire mentre il contenuto cambia sotto è il
+   contrario di quello che una transizione dovrebbe raccontare.
+
+   `body > header` e non `header`: le sezioni, le schede risposta e i nodi
+   della mappa mentale hanno il proprio `<header>`, e su una scheda destinazione
+   sono trentadue. Un nome di transizione ripetuto non è un dettaglio che si
+   nota poco — il browser annulla l'intera transizione, e la riga qui sopra non
+   farebbe più niente su nessuna pagina. */
+body > header {
+  view-transition-name: site-header;
+}
+
+/* Meno movimento vuol dire nessun movimento: la pagina cambia e basta, senza
+   che si perda niente per strada. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

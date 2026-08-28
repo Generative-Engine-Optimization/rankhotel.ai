@@ -22,7 +22,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { VERIFIED_HOTELS } from "../seed/verified-hotels.mjs";
 import { DESTINATIONS } from "../seed/destinations.mjs";
-import { buildGazetteer, namesAnotherPlace } from "./geo-check.mjs";
+import { buildGazetteer, namesAnotherPlace, junkTitle } from "./geo-check.mjs";
 
 const audit = JSON.parse(await readFile(process.argv[2], "utf8"));
 const gazetteer = buildGazetteer(DESTINATIONS);
@@ -45,6 +45,15 @@ for (const row of audit) {
   }
 
   if (DOWNGRADE.has(row.verdict)) {
+    // Il filtro si riapplica ai titoli già raccolti, senza rileggere mille siti.
+    const junk = junkTitle(row.title);
+    if (junk) {
+      counts["via-non-struttura"] += 1;
+      removed.push({ ...row, azione: "non-struttura", why: junk });
+      decisions.set(key, null);
+      continue;
+    }
+
     const elsewhere = namesAnotherPlace(row, gazetteer);
     if (elsewhere.ok) {
       counts["via-altrove"] += 1;

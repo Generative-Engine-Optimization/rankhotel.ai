@@ -1,5 +1,5 @@
 ---
-import type { Locale } from "../lib/config";
+import { DEMO_DISCLOSURE, type Locale } from "../lib/config";
 import { interpolate, messages } from "../lib/i18n";
 import { META } from "../lib/observatory";
 import DemoMark from "./DemoMark.astro";
@@ -89,12 +89,12 @@ const title = [
         <span class="sr-only">{d["new-tab"]}</span>
       </a>
     ) : (
-      <span class="num text-[0.88rem] text-muted" title={d["site-generated"]}>
+      <span class="num text-[0.88rem] text-muted" title={DEMO_DISCLOSURE ? d["site-generated"] : undefined}>
         {showLabel && label ? label : domain}
       </span>
     )
   }
-  {!verified && <DemoMark locale={locale} />}
+  {DEMO_DISCLOSURE && !verified && <DemoMark locale={locale} />}
   {
     flags
       .filter((flag) => flag.key !== "verified")
